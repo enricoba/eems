@@ -3,6 +3,7 @@
 
 # Python files
 *.pyc
+test.py
 
 # Package files
 *.egg-info
