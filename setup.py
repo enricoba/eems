@@ -1,19 +1,11 @@
 from setuptools import setup, find_packages
-from codecs import open
-from os import path
-
-
-here = path.abspath(path.dirname(__file__))
-
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
-    long_description = f.read()
 
 setup(
-    name='easy_ems',
+    name='eems',
     version='0.0.0.dev1',
     description='An easy application to establish an energy monitoring system.',
-    long_description=long_description,
-    url='https://github.com/enricoba/easy_ems',
+    long_description='test',
+    url='https://github.com/enricoba/eems',
     author='Henrik Baran, Aurofree Hoehn',
     author_email='henrik.baran@online.de, a.hoehn@mailbox.org',
     license='MIT',
