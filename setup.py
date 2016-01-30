@@ -24,7 +24,7 @@ setup(
         'Intended Audience :: Manufacturing',
         'Topic :: Scientific/Engineering',
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 2.7'
     ],
     keywords='easy energy monitoring system',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
