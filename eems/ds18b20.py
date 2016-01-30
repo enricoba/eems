@@ -106,13 +106,13 @@ class Check(object):
                 config = config_file.readlines()
         except IOError as e:
             self.logger.error('{}'.format(e))
-            self.logger.warning('Application has been stopped')
+            # self.logger.warning('Application has been stopped')
         else:
             check = [c for c in config if c.strip('\n') == 'dtoverlay=w1-gpio']
             if len(check) == 0:
                 self.logger.error('Config.txt check failed: "dtoverlay=w1-gpio"'
                                   ' is not set')
-                self.logger.warning('Application has been stopped')
+                # self.logger.warning('Application has been stopped')
                 sys.exit()
             else:
                 self.logger.info('Config.txt check ok: "dtoverlay=w1-gpio" '
@@ -132,7 +132,7 @@ class Check(object):
                 modules = modules_file.readlines()
         except IOError as e:
             self.logger.error('{}'.format(e))
-            self.logger.warning('Application has been stopped')
+            # self.logger.warning('Application has been stopped')
         else:
             check = [c for c in modules if c.strip('\n') == 'w1-therm' or
                      c.strip('\n') == 'w1-gpio']
@@ -143,7 +143,7 @@ class Check(object):
             else:
                 self.logger.error('Modules check failed: "w1-gpio" and/or '
                                   '"w1-therm" are/is not set')
-                self.logger.warning('Application has been stopped')
+                # self.logger.warning('Application has been stopped')
                 sys.exit()
 
 
@@ -171,11 +171,10 @@ class Temp(object):
             object write an entry into the csv-file after been called.
 
         :param log:
-            ### NACHZIEHEN ###
-            Initially log=None. Therefore, a logfile in .log-format is
+            Initially log=None. A logfile in .log-format can be
             created in the same directory as this script. All outputs of the
             logger are written into the log-file. The logfile records with
-            the level=DEBUG. If log=False, no logfile is created.
+            the level=DEBUG. If log=True, a logfile is created.
 
         :param console:
             Initially console=True. Consequently, outputs are written into the
@@ -275,11 +274,11 @@ class Temp(object):
                 return list_sensors
             else:
                 self.logger.error('No sensors detected')
-                self.logger.warning('Application has been stopped')
+                # self.logger.warning('Application has been stopped')
                 sys.exit()
         else:
             self.logger.error('Path "/sys/bus/w1/devices" does not exist')
-            self.logger.warning('Application has been stopped')
+            # self.logger.warning('Application has been stopped')
             sys.exit()
 
     def __read_slave(self, sensor):
@@ -301,7 +300,7 @@ class Temp(object):
                     file_content = slave.readlines()
             except IOError as e:
                 self.logger.error('{}'.format(e))
-                self.logger.warning('Application has been stopped')
+                # self.logger.warning('Application has been stopped')
             else:
                 if x == 3:
                     self.logger.warning('Sensor: {0} - read failed '
@@ -359,7 +358,7 @@ class Temp(object):
                 csv.write('Date;Time;{0}\n'.format(str_head))
         except IOError as e:
             self.logger.error('{}'.format(e))
-            self.logger.warning('Application has been stopped')
+            # self.logger.warning('Application has been stopped')
 
     def __write_csv(self):
         """Internal function:__write_csv writes values into the csv-export
@@ -384,7 +383,7 @@ class Temp(object):
                 csv.write('{0};{1};{2}\n'.format(str_date, str_time, str_temp))
         except IOError as e:
             self.logger.error('{}'.format(e))
-            self.logger.warning('Application has been stopped')
+            # self.logger.warning('Application has been stopped')
 
     def read_once(self, *args, **kwargs):
         """Public function:read_one reads all connected sensors.
@@ -429,7 +428,7 @@ class Temp(object):
                 interval = 60
             elif interval < 2:
                 self.logger.error('Interval must be >= 2s')
-                self.logger.warning('Application has been stopped')
+                # self.logger.warning('Application has been stopped')
                 sys.exit()
             worker = Thread(target=self.__start_read, args=(interval,))
             self.logger.debug('Thread start_read was added')
@@ -446,7 +445,7 @@ class Temp(object):
                 else:
                     self.logger.error('Duration must be longer then the '
                                       'interval')
-                    self.logger.warning('Application has been stopped')
+                    # self.logger.warning('Application has been stopped')
                     sys.exit()
             # if daemon is True:
             # worker.setDaemon(True)
@@ -461,8 +460,8 @@ class Temp(object):
             except KeyboardInterrupt:
                 self.read_flag.wait()
                 self.stop_read(trigger='keyboard')
-            finally:
-                self.logger.info('Application has been stopped')
+            # finally:
+                # self.logger.info('Application has been stopped')
         else:
             self.logger.warning('Already one read thread is running, '
                                 'start of a second thread was stopped')
