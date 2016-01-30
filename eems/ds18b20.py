@@ -89,7 +89,7 @@ class Check(object):
             logging.basicConfig(level=logging.INFO,
                                 format=log_format,
                                 datefmt=log_date_format)
-            self.logger = self.logger = logging.getLogger('rbp_ds18b20')
+            self.logger = self.logger = logging.getLogger('eems')
         else:
             self.logger = logger
 
@@ -148,7 +148,7 @@ class Check(object):
 
 
 class Temp(object):
-    def __init__(self, check=None, csv=None, log=True, console=True):
+    def __init__(self, check=None, csv=None, log=None, console=True):
         """Public Class:Temp detects all connected DS18B20 one-wire sensors
         and provides public functions to read the sensors.
 
@@ -171,7 +171,8 @@ class Temp(object):
             object write an entry into the csv-file after been called.
 
         :param log:
-            Initially log=True. Therefore, a logfile in .log-format is
+            ### NACHZIEHEN ###
+            Initially log=None. Therefore, a logfile in .log-format is
             created in the same directory as this script. All outputs of the
             logger are written into the log-file. The logfile records with
             the level=DEBUG. If log=False, no logfile is created.
@@ -212,18 +213,18 @@ class Temp(object):
                                               datefmt=log_date_format)
                 console.setFormatter(formatter)
                 logging.getLogger('').addHandler(console)
-                self.logger = logging.getLogger('rbp_ds18b20')
+                self.logger = logging.getLogger('eems')
             else:
-                self.logger = logging.getLogger('rbp_ds18b20')
+                self.logger = logging.getLogger('eems')
         else:
             logging.basicConfig(level=logging.INFO,
                                 format=log_format,
                                 datefmt=log_date_format)
             if console is False:
-                self.logger = logging.getLogger('rbp_ds18b20')
+                self.logger = logging.getLogger('eems')
                 self.logger.disabled = True
             else:
-                self.logger = logging.getLogger('rbp_ds18b20')
+                self.logger = logging.getLogger('eems')
 
         if log is True:
             self.logger.debug('Logfile has been created')
@@ -533,12 +534,3 @@ class Temp(object):
             self.flag = False
         else:
             self.logger.warning('No read function to stop ...')
-
-
-def main():
-    temp = Temp()
-    temp.read_once()
-
-
-if __name__ == "__main__":
-    main()
