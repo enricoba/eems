@@ -20,5 +20,10 @@ setup(
         'Programming Language :: Python :: 2.7'
     ],
     keywords='easy energy monitoring system',
-    packages=find_packages(exclude=['contrib', 'docs', 'tests'])
+    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+    entry_points={
+        'console_scripts': [
+            'eems = eems.scripts:main'
+        ]
+    }
 )
