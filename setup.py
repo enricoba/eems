@@ -13,7 +13,7 @@ setup(
     version='0.0.0.dev1',
     description='An easy application to establish an energy monitoring system.',
     long_description=long_description,
-    url='https://github.com/enricoba/easy-ems',
+    url='https://github.com/enricoba/easy_ems',
     author='Henrik Baran, Aurofree Hoehn',
     author_email='henrik.baran@online.de, a.hoehn@mailbox.org',
     license='MIT',
