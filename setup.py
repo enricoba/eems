@@ -9,6 +9,7 @@ setup(
     author='Henrik Baran, Aurofree Hoehn',
     author_email='henrik.baran@online.de, a.hoehn@mailbox.org',
     license='MIT',
+    platforms='',
     classifiers=[
         'Development Status :: 1 - Planning',
         'Intended Audience :: End Users/Desktop',
@@ -19,6 +20,5 @@ setup(
         'Programming Language :: Python :: 2.7'
     ],
     keywords='easy energy monitoring system',
-    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    install_requires=['']
+    packages=find_packages(exclude=['contrib', 'docs', 'tests'])
 )
