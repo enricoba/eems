@@ -6,10 +6,8 @@ def main():
     parser = argparse.ArgumentParser(description='Help Information for eems.',
                                      prog='eems',
                                      usage='eems <command> [options]')
-
     parser.add_argument('check',
-                        help='Check sensor requirements.',
-                        type=bool)
+                        help='Check sensor requirements.')
     parser.add_argument('read',
                         help='Read sensors once.')
     parser.add_argument('monitor',
@@ -21,7 +19,8 @@ def main():
     check_group.add_argument('-c', '--config',
                              help='Check config.txt file.')
 
-    monitor_group = parser.add_argument_group('monitor_group', 'Options for monitor')
+    monitor_group = parser.add_argument_group('monitor_group',
+                                              'Options for monitor')
 
     monitor_group.add_argument('--check',
                                help='Run check before monitoring.')
@@ -32,24 +31,29 @@ def main():
     monitor_group.add_argument('--noprint',
                                help='Disable console output.')
     monitor_group.add_argument('--interval',
-                               help='Define measurement interval (default is 60s).',
+                               help='Define measurement interval '
+                                    '(default is 60s).',
                                type=int)
     monitor_group.add_argument('--duration',
-                               help='Define maximum duration (default is infinity).',
+                               help='Define maximum duration '
+                                    '(default is infinity).',
                                type=int)
 
     args = parser.parse_args()
 
     if args.check:
+        c = Check()
         if args.modules:
-            Check().w1_modules()
-        if args.config:
-            Check().w1_config()
+            c.w1_modules()
+        elif args.config:
+            c.w1_config()
         else:
-            Check()
+            c.w1_config()
+            c.w1_config()
 
     elif args.read:
-        Temp().read_once()
+        t = Temp()
+        t.read_once()
 
     elif args.monitor:
         if args.check:
@@ -78,7 +82,6 @@ def main():
             duration = None
         t = Temp(check=check, csv=csv, log=log, console=console)
         t.start_read(interval=interval, duration=duration)
-
     else:
         parser.print_help()
 
