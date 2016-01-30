@@ -9,8 +9,8 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='easy-ems',
-    version='0.0.1.dev1',
+    name='easy_ems',
+    version='0.0.0.dev1',
     description='An easy application to establish an energy monitoring system.',
     long_description=long_description,
     url='https://github.com/enricoba/easy-ems',
