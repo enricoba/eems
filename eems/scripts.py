@@ -1,5 +1,4 @@
 from ds18b20 import *
-import sys
 import argparse
 
 
@@ -11,10 +10,10 @@ def main():
     parser.add_argument('check',
                         help='Check sensor requirements.',
                         type=bool)
-    parser.add_argument('monitor',
-                        help='Start monitoring sensors.')
     parser.add_argument('read',
                         help='Read sensors once.')
+    parser.add_argument('monitor',
+                        help='Start monitoring sensors.')
 
     check_group = parser.add_argument_group('check_group', 'Options for check')
     check_group.add_argument('-m', '--modules',
@@ -38,10 +37,51 @@ def main():
     monitor_group.add_argument('--duration',
                                help='Define maximum duration (default is infinity).',
                                type=int)
-    parser.print_help()
+
     args = parser.parse_args()
 
-    #print args
+    if args.check:
+        if args.modules:
+            Check().w1_modules()
+        if args.config:
+            Check().w1_config()
+        else:
+            Check()
+
+    elif args.read:
+        Temp().read_once()
+
+    elif args.monitor:
+        if args.check:
+            check = True
+        else:
+            check = None
+        if args.csv:
+            csv = True
+        else:
+            csv = None
+        if args.log:
+            log = True
+        else:
+            log = None
+        if args.noprint:
+            console = False
+        else:
+            console = True
+        if args.interval:
+            interval = args.interval
+        else:
+            interval = None
+        if args.duration:
+            duration = args.interval
+        else:
+            duration = None
+        t = Temp(check=check, csv=csv, log=log, console=console)
+        t.start_read(interval=interval, duration=duration)
+
+    else:
+        parser.print_help()
+
 
 if __name__ == "__main__":
     main()
