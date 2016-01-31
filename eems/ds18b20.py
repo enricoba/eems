@@ -83,7 +83,7 @@ class Check(object):
             Returns an in-memory object tree providing the public functions
             w1_config() and w1_modules().
         """
-        log_format = '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
+        log_format = '%(asctime)s %(name)-8s %(levelname)-8s %(message)s'
         log_date_format = '%Y-%m-%d %H:%M:%S'
         if logger is None:
             logging.basicConfig(level=logging.INFO,
@@ -193,7 +193,7 @@ class Temp(object):
         self.read_flag = Event()
         self.flag = False
 
-        log_format = '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
+        log_format = '%(asctime)s %(name)-8s %(levelname)-8s %(message)s'
         log_date_format = '%Y-%m-%d %H:%M:%S'
 
         # logger
