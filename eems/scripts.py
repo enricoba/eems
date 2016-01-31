@@ -1,6 +1,7 @@
-from ds18b20 import Temp, Check
+import ds18b20
 import argparse
 import sys
+import os
 
 
 class ArgumentParserError(Exception):
@@ -13,9 +14,11 @@ class ThrowingArgumentParser(argparse.ArgumentParser):
 
 
 def read_help():
-    path = '/usr/local/lib/python2.7/dist-packages/eems/data/'
+    path = os.path.dirname(ds18b20.__file__)
+    # path = '/usr/local/lib/python2.7/dist-packages/eems/data/'
+    print path
     try:
-        with open('{0}help.txt'.format(path), 'r') as h:
+        with open('{0}/data/help.txt'.format(path), 'r') as h:
             return h.read()
     except IOError as e:
         print '{}'.format(e)
@@ -45,7 +48,7 @@ def main():
         sys.exit()
 
     if args.command == 'check':
-        c = Check()
+        c = ds18b20.Check()
         if args.modules is True:
             c.w1_modules()
         elif args.config is True:
@@ -55,7 +58,7 @@ def main():
             c.w1_config()
 
     elif args.command == 'read':
-        t = Temp()
+        t = ds18b20.Temp()
         t.read_once()
 
     elif args.command == 'monitor':
@@ -83,7 +86,7 @@ def main():
             duration = args.interval
         else:
             duration = None
-        t = Temp(check=check, csv=csv, log=log, console=console)
+        t = ds18b20.Temp(check=check, csv=csv, log=log, console=console)
         t.start_read(interval=interval, duration=duration)
     else:
         print read_help()
