@@ -14,7 +14,7 @@ class ThrowingArgumentParser(argparse.ArgumentParser):
 
 def read_help():
     try:
-        with open('help.txt', 'r') as h:
+        with open('data/help.txt', 'r') as h:
             return h.read()
     except IOError as e:
         print '{}'.format(e)
