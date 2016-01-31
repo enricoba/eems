@@ -16,7 +16,7 @@ class ThrowingArgumentParser(argparse.ArgumentParser):
 def read_help():
     path = os.path.dirname(ds18b20.__file__)
     try:
-        with open('{0}/data/help.txt'.format(path), 'r') as h:
+        with open('{0}/data/help.txt'.format(path), 'rb') as h:
             return h.read()
     except IOError as e:
         print '{}'.format(e)
