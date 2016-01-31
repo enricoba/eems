@@ -31,8 +31,8 @@ into a python file.
 Usage:
   eems <command> [options]
 Commands:
-  check                 Check sensor requirements.
-  read                  Read sensors once.
+:what: check            :how: Check sensor requirements.
+  :read:                  Read sensors once.
   monitor               Start monitoring sensors.
   help                  Show help for commands.
 Options for check:
