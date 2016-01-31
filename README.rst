@@ -43,6 +43,7 @@ Commands:
     Show help for commands.
 
 Options for check:
+:width: 30 80
   -m, --modules         Check required modules.
   -c, --config          Check config.txt file.
   -h, --help            Show help for command check.
@@ -56,10 +57,13 @@ Options for monitor:
   -h, --help            Show help for command monitor.
 
 .. list-table:: Commands
-   :widths: 15 20
-   :header-rows: 1
+   :widths: 30 80
 
    * - check
      - Check sensor requirements.
    * - read
      - Read sensors once.
+   * - monitor
+     - Start monitoring sensors.
+   * - help
+     - Show help for commands.
