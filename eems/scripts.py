@@ -3,32 +3,31 @@ import argparse
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Help Information for eems.',
-                                     prog='eems',
-                                     usage='eems <command> [options]')
-    parser.add_argument('check',
+    parser = argparse.ArgumentParser(prog='eems',
+                                     usage='\n  eems <command> [options]')
+    parser.add_argument('command',
                         help='Check sensor requirements.')
-    parser.add_argument('read',
-                        help='Read sensors once.')
-    parser.add_argument('monitor',
-                        help='Start monitoring sensors.')
+    # parser.add_argument('read',
+    #                    help='Read sensors once.')
+    # parser.add_argument('monitor',
+    #                    help='Start monitoring sensors.')
 
     check_group = parser.add_argument_group('check_group', 'Options for check')
-    check_group.add_argument('-m', '--modules',
+    check_group.add_argument('-m', '--modules', action='store_true',
                              help='Check required modules.')
-    check_group.add_argument('-c', '--config',
+    check_group.add_argument('-c', '--config', action='store_true',
                              help='Check config.txt file.')
 
     monitor_group = parser.add_argument_group('monitor_group',
                                               'Options for monitor')
 
-    monitor_group.add_argument('--check',
+    monitor_group.add_argument('--check', action='store_true',
                                help='Run check before monitoring.')
-    monitor_group.add_argument('--csv',
+    monitor_group.add_argument('--csv', action='store_true',
                                help='Write values into csv file.')
-    monitor_group.add_argument('--log',
+    monitor_group.add_argument('--log', action='store_true',
                                help='Write log file.')
-    monitor_group.add_argument('--noprint',
+    monitor_group.add_argument('--noprint', action='store_true',
                                help='Disable console output.')
     monitor_group.add_argument('--interval',
                                help='Define measurement interval '
@@ -40,35 +39,36 @@ def main():
                                type=int)
 
     args = parser.parse_args()
+    # print args
 
-    if args.check:
+    if args.command == 'check':
         c = Check()
-        if args.modules:
+        if args.modules is True:
             c.w1_modules()
-        elif args.config:
+        elif args.config is True:
             c.w1_config()
         else:
             c.w1_config()
             c.w1_config()
 
-    elif args.read:
+    elif args.command == 'read':
         t = Temp()
         t.read_once()
 
-    elif args.monitor:
-        if args.check:
+    elif args.command == 'monitor':
+        if args.check is True:
             check = True
         else:
             check = None
-        if args.csv:
+        if args.csv is True:
             csv = True
         else:
             csv = None
-        if args.log:
+        if args.log is True:
             log = True
         else:
             log = None
-        if args.noprint:
+        if args.noprint is True:
             console = False
         else:
             console = True
