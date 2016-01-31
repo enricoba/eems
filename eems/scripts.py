@@ -26,12 +26,11 @@ def main():
     parser = ThrowingArgumentParser(add_help=False)
     parser.add_argument('command')
 
-    # check_group = parser.add_argument_group('check_group', 'Options for check')
+    # optional arguments for check
     parser.add_argument('-m', '--modules', action='store_true')
     parser.add_argument('-c', '--config', action='store_true')
 
-    # monitor_group = parser.add_argument_group('monitor_group',
-    #                                         'Options for monitor')
+    # optional arguments for monitor
     parser.add_argument('--check', action='store_true')
     parser.add_argument('--csv', action='store_true')
     parser.add_argument('--log', action='store_true')
@@ -81,7 +80,7 @@ def main():
         else:
             interval = None
         if args.duration:
-            duration = args.interval
+            duration = args.duration
         else:
             duration = None
         t = ds18b20.Temp(check=check, csv=csv, log=log, console=console)
