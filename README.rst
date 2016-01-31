@@ -46,12 +46,13 @@ Usage::
 
 .. list-table:: **Options for check**
    :width: 30 80
-  * - -m, --modules
-    - Check required modules.
-  * - -c, --config
-    - Check config.txt file.
-  * - -h, --help
-    - Show help for command check.
+
+   * - -m, --modules
+     - Check required modules.
+   * - -c, --config
+     - Check config.txt file.
+   * - -h, --help
+     - Show help for command check.
 
 
 Options for monitor:
