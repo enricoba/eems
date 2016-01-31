@@ -11,4 +11,4 @@ test.py
 # Build and docs folder/files
 dist/*
 build/*
-source/*
+docs/*
