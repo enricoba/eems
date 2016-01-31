@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name='eems',
@@ -20,15 +20,11 @@ setup(
         'Programming Language :: Python :: 2.7'
     ],
     keywords='easy energy monitoring system',
-    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+    packages='eems',
     package_data={
-        'eems': [
-            'data/*.txt'
-        ]
+        'eems': ['data/*.txt']
     },
     entry_points={
-        'console_scripts': [
-            'eems = eems.scripts:main'
-        ]
+        'console_scripts': ['eems = eems.scripts:main']
     }
 )
