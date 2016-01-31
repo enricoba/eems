@@ -10,17 +10,14 @@ Installation
 ============
 
 Install via pip::
-~~~~~~~~~~~~~~~~~
 
     pip install eems
 
-Install via git:
-~~~~~~~~~~~~~~~~
-::
+Install via git::
+
     git clone https://github.com/enricoba/eems.git
     cd eems/
     python setup.py install
-
 
 Usage
 =====
