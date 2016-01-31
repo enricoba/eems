@@ -1,45 +1,47 @@
-from ds18b20 import *
+from ds18b20 import Temp, Check
 import argparse
+import sys
+
+
+class ArgumentParserError(Exception):
+    pass
+
+
+class ThrowingArgumentParser(argparse.ArgumentParser):
+    def error(self, message):
+        raise ArgumentParserError(message)
+
+
+def read_help():
+    try:
+        with open('help.txt', 'r') as h:
+            return h.read()
+    except IOError as e:
+        print '{}'.format(e)
 
 
 def main():
-    parser = argparse.ArgumentParser(prog='eems',
-                                     usage='\n  eems <command> [options]')
-    parser.add_argument('command',
-                        help='Check sensor requirements.')
-    # parser.add_argument('read',
-    #                    help='Read sensors once.')
-    # parser.add_argument('monitor',
-    #                    help='Start monitoring sensors.')
+    parser = ThrowingArgumentParser(add_help=False)
+    parser.add_argument('command')
 
     check_group = parser.add_argument_group('check_group', 'Options for check')
-    check_group.add_argument('-m', '--modules', action='store_true',
-                             help='Check required modules.')
-    check_group.add_argument('-c', '--config', action='store_true',
-                             help='Check config.txt file.')
+    check_group.add_argument('-m', '--modules', action='store_true')
+    check_group.add_argument('-c', '--config', action='store_true')
 
     monitor_group = parser.add_argument_group('monitor_group',
                                               'Options for monitor')
+    monitor_group.add_argument('--check', action='store_true')
+    monitor_group.add_argument('--csv', action='store_true')
+    monitor_group.add_argument('--log', action='store_true')
+    monitor_group.add_argument('--quiet', action='store_true')
+    monitor_group.add_argument('--interval', type=int)
+    monitor_group.add_argument('--duration', type=int)
 
-    monitor_group.add_argument('--check', action='store_true',
-                               help='Run check before monitoring.')
-    monitor_group.add_argument('--csv', action='store_true',
-                               help='Write values into csv file.')
-    monitor_group.add_argument('--log', action='store_true',
-                               help='Write log file.')
-    monitor_group.add_argument('--noprint', action='store_true',
-                               help='Disable console output.')
-    monitor_group.add_argument('--interval',
-                               help='Define measurement interval '
-                                    '(default is 60s).',
-                               type=int)
-    monitor_group.add_argument('--duration',
-                               help='Define maximum duration '
-                                    '(default is infinity).',
-                               type=int)
-
-    args = parser.parse_args()
-    # print args
+    try:
+        args = parser.parse_args()
+    except ArgumentParserError:
+        print read_help()
+        sys.exit()
 
     if args.command == 'check':
         c = Check()
@@ -68,7 +70,7 @@ def main():
             log = True
         else:
             log = None
-        if args.noprint is True:
+        if args.quiet is True:
             console = False
         else:
             console = True
@@ -83,7 +85,7 @@ def main():
         t = Temp(check=check, csv=csv, log=log, console=console)
         t.start_read(interval=interval, duration=duration)
     else:
-        parser.print_help()
+        print read_help()
 
 
 if __name__ == "__main__":
