@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='eems',
-    version='0.0.4.0a1',
+    version='0.0.4.1a1',
     description='An easy application to establish an energy monitoring system.',
     long_description='test',
     url='https://github.com/enricoba/eems',
