@@ -10,13 +10,13 @@ from threading import Thread, Lock, Event
 
 
 """
-Internal classes / functions
+Private classes / functions
 """
 
 
 class _SensorDictionary(object):
     def __init__(self, sensors):
-        """Internal class:_SensorDictionary provides functions to manage the
+        """Private class:_SensorDictionary provides functions to manage the
         sensors dictionary.
 
         :param sensors:
@@ -183,7 +183,7 @@ class Temp(object):
 
         :return:
             Returns an in-memory object tree providing the public functions
-            read_once(), start_read() and stop_read().
+            read_once(), start_read() and __stop_read().
         """
         # Adding logger
         if os.path.basename(sys.argv[0])[-3:] == '.py':
@@ -263,7 +263,7 @@ class Temp(object):
             self.csv_filename = None
 
     def __check_sensors(self):
-        """Internal function:__check_sensors detects all connected sensors.
+        """Private function:__check_sensors detects all connected sensors.
 
         :return:
             Returns a list containing all connected sensors.
@@ -286,7 +286,7 @@ class Temp(object):
             sys.exit()
 
     def __read_slave(self, sensor):
-        """Internal function:__read_slave reads the file 'w1_slave' of a
+        """Private function:__read_slave reads the file 'w1_slave' of a
         connected sensor.
 
         :param sensor:
@@ -321,7 +321,7 @@ class Temp(object):
                     time.sleep(0.2)
 
     def __read_sensors(self):
-        """Internal function:__read_sensors reads all connected sensors by
+        """Private function:__read_sensors reads all connected sensors by
         initializing parallel threads. Function waits until all sensors
         are read.
 
@@ -345,7 +345,7 @@ class Temp(object):
         self.read_flag.set()
 
     def __prepare_csv(self):
-        """Internal function:__prepare_csv adds a csv-export file to store
+        """Private function:__prepare_csv adds a csv-export file to store
         read values of the sensors.
 
         :return:
@@ -365,7 +365,7 @@ class Temp(object):
             # self.logger.warning('Application has been stopped')
 
     def __write_csv(self):
-        """Internal function:__write_csv writes values into the csv-export
+        """Private function:__write_csv writes values into the csv-export
         file.
 
         :return:
@@ -390,9 +390,9 @@ class Temp(object):
             # self.logger.warning('Application has been stopped')
 
     def read_once(self, *args, **kwargs):
-        """Public function:read_one reads all connected sensors.
+        """Public function:read_once reads all connected sensors.
 
-        If attribute internal variable:csv=True, the results are
+        If attribute Private variable:csv=True, the results are
         written into the created csv-export file. If internal
         variable:csv=None, nothing is written into any file.
 
@@ -463,7 +463,7 @@ class Temp(object):
                     time.sleep(0.25)
             except KeyboardInterrupt:
                 self.read_flag.wait()
-                self.stop_read(trigger='keyboard')
+                self.__stop_read(trigger='keyboard')
             # finally:
                 # self.logger.info('Application has been stopped')
         else:
@@ -471,7 +471,7 @@ class Temp(object):
                                 'start of a second thread was stopped')
 
     def __watchdog(self, duration, interval):
-        """Internal function:__watchdog stops the read process after a defined
+        """Private function:__watchdog stops the read process after a defined
         duration.
 
         :param duration:
@@ -488,11 +488,11 @@ class Temp(object):
         t = timestamp - time.time()
         time.sleep(duration + t)
         self.read_flag.wait()
-        self.stop_read(trigger='watchdog')
+        self.__stop_read(trigger='watchdog')
 
     def __start_read(self, interval):
-        """Internal function:__start_read manages the loop in which the
-        internal function:__read_sensors is called.
+        """Private function:__start_read manages the loop in which the
+        Private function:__read_sensors is called.
 
         :param interval:
             Expects an integer for the interval.
@@ -513,8 +513,8 @@ class Temp(object):
                 self.__write_csv()
             timestamp += interval
 
-    def stop_read(self, trigger):
-        """Public function:stop_read stops the started thread to read the
+    def __stop_read(self, trigger):
+        """Private function:__stop_read stops the started thread to read the
         connected sensors in a fixed interval.
 
         :param trigger:
