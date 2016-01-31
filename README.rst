@@ -62,4 +62,4 @@ Options for monitor:
    * - check
      - Check sensor requirements.
    * - read
-    - Read sensors once.
+     - Read sensors once.
