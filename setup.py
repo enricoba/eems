@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='eems',
-    version='0.0.4.1a1',
+    version='0.0.4.2a1',
     description='An easy application to establish an energy monitoring system.',
     long_description='test',
     url='https://github.com/enricoba/eems',
@@ -22,7 +22,7 @@ setup(
     keywords='easy energy monitoring system',
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
     package_data={
-        'eems': ['data/*.txt']
+        'eems': ['*.txt']
     },
     entry_points={
         'console_scripts': ['eems = eems.scripts:main']
