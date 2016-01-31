@@ -1,0 +1,2 @@
+# Include supporting texts
+include eems/data/*.txt
