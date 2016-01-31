@@ -8,14 +8,14 @@ Commands:
   monitor               Start monitoring sensors.
   help                  Show help for commands.
 Options for check:
-  --modules             Check required modules.
-  --config              Check config.txt file.
+  -m, --modules         Check required modules.
+  -c, --config          Check config.txt file.
   -h, --help            Show help for command check.
 Options for monitor:
   --check               Run check before monitoring.
   --csv                 Write values into csv file.
   --log                 Write log file.
-  --noprint             Disable console output.
+  --quiet               Disable console output.
   --interval <sec>      Define measurement interval (default is 60s).
   --duration <sec>      Define maximum duration (default is infinity).
   -h, --help            Show help for command monitor.
