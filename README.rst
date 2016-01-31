@@ -62,4 +62,4 @@ Quick start::
    # duration of 10s
    t.start_read(interval=2, duration=10)
 
-Detailed documentation still needs to be defined.
+More features can be found here: :ref:`module`
