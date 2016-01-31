@@ -195,6 +195,7 @@ class Temp(object):
         self.event = Event()
         self.read_flag = Event()
         self.flag = False
+        self.stop = False
 
         log_format = '%(asctime)s %(name)-8s %(levelname)-8s %(message)s'
         log_date_format = '%Y-%m-%d %H:%M:%S'
@@ -458,8 +459,8 @@ class Temp(object):
             self.logger.debug('Thread start_read has started with an '
                               'interval of {1}s'.format(worker, interval))
             try:
-                while True:
-                    time.sleep(1)
+                while self.stop is False:
+                    time.sleep(0.25)
             except KeyboardInterrupt:
                 self.read_flag.wait()
                 self.stop_read(trigger='keyboard')
@@ -534,5 +535,6 @@ class Temp(object):
                           'pressing Ctrl-C'
             self.logger.debug(message)
             self.flag = False
+            self.stop = True
         else:
             self.logger.warning('No read function to stop ...')
