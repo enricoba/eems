@@ -39,8 +39,7 @@ Commands:
     Read sensors once.
   monitor
     Start monitoring sensors.
-  help
-    Show help for commands.
+  :help: Show help for commands.
 
 Options for check:
   -m, --modules         Check required modules.
