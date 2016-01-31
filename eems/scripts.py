@@ -13,8 +13,9 @@ class ThrowingArgumentParser(argparse.ArgumentParser):
 
 
 def read_help():
+    path = '/usr/local/lib/python2.7/dist-packages/eems/data/'
     try:
-        with open('data/help.txt', 'r') as h:
+        with open('{0}help.txt'.format(path), 'r') as h:
             return h.read()
     except IOError as e:
         print '{}'.format(e)
