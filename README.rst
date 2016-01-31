@@ -10,13 +10,13 @@ Installation
 ============
 
 Install via pip:
-----------------
-::
+~~~~~~~~~~~~~~~~
+test::
     pip install eems
 
 Install via git:
-----------------
-::
+~~~~~~~~~~~~~~~~
+test::
     git clone https://github.com/enricoba/eems.git
     cd eems/
     python setup.py install
