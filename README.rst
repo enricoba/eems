@@ -22,6 +22,30 @@ Install via git::
 Usage
 =====
 
-Here it comes
+The application can be used directly in the command line or be imported
+into a python file.
+
+1. Command line
+~~~~~~~~~~~~~~~
+
+Usage:
+  eems <command> [options]
+Commands:
+  check                 Check sensor requirements.
+  read                  Read sensors once.
+  monitor               Start monitoring sensors.
+  help                  Show help for commands.
+Options for check:
+  -m, --modules         Check required modules.
+  -c, --config          Check config.txt file.
+  -h, --help            Show help for command check.
+Options for monitor:
+  --check               Run check before monitoring.
+  --csv                 Write values into csv file.
+  --log                 Write log file.
+  --quiet               Disable console output.
+  --interval <sec>      Define measurement interval (default is 60s).
+  --duration <sec>      Define maximum duration (default is infinity).
+  -h, --help            Show help for command monitor.
 
 
