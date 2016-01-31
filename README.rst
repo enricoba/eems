@@ -39,7 +39,8 @@ Commands:
     Read sensors once.
   monitor
     Start monitoring sensors.
-  :help: Show help for commands.
+  help
+    Show help for commands.
 
 Options for check:
   -m, --modules         Check required modules.
@@ -50,8 +51,11 @@ Options for monitor:
   --csv                 Write values into csv file.
   --log                 Write log file.
   --quiet               Disable console output.
-  --interval <sec>      Define measurement interval (default is 60s).
-  --duration <sec>      Define maximum duration (default is infinity).
+  --interval <sec>      Define measurement interval
+
+                        (default is 60s).
+  --duration <sec>      Define maximum duration
+                        (default is infinity).
   -h, --help            Show help for command monitor.
 
 
