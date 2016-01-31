@@ -22,7 +22,7 @@ setup(
     keywords='easy energy monitoring system',
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
     package_data={
-        'eems': ['*.txt']
+        'eems': ['*.txt'],
     },
     entry_points={
         'console_scripts': ['eems = eems.scripts:main']
