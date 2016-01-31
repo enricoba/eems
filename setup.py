@@ -2,9 +2,10 @@ from setuptools import setup, find_packages
 
 setup(
     name='eems',
-    version='0.0.4.3a1',
-    description='An easy application to establish an energy monitoring system.',
-    long_description='test',
+    version='0.1.0.0b1',
+    description='eems - easy energy monitoring system',
+    long_description='An easy application to establish an energy monitoring '
+                     'system for raspberry pi and ds18b20 temperature sensors.',
     url='https://github.com/enricoba/eems',
     author='Henrik Baran, Aurofree Hoehn',
     author_email='henrik.baran@online.de, a.hoehn@mailbox.org',
