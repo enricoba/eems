@@ -186,7 +186,10 @@ class Temp(object):
             read_once(), start_read() and stop_read().
         """
         # Adding logger
-        self.filename_script = os.path.basename(sys.argv[0])[:-3]
+        if os.path.basename(sys.argv[0])[-3:] == '.py':
+            self.filename_script = os.path.basename(sys.argv[0])[:-3]
+        else:
+            self.filename_script = 'eems'
         self.str_date = time.strftime('%Y-%m-%d')
         self.str_time = time.strftime('%H-%M-%S')
         self.event = Event()
