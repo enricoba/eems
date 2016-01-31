@@ -55,4 +55,11 @@ Options for monitor:
   --duration <sec>    Define maximum duration (default is infinity).
   -h, --help            Show help for command monitor.
 
+.. list-table:: Commands
+   :widths: 15 20
+   :header-rows: 1
 
+   * - check
+     - Check sensor requirements.
+   * - read
+    - Read sensors once.
