@@ -28,13 +28,20 @@ into a python file.
 1. Command line
 ~~~~~~~~~~~~~~~
 
-Usage:
+Usage::
+
   eems <command> [options]
+
 Commands:
-:what: check            :how: Check sensor requirements.
-  :read:                  Read sensors once.
-  monitor               Start monitoring sensors.
-  help                  Show help for commands.
+  check
+    Check sensor requirements.
+  read
+    Read sensors once.
+  monitor
+    Start monitoring sensors.
+  help
+    Show help for commands.
+
 Options for check:
   -m, --modules         Check required modules.
   -c, --config          Check config.txt file.
