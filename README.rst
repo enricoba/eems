@@ -32,31 +32,7 @@ Usage::
 
   eems <command> [options]
 
-Commands:
-  check
-    Check sensor requirements.
-  read
-    Read sensors once.
-  monitor
-    Start monitoring sensors.
-  help
-    Show help for commands.
-
-Options for check:
-:width: 30 80
-  -m, --modules         Check required modules.
-  -c, --config          Check config.txt file.
-  -h, --help            Show help for command check.
-Options for monitor:
-  --check               Run check before monitoring.
-  --csv                 Write values into csv file.
-  --log                 Write log file.
-  --quiet               Disable console output.
-  --interval <sec>  Define measurement interval (default is 60s).
-  --duration <sec>    Define maximum duration (default is infinity).
-  -h, --help            Show help for command monitor.
-
-.. list-table:: Commands
+.. list-table:: **Commands**
    :widths: 30 80
 
    * - check
@@ -67,3 +43,23 @@ Options for monitor:
      - Start monitoring sensors.
    * - help
      - Show help for commands.
+
+.. list-table:: **Options for check**
+   :width: 30 80
+  * - -m, --modules
+    - Check required modules.
+  * - -c, --config
+    - Check config.txt file.
+  * - -h, --help
+    - Show help for command check.
+
+
+Options for monitor:
+  --check               Run check before monitoring.
+  --csv                 Write values into csv file.
+  --log                 Write log file.
+  --quiet               Disable console output.
+  --interval <sec>  Define measurement interval (default is 60s).
+  --duration <sec>    Define maximum duration (default is infinity).
+  -h, --help            Show help for command monitor.
+
