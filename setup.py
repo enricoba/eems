@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='eems',
@@ -20,7 +20,7 @@ setup(
         'Programming Language :: Python :: 2.7'
     ],
     keywords='easy energy monitoring system',
-    packages='eems',
+    packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
     package_data={
         'eems': ['data/*.txt']
     },
