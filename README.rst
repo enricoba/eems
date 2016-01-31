@@ -32,35 +32,34 @@ Usage::
 
   eems <command> [options]
 
-.. list-table:: **Commands**
-   :widths: 30 80
 
-   * - check
-     - Check sensor requirements.
-   * - read
-     - Read sensors once.
-   * - monitor
-     - Start monitoring sensors.
-   * - help
-     - Show help for commands.
+Show help::
 
-.. list-table:: **Options for check**
-   :width: 30 80
+   eems help
 
-   * - -m, --modules
-     - Check required modules.
-   * - -c, --config
-     - Check config.txt file.
-   * - -h, --help
-     - Show help for command check.
+2. Python script
+~~~~~~~~~~~~~~~~
+
+Quick start::
+
+   import eems
 
 
-Options for monitor:
-  --check               Run check before monitoring.
-  --csv                 Write values into csv file.
-  --log                 Write log file.
-  --quiet               Disable console output.
-  --interval <sec>  Define measurement interval (default is 60s).
-  --duration <sec>    Define maximum duration (default is infinity).
-  -h, --help            Show help for command monitor.
+   # generate check-object to identify ds18b20 requirements
+   c = eems.Check()
+   # check if modules w1-therm and w1-gpio are set
+   c.w1_modules()
+   # check if dtoverlay=w1-gpio is set in config.txt
+   c.w1_config()
 
+   # generate temp-object to read sensors
+   t = eems.Temp()
+
+   # Read all connected sensors once.
+   t.read_once()
+
+   # Start reading temperature sensors with an interval of 2s and a maximum
+   # duration of 10s
+   t.start_read(interval=2, duration=10)
+
+Detailed documentation still needs to be defined.
