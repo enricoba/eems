@@ -446,7 +446,7 @@ class Temp(object):
                                       ' of {0}s'.format(duration))
                     watchdog.start()
                 else:
-                    self.logger.error('Duration must be longer then the '
+                    self.logger.error('Duration must be longer than the '
                                       'interval')
                     # self.logger.warning('Application has been stopped')
                     sys.exit()
@@ -532,7 +532,7 @@ class Temp(object):
             elif trigger == 'keyboard':
                 message = 'Function:start_read has been stopped manually by ' \
                           'pressing Ctrl-C'
-            self.logger.info(message)
+            self.logger.debug(message)
             self.flag = False
         else:
             self.logger.warning('No read function to stop ...')
