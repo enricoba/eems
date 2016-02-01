@@ -12,7 +12,7 @@ setup(
     license='MIT',
     platforms='',
     classifiers=[
-        'Development Status :: 1 - Planning',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: End Users/Desktop',
         'Intended Audience :: Education',
         'Intended Audience :: Manufacturing',
