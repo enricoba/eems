@@ -5,7 +5,7 @@ Changelog
 All major versions including are listed below.
 
 
-Version 0.1.0.0b1
+Version 0.1.0.1b1
 ~~~~~~~~~~~~~~~~~
 
 Open beta for testing issues.
