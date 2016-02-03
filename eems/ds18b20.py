@@ -330,11 +330,11 @@ class Temp(object):
         """
         self.read_flag.clear()
         threads = []
-        for x in range(len(self.sensors)):
+        for sensor in self.sensors:
             threads.append(Thread(target=self.__read_slave,
-                                  args=(self.sensors[x], )))
+                                  args=(sensor, )))
             self.logger.debug('Thread for sensor {0} was '
-                              'added'.format(self.sensors[x]))
+                              'added'.format(sensor))
         for t in threads:
             t.setDaemon(True)
             t.start()
