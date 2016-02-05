@@ -202,7 +202,7 @@ class Temp(object):
 
         # logger
         if log is True:
-            log_file = '{0}_{1}_{2}.log'.format(self.str_date,
+            log_file = '{0}_{1}_{2}.txt'.format(self.str_date,
                                                 self.str_time,
                                                 self.filename_script)
             logging.basicConfig(level=logging.DEBUG,
@@ -333,15 +333,15 @@ class Temp(object):
         for sensor in self.sensors:
             threads.append(Thread(target=self.__read_slave,
                                   args=(sensor, )))
-            self.logger.debug('Thread for sensor {0} was '
-                              'added'.format(sensor))
+            # self.logger.debug('Thread for sensor {0} was '
+            #                   'added'.format(sensor))
         for t in threads:
             t.setDaemon(True)
             t.start()
-            self.logger.debug('Thread {0} has started'.format(t))
+            # self.logger.debug('Thread {0} has started'.format(t))
         for t in threads:
             t.join()
-            self.logger.debug('Thread {0} has joined'.format(t))
+            # self.logger.debug('Thread {0} has joined'.format(t))
         self.read_flag.set()
 
     def __prepare_csv(self):
