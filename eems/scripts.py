@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+
+
 import ds18b20
 import argparse
 import sys

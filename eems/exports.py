@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 
@@ -28,11 +27,7 @@ class CsvHandler(object):
 
     def add(self, header):
         if os.path.exists(self.csv_file) is False:
-            try:
-                assert not isinstance(header, basestring)
-            except AssertionError:
-                print 'no list passed'
-            else:
+            if isinstance(header, list) is True:
                 header = ['id', 'date', 'time'] + header
                 try:
                     with open(self.csv_file, 'wb') as _csv:
@@ -40,18 +35,16 @@ class CsvHandler(object):
                         csv_writer.writerow(header)
                 except IOError:
                     print 'kann nicht lesen'
+            else:
+                print 'no list passed'
         else:
             print 'file schon da'
 
     def write(self, data):
         if os.path.exists(self.csv_file) is True:
-            try:
-                assert not isinstance(data, basestring)
-            except AssertionError:
-                print 'no list passed'
-            else:
+            if isinstance(data, dict) is True:
                 columns = self.__count_col()
-                entries = len(data)
+                entries = len(data.keys())
                 if entries == columns:
                     try:
                         with open(self.csv_file, 'ab') as _csv:
@@ -61,6 +54,8 @@ class CsvHandler(object):
                         print 'kann nicht lesen'
                 else:
                     print 'nicht gleich lang'
+            else:
+                print 'no dict passed'
         else:
             print 'no file existing'
 
