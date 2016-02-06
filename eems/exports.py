@@ -28,7 +28,7 @@ class CsvHandler(object):
         else:
             self.logger = logger
 
-    def count_col(self):
+    def __count_col(self):
         try:
             with open(self.csv_file, 'rb') as _csv:
                 csv_reader = csv.reader(_csv, delimiter=';')
@@ -36,7 +36,7 @@ class CsvHandler(object):
         except IOError as e:
             self.logger.error('{}'.format(e))
 
-    def count_rows(self):
+    def __count_rows(self):
         try:
             with open(self.csv_file, 'rb') as _csv:
                 csv_reader = csv.reader(_csv, delimiter=';')
@@ -48,7 +48,7 @@ class CsvHandler(object):
     def add(self, header):
         if os.path.exists(self.csv_file) is False:
             if isinstance(header, list) is True:
-                header = ['id', 'date', 'time'] + header
+                header = ['id', 'date', 'time'] + sorted(header)
                 try:
                     with open(self.csv_file, 'wb') as _csv:
                         csv_writer = csv.writer(_csv, delimiter=';')
@@ -63,13 +63,13 @@ class CsvHandler(object):
     def write(self, data):
         if os.path.exists(self.csv_file) is True:
             if isinstance(data, dict) is True:
-                columns = self.count_col() - 3
+                columns = self.__count_col() - 3
                 entries = len(data.keys())
                 if entries == columns:
-                    row = self.count_rows() - 1
+                    row = self.__count_rows()
                     str_date = time.strftime('%Y-%m-%d')
-                    str_time = time.strftime('%H-%M-%S')
-                    data = [row, str_date, str_time] + data.keys()
+                    str_time = time.strftime('%H:%M:%S')
+                    data = [row, str_date, str_time] + sorted(data.keys())
                     try:
                         with open(self.csv_file, 'ab') as _csv:
                             csv_writer = csv.writer(_csv, delimiter=';')
