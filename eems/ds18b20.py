@@ -5,6 +5,7 @@ import os
 import time
 import sys
 import logging
+import exports
 from threading import Thread, Lock, Event
 
 
@@ -253,13 +254,16 @@ class Temp(object):
 
         # Create csv-export file if csv=True
         if csv is True:
+            # define csv file name
+            csv_file = '{0}_{1}_{2}.csv'.format(self.str_date,
+                                                self.str_time,
+                                                self.filename_script)
+            # add csv handler
+            self.CsvHandler = exports.CsvHandler(csv_file, self.logger)
+            self.CsvHandler.add(self.sensors)
             self.csv = True
-            self.csv_filename = '{0}_{1}_{2}.csv'\
-                .format(self.str_date, self.str_time, self.filename_script)
-            self.__prepare_csv()
         else:
             self.csv = None
-            self.csv_filename = None
 
     def __check_sensors(self):
         """Private function:__check_sensors detects all connected sensors.
@@ -343,51 +347,6 @@ class Temp(object):
             # self.logger.debug('Thread {0} has joined'.format(t))
         self.read_flag.set()
 
-    def __prepare_csv(self):
-        """Private function:__prepare_csv adds a csv-export file to store
-        read values of the sensors.
-
-        :return:
-            Returns None.
-        """
-        str_head = ''
-        for x in range(len(self.sensors)):
-            if x + 1 == len(self.sensors):
-                str_head = '{0}{1}'.format(str_head, self.sensors[x])
-            else:
-                str_head = '{0}{1};'.format(str_head, self.sensors[x])
-        try:
-            with open(self.csv_filename, 'a') as csv:
-                csv.write('Date;Time;{0}\n'.format(str_head))
-        except IOError as e:
-            self.logger.error('{}'.format(e))
-            # self.logger.warning('Application has been stopped')
-
-    def __write_csv(self):
-        """Private function:__write_csv writes values into the csv-export
-        file.
-
-        :return:
-            Returns None.
-        """
-        results = self.sensor_dict.get_dic()
-        str_temp = ''
-        str_date = time.strftime('%Y-%m-%d')
-        str_time = time.strftime('%H:%M:%S')
-        for x in range(len(self.sensors)):
-            if x + 1 == len(self.sensors):
-                str_temp = '{0}{1}'.format(str_temp,
-                                           results[self.sensors[x]])
-            else:
-                str_temp = '{0}{1};'.format(str_temp,
-                                            results[self.sensors[x]])
-        try:
-            with open(self.csv_filename, 'a') as csv:
-                csv.write('{0};{1};{2}\n'.format(str_date, str_time, str_temp))
-        except IOError as e:
-            self.logger.error('{}'.format(e))
-            # self.logger.warning('Application has been stopped')
-
     def read_once(self, *args, **kwargs):
         """Public function:read_once reads all connected sensors.
 
@@ -407,8 +366,9 @@ class Temp(object):
         else:
             self.sensor_dict.reset_dic()
             self.__read_sensors()
-            self.__write_csv()
-            return self.sensor_dict.get_dic()
+            result = self.sensor_dict.get_dic()
+            self.CsvHandler.write(result)
+            return result
 
     def start_read(self, interval=None, duration=None):
         """Public function:start_read starts a thread to read connected
@@ -509,7 +469,8 @@ class Temp(object):
             else:
                 self.sensor_dict.reset_dic()
                 self.__read_sensors()
-                self.__write_csv()
+                result = self.sensor_dict.get_dic()
+                self.CsvHandler.write(result)
             timestamp += interval
 
     def __stop_read(self, trigger):

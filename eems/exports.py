@@ -9,21 +9,41 @@ modules inside this package.
 
 import csv
 import os
+import logging
+import time
 
 
 class CsvHandler(object):
-    def __init__(self, csv_file=None, logger=None):
+    def __init__(self, csv_file, logger=None):
         self.csv_file = csv_file
         self. logger = logger
-        self.exist_flag = False
+        # adding simple logger ig no logger has been passed
+        log_format = '%(asctime)s %(name)-8s %(levelname)-8s %(message)s'
+        log_date_format = '%Y-%m-%d %H:%M:%S'
+        if logger is None:
+            logging.basicConfig(level=logging.INFO,
+                                format=log_format,
+                                datefmt=log_date_format)
+            self.logger = self.logger = logging.getLogger('eems')
+        else:
+            self.logger = logger
 
-    def __count_col(self):
+    def count_col(self):
         try:
             with open(self.csv_file, 'rb') as _csv:
                 csv_reader = csv.reader(_csv, delimiter=';')
                 return len(csv_reader.next())
-        except IOError:
-            'kann nicht lesen'
+        except IOError as e:
+            self.logger.error('{}'.format(e))
+
+    def count_rows(self):
+        try:
+            with open(self.csv_file, 'rb') as _csv:
+                csv_reader = csv.reader(_csv, delimiter=';')
+                rows = sum(1 for row in csv_reader)
+                return rows
+        except IOError as e:
+            self.logger.error('{}'.format(e))
 
     def add(self, header):
         if os.path.exists(self.csv_file) is False:
@@ -33,35 +53,33 @@ class CsvHandler(object):
                     with open(self.csv_file, 'wb') as _csv:
                         csv_writer = csv.writer(_csv, delimiter=';')
                         csv_writer.writerow(header)
-                except IOError:
-                    print 'kann nicht lesen'
+                except IOError as e:
+                    self.logger.error('{}'.format(e))
             else:
-                print 'no list passed'
+                self.logger.error('Function "add" expects a list')
         else:
-            print 'file schon da'
+            self.logger.error('File {} already exists'.format(self.csv_file))
 
     def write(self, data):
         if os.path.exists(self.csv_file) is True:
             if isinstance(data, dict) is True:
-                columns = self.__count_col()
+                columns = self.count_col() - 3
                 entries = len(data.keys())
                 if entries == columns:
+                    row = self.count_rows() - 1
+                    str_date = time.strftime('%Y-%m-%d')
+                    str_time = time.strftime('%H-%M-%S')
+                    data = [row, str_date, str_time] + data.keys()
                     try:
                         with open(self.csv_file, 'ab') as _csv:
                             csv_writer = csv.writer(_csv, delimiter=';')
                             csv_writer.writerow(data)
-                    except IOError:
-                        print 'kann nicht lesen'
+                    except IOError as e:
+                        self.logger.error('{}'.format(e))
                 else:
-                    print 'nicht gleich lang'
+                    self.logger.error('Passed elements do not have the same '
+                                      'length as columns in csv')
             else:
-                print 'no dict passed'
+                self.logger.error('Function "write" expects a dictionary')
         else:
-            print 'no file existing'
-
-
-print os.path.exists('test.csv')
-test = CsvHandler(csv_file='test.csv')
-test.add(['sensor1', 'sensor2', 'sensor3'])
-test.write(['1', '2016-02-05', '10:20:30', '20.3', '20.3', '10,3'])
-test.write(['20'])
+            self.logger.error('File {} does not exist'.format(self.csv_file))
