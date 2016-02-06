@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-
+"""
+Main module for ds18b2 sensors.
+"""
 
 import os
 import time
@@ -7,6 +9,9 @@ import sys
 import logging
 import exports
 from threading import Thread, Lock, Event
+
+
+__version__ = '0.1.0.1b1'
 
 
 """
@@ -67,7 +72,7 @@ class _SensorDictionary(object):
 
 
 """
-public class
+Public classes / functions
 """
 
 

@@ -2,11 +2,11 @@
 
 
 from setuptools import setup, find_packages
-
+from eems.ds18b20 import __version__
 
 setup(
     name='eems',
-    version='0.1.0.1b1',
+    version=__version__,
     description='eems - easy energy monitoring system',
     long_description='An easy application to establish an energy monitoring '
                      'system for raspberry pi and ds18b20 temperature sensors.',
