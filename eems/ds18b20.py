@@ -343,13 +343,13 @@ class Temp(object):
             self.CsvHandler.write(result)
             return result
 
-    def monitor(self, interval=None, duration=None):
+    def monitor(self, interval=60, duration=None):
         """Public function *monitor* starts a thread to read connected
         DS18B20 sensors within an interval over a duration.
 
         :param interval:
-            Expects an integer containing the interval time in seconds. If
-            *interval=None*, the default interval is set to 60 seconds.
+            Expects an integer containing the interval time in seconds. The
+            default interval is set to 60 seconds.
         :param duration:
             Expects an integer containing the duration time in seconds. If
             *duration=None*, the duration is infinite and the thread needs to
@@ -358,9 +358,7 @@ class Temp(object):
             Returns *None*.
         """
         if self.flag is False:
-            if interval is None:
-                interval = 60
-            elif interval < 2:
+            if interval < 2:
                 self.logger.error('Interval must be >= 2s')
                 sys.exit()
             worker = Thread(target=self.__start_read, args=(interval,))
