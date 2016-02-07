@@ -2,8 +2,8 @@
 
 
 """
-This module will handle file exports and provide functions to call for other
-modules inside this package.
+This module handles file exports and provides functions and classes to call
+for other modules inside this package.
 """
 
 
