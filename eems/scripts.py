@@ -57,6 +57,10 @@ def main():
             c.w1_config()
             c.w1_config()
 
+    elif args.command == 'prepare':
+        c = ds18b20.Check()
+        c.prepare()
+
     elif args.command == 'read':
         t = ds18b20.Temp()
         t.read()

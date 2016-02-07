@@ -4,6 +4,7 @@ Usage:
   eems <command> [options]
 Commands:
   check                 Check sensor requirements.
+  prepare               Prepare configuration files.
   read                  Read sensors once.
   monitor               Start monitoring sensors.
   help                  Show help for commands.
