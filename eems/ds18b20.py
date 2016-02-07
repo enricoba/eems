@@ -157,7 +157,7 @@ class Temp(object):
         :param check:
             Expects the boolean *True* or *None*. If *check=True*, the public
             class *Check* is initialised and both public functions, *w1_config*
-            and *w1_modules* are called. If *check=None*
+            and *w1_modules* are called.
         :param csv:
             Expects the boolean *True* or *None*. If *csv=True*, a csv file is
             created in the same directory as this script. Afterwards all public
