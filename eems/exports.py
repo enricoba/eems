@@ -93,7 +93,7 @@ class CsvHandler(object):
             # validate if passed parameter *header* is a list
             if isinstance(header, list) is True:
                 # adding the columns id, date and time
-                header = ['id', 'date', 'time'] + sorted(header)
+                header = ['id', 'date', 'time'] + header
                 try:
                     with open(self.csv_file, 'wb') as _csv:
                         csv_writer = csv.writer(_csv, delimiter=';')
@@ -127,8 +127,7 @@ class CsvHandler(object):
                     row = self.__count_rows()
                     str_date = time.strftime('%Y-%m-%d')
                     str_time = time.strftime('%H:%M:%S')
-                    values = sorted(data)
-                    data = [row, str_date, str_time] + sorted(values.keys())
+                    data = [row, str_date, str_time] + data.values()
                     try:
                         with open(self.csv_file, 'ab') as _csv:
                             csv_writer = csv.writer(_csv, delimiter=';')

@@ -8,6 +8,7 @@ import time
 import sys
 import logging
 import exports
+import collections
 from threading import Thread, Lock, Event
 
 
@@ -30,10 +31,10 @@ class _SensorDictionary(object):
             Returns a in-memory object tree providing the functions
             *set_temp*, *get_dic* and *reset_dic*.
         """
-        self.sensors = sensors
-        self.dic = dict()
+        dic = dict()
         for sensor in sensors:
-            self.dic[sensor] = None
+            dic[sensor] = None
+        self.dic = collections.OrderedDict(sorted(dic.items()))
         self.lock = Lock()
 
     def set_temp(self, sensor, temp):
@@ -48,7 +49,7 @@ class _SensorDictionary(object):
             Returns *None*.
         """
         with self.lock:
-            self.dic[sensor] = temp
+            self.dic.__setitem__(sensor, temp)
 
     def get_dic(self):
         """Public function *get_dic* returns the sensors dictionary.
@@ -64,9 +65,8 @@ class _SensorDictionary(object):
         :return:
             Returns *None*.
         """
-        self.dic = dict()
-        for sensor in self.sensors:
-            self.dic[sensor] = None
+        for sensor in self.dic.keys():
+            self.dic.__setitem__(sensor, None)
 
 
 """
@@ -237,14 +237,15 @@ class Temp(object):
         if sensors is False:
             sys.exit()
         else:
-            self.sensors = sensors
-        self.sensor_dict = _SensorDictionary(self.sensors)
+            self.sensor_dict = _SensorDictionary(sensors)
 
         if csv is True:
             csv_file = '{0}_{1}_{2}.csv'.format(self.str_date,
                                                 self.str_time,
                                                 self.filename_script)
-            self.CsvHandler = exports.CsvHandler(csv_file, self.sensors,
+            dic = self.sensor_dict.get_dic()
+            self.CsvHandler = exports.CsvHandler(csv_file,
+                                                 dic.keys(),
                                                  self.logger)
             self.csv = True
         else:
@@ -312,7 +313,8 @@ class Temp(object):
         """
         self.read_flag.clear()
         threads = []
-        for sensor in self.sensors:
+        dic = self.sensor_dict.get_dic()
+        for sensor in dic.keys():
             threads.append(Thread(target=self.__read_slave,
                                   args=(sensor, )))
         for t in threads:
