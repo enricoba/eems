@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Main module for ds18b2 sensors.
+Main module for DS18B2 sensors.
 """
 
 import os
