@@ -55,11 +55,11 @@ Quick start::
    # generate temp-object to read sensors
    t = eems.Temp()
 
-   # Read all connected sensors once.
-   t.read_once()
+   # Read all connected DS18B20 sensors once.
+   t.read()
 
-   # Start reading temperature sensors with an interval of 2s and a maximum
+   # Start reading DS18B20 sensors with an interval of 2s and a maximum
    # duration of 10s
-   t.start_read(interval=2, duration=10)
+   t.monitor(interval=2, duration=10)
 
 More features can be found here: :ref:`module`
