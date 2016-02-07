@@ -110,8 +110,7 @@ class CsvHandler(object):
         file.
 
         :param data:
-            Expects a dictionary containing the same keys as passed to the
-            header. All values of the passed dictionary are added to the csv.
+            Expects a list containing values with the same length as keys.
         :return:
             Returns *None*.
         """
