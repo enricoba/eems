@@ -148,7 +148,7 @@ class Check(object):
                 return False
 
     def preparation(self):
-        print 'test'
+        print 'test2'
 
 
 class Temp(object):
