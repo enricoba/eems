@@ -118,16 +118,16 @@ class CsvHandler(object):
         # validate if the csv file  has been created
         if os.path.exists(self.csv_file) is True:
             # validates if the passed parameter *data* is a dictionary
-            if isinstance(data, dict) is True:
+            if isinstance(data, list) is True:
                 columns = self.__count_col() - 3
-                entries = len(data.keys())
+                entries = len(data)
                 # validates if the amount of columns is similar to the passed
                 # keys of the dictionary
                 if entries == columns:
                     row = self.__count_rows()
                     str_date = time.strftime('%Y-%m-%d')
                     str_time = time.strftime('%H:%M:%S')
-                    data = [row, str_date, str_time] + data.values()
+                    data = [row, str_date, str_time] + data
                     try:
                         with open(self.csv_file, 'ab') as _csv:
                             csv_writer = csv.writer(_csv, delimiter=';')

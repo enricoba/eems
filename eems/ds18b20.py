@@ -340,7 +340,7 @@ class Temp(object):
             self.sensor_dict.reset_dic()
             self.__read_sensors()
             result = self.sensor_dict.get_dic()
-            self.CsvHandler.write(result)
+            self.CsvHandler.write(result.values())
             return result
 
     def monitor(self, interval=60, duration=None):
@@ -429,7 +429,7 @@ class Temp(object):
                 self.sensor_dict.reset_dic()
                 self.__read_sensors()
                 result = self.sensor_dict.get_dic()
-                self.CsvHandler.write(result)
+                self.CsvHandler.write(result.values())
             timestamp += interval
 
     def __stop_read(self, trigger):
