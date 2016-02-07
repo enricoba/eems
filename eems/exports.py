@@ -14,13 +14,26 @@ import time
 
 
 class CsvHandler(object):
-    def __init__(self, csv_file, logger=None):
-        self.csv_file = csv_file
-        self. logger = logger
-        # adding simple logger ig no logger has been passed
-        log_format = '%(asctime)s %(name)-8s %(levelname)-8s %(message)s'
-        log_date_format = '%Y-%m-%d %H:%M:%S'
+    def __init__(self, csv_file, header, logger=None):
+        """Public class *CsvHandler* provides functions to manipulate csv files
+        passed via the parameter *csv_file*. Therefore, the standard library
+        module *csv* is used.
+
+        :param csv_file:
+            Expects a string containing a csv file name. If no string is
+            provided, default file name *default.csv* is assumed.
+        :param header:
+            Expects a list containing all header elements for the csv file.
+        :param logger:
+            Expects a logger object of the standard library module *logging*.
+            If *logger=None*, an own logger object of the standard
+            library module *logging* is added to handle outputs.
+        :return:
+        """
+        # validating the passed parameter *logger*
         if logger is None:
+            log_format = '%(asctime)s %(name)-8s %(levelname)-8s %(message)s'
+            log_date_format = '%Y-%m-%d %H:%M:%S'
             logging.basicConfig(level=logging.INFO,
                                 format=log_format,
                                 datefmt=log_date_format)
@@ -28,7 +41,23 @@ class CsvHandler(object):
         else:
             self.logger = logger
 
+        # validating the passed parameter *csv_file*
+        if isinstance(csv_file, basestring) is True:
+            self.csv_file = csv_file
+        else:
+            self.csv_file = 'default.csv'
+            self.logger.warning('Passed parameter *csv_file* was no string, '
+                                'filename has been changed to *default.csv*')
+        # adding the csv file
+        self.__add(header)
+
     def __count_col(self):
+        """Private function *__count_col* reads the csv file handled by the
+         parent class and counts existing columns.
+
+        :return:
+            Returns an integer containing the count of columns.
+        """
         try:
             with open(self.csv_file, 'rb') as _csv:
                 csv_reader = csv.reader(_csv, delimiter=';')
@@ -37,6 +66,12 @@ class CsvHandler(object):
             self.logger.error('{}'.format(e))
 
     def __count_rows(self):
+        """Private function *__count_rows* reads the csv file handled by the
+         parent class and counts existing rows.
+
+        :return:
+            Returns an integer containing the count of rows.
+        """
         try:
             with open(self.csv_file, 'rb') as _csv:
                 csv_reader = csv.reader(_csv, delimiter=';')
@@ -45,7 +80,15 @@ class CsvHandler(object):
         except IOError as e:
             self.logger.error('{}'.format(e))
 
-    def add(self, header):
+    def __add(self, header):
+        """Private function *__add* creates the csv file using the file name of
+        the string *csv_file* passed to the parent class.
+
+        :param header:
+            Expects a list containing all header elements for the csv file.
+        :return:
+            Returns None.
+        """
         if os.path.exists(self.csv_file) is False:
             if isinstance(header, list) is True:
                 header = ['id', 'date', 'time'] + sorted(header)
