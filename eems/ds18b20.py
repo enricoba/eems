@@ -166,7 +166,7 @@ class Temp(object):
         :param log:
             Expects the boolean *True* or *None*. If *log=True*, a .txt logfile
             is created in the same directory as this script. Therefore, all
-            outputs of the *level*DEBUG* are written into the log file.
+            outputs of the *level=DEBUG* are written into the log file.
         :param console:
             Expects the boolean *True* or *None*. If *console=True*, outputs
             of the *level=INFO* are passed to the console.

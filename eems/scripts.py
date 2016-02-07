@@ -37,7 +37,7 @@ def main():
     parser.add_argument('--check', action='store_true')
     parser.add_argument('--csv', action='store_true')
     parser.add_argument('--log', action='store_true')
-    parser.add_argument('--quiet', action='store_true')
+    parser.add_argument('--console', action='store_true')
     parser.add_argument('--interval', type=int)
     parser.add_argument('--duration', type=int)
 
@@ -74,10 +74,10 @@ def main():
             log = True
         else:
             log = None
-        if args.quiet is True:
-            console = False
-        else:
+        if args.console is True:
             console = True
+        else:
+            console = None
         if args.interval:
             interval = args.interval
         else:
