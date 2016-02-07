@@ -34,7 +34,9 @@ class _SensorDictionary(object):
         dic = dict()
         for sensor in sensors:
             dic[sensor] = None
-        self.dic = collections.OrderedDict(sorted(dic.items()))
+        # self.dic = collections.OrderedDict(sorted(dic.items()))
+        collections.OrderedDict(sorted(dic.items(), key=lambda t: t[0]))
+        self.dic = dic
         self.lock = Lock()
 
     def set_temp(self, sensor, temp):
