@@ -21,15 +21,14 @@ Private classes / functions
 
 class _SensorDictionary(object):
     def __init__(self, sensors):
-        """Private class:_SensorDictionary provides functions to manage the
+        """Private class *_SensorDictionary* provides functions to manage the
         sensors dictionary.
 
         :param sensors:
             Expects a list containing sensors as strings.
-
         :return:
             Returns a in-memory object tree providing the functions
-            set_temp(sensor, temp), get_dic() and reset_dic().
+            *set_temp*, *get_dic* and *reset_dic*.
         """
         self.sensors = sensors
         self.dic = dict()
@@ -38,22 +37,21 @@ class _SensorDictionary(object):
         self.lock = Lock()
 
     def set_temp(self, sensor, temp):
-        """Public function:set_temp sets the value for a special key.
+        """Public function *set_temp* sets the value for an individual key.
 
         :param sensor:
-            Expects the string of a sensor name to match with the sensor key.
-
+            Expects a string of the sensor name to match with the sensor key.
         :param temp:
-            Expects a temperature value to store the value.
-
+            Expects an integer or a float containing the sensor value
+            to store.
         :return:
-            Returns None.
+            Returns *None*.
         """
         with self.lock:
             self.dic[sensor] = temp
 
     def get_dic(self):
-        """Public function:get_dic returns the sensors dictionary.
+        """Public function *get_dic* returns the sensors dictionary.
 
         :return:
             Returns the dictionary.
@@ -61,10 +59,10 @@ class _SensorDictionary(object):
         return self.dic
 
     def reset_dic(self):
-        """Public function:reset_dic is setting all dictionary values to None.
+        """Public function *reset_dic* sets all dictionary values to None.
 
         :return:
-            Returns None.
+            Returns *None*.
         """
         self.dic = dict()
         for sensor in self.sensors:
@@ -78,19 +76,21 @@ Public classes / functions
 
 class Check(object):
     def __init__(self, logger=None):
-        """Public class:Check provides public functions to check system
-        configuration to make DS18B20 sensors readable.
+        """Public class *Check* provides functions to validate system
+        configuration enabling DS18B20 sensors.
 
         :param logger:
-            Logger expects a logging object.
-
+            Expects a logger object of the standard library module *logging*.
+            If *logger=None*, an own logger object of the standard
+            library module *logging* is added to handle outputs.
         :return:
-            Returns an in-memory object tree providing the public functions
-            w1_config() and w1_modules().
+            Returns an object providing the public functions *w1_config* and
+            *w1_modules*.
         """
-        log_format = '%(asctime)s %(name)-8s %(levelname)-8s %(message)s'
-        log_date_format = '%Y-%m-%d %H:%M:%S'
+        # validating the passed parameter *logger*
         if logger is None:
+            log_format = '%(asctime)s %(name)-8s %(levelname)-8s %(message)s'
+            log_date_format = '%Y-%m-%d %H:%M:%S'
             logging.basicConfig(level=logging.INFO,
                                 format=log_format,
                                 datefmt=log_date_format)
@@ -99,11 +99,11 @@ class Check(object):
             self.logger = logger
 
     def w1_config(self):
-        """Public function:w1_config checks the config.txt file for the
-        entry 'dtoverlay=w1-gpio'.
+        """Public function *w1_config* checks the config.txt file for the
+        entry *dtoverlay=w1-gpio*.
 
         :return:
-            Returns True if check passed. Otherwise None.
+            Returns *True* if check passed. Otherwise *False*.
         """
         dir_config = '/boot/config.txt'
         try:
@@ -111,25 +111,23 @@ class Check(object):
                 config = config_file.readlines()
         except IOError as e:
             self.logger.error('{}'.format(e))
-            # self.logger.warning('Application has been stopped')
         else:
             check = [c for c in config if c.strip('\n') == 'dtoverlay=w1-gpio']
             if len(check) == 0:
                 self.logger.error('Config.txt check failed: "dtoverlay=w1-gpio"'
                                   ' is not set')
-                # self.logger.warning('Application has been stopped')
-                sys.exit()
+                return False
             else:
                 self.logger.info('Config.txt check ok: "dtoverlay=w1-gpio" '
                                  'is set')
                 return True
 
     def w1_modules(self):
-        """Public function:w1_modules checks the file modules for the entries
-        'w1-therm' and 'w1-gpio'.
+        """Public function *w1_modules* checks the file */etc/modules* for the
+        entries *w1-therm* and *w1-gpio*.
 
         :return:
-            Returns True if check passed. Otherwise None.
+            Returns True if check passed. Otherwise False.
         """
         dir_modules = '/etc/modules'
         try:
@@ -137,7 +135,6 @@ class Check(object):
                 modules = modules_file.readlines()
         except IOError as e:
             self.logger.error('{}'.format(e))
-            # self.logger.warning('Application has been stopped')
         else:
             check = [c for c in modules if c.strip('\n') == 'w1-therm' or
                      c.strip('\n') == 'w1-gpio']
@@ -148,49 +145,35 @@ class Check(object):
             else:
                 self.logger.error('Modules check failed: "w1-gpio" and/or '
                                   '"w1-therm" are/is not set')
-                # self.logger.warning('Application has been stopped')
-                sys.exit()
+                return False
 
 
 class Temp(object):
-    def __init__(self, check=None, csv=None, log=None, console=True):
-        """Public Class:Temp detects all connected DS18B20 one-wire sensors
-        and provides public functions to read the sensors.
-
-        On creation of the object a logger is added. All outputs are
-        managed by the internal logger.
-
-        All connected DS18B20 sensors are detected and a dictionary
-        containing the sensors is created.
-
-        Depending on listed parameters, several functions of the object are
-        activated.
+    def __init__(self, check=None, csv=None, log=None, console=None):
+        """Public Class *Temp* detects connected DS18B20 one-wire sensors
+        and provides functions to read the sensors. This class uses the
+        standard library module *logging* for handling outputs.
 
         :param check:
-            If check=True, the public class:Check is initialised and both public
-            functions, w1_config() and w1_modules() are called.
-
+            Expects the boolean *True* or *None*. If *check=True*, the public
+            class *Check* is initialised and both public functions, *w1_config*
+            and *w1_modules* are called. If *check=None*
         :param csv:
-            If csv=True, an export file in csv-format is created in the same
-            directory as this script. Afterwards all public functions of this
-            object write an entry into the csv-file after been called.
-
+            Expects the boolean *True* or *None*. If *csv=True*, a csv file is
+            created in the same directory as this script. Afterwards all public
+            functions of this object write entries into the csv file after
+            been called.
         :param log:
-            Initially log=None. A logfile in .log-format can be
-            created in the same directory as this script. All outputs of the
-            logger are written into the log-file. The logfile records with
-            the level=DEBUG. If log=True, a logfile is created.
-
+            Expects the boolean *True* or *None*. If *log=True*, a .txt logfile
+            is created in the same directory as this script. Therefore, all
+            outputs of the *level*DEBUG* are written into the log file.
         :param console:
-            Initially console=True. Consequently, outputs are written into the
-            console. The logger level for the console is INFO. If console=False,
-            no output is written into the console.
-
+            Expects the boolean *True* or *None*. If *console=True*, outputs
+            of the *level=INFO* are passed to the console.
         :return:
-            Returns an in-memory object tree providing the public functions
-            read_once(), start_read() and __stop_read().
+            Returns an object providing the public functions *read* and
+            *monitor*.
         """
-        # Adding logger
         if os.path.basename(sys.argv[0])[-3:] == '.py':
             self.filename_script = os.path.basename(sys.argv[0])[:-3]
         else:
@@ -205,7 +188,6 @@ class Temp(object):
         log_format = '%(asctime)s %(name)-8s %(levelname)-8s %(message)s'
         log_date_format = '%Y-%m-%d %H:%M:%S'
 
-        # logger
         if log is True:
             log_file = '{0}_{1}_{2}.txt'.format(self.str_date,
                                                 self.str_time,
@@ -228,53 +210,53 @@ class Temp(object):
             logging.basicConfig(level=logging.INFO,
                                 format=log_format,
                                 datefmt=log_date_format)
-            if console is False:
+            if console is True:
                 self.logger = logging.getLogger('eems')
-                self.logger.disabled = True
             else:
                 self.logger = logging.getLogger('eems')
+                self.logger.disabled = True
 
         if log is True:
             self.logger.debug('Logfile has been created')
-        elif log is False:
-            self.logger.debug('No logfile has been created')
         else:
-            pass
+            self.logger.debug('No logfile has been created')
 
-        # get process PID and log
         pid = os.getpid()
         self.logger.debug('Process PID: {0}'.format(pid))
 
-        # Run checks if check=True
         if check is True:
             check = Check(self.logger)
-            if check.w1_config() is True:
+            if check.w1_config() is True and check.w1_modules() is True:
                 pass
-            if check.w1_modules() is True:
-                pass
+            else:
+                sys.exit()
+        else:
+            pass
 
-        # Detect connected sensors and create public dictionary
-        self.sensors = self.__check_sensors()
+        sensors = self.__detect_sensors()
+        if sensors is False:
+            sys.exit()
+        else:
+            self.sensors = sensors
         self.sensor_dict = _SensorDictionary(self.sensors)
 
-        # Create csv-export file if csv=True
         if csv is True:
-            # define csv file name
             csv_file = '{0}_{1}_{2}.csv'.format(self.str_date,
                                                 self.str_time,
                                                 self.filename_script)
-            # add csv handler
-            self.CsvHandler = exports.CsvHandler(csv_file, self.logger)
-            self.CsvHandler.add(self.sensors)
+            self.CsvHandler = exports.CsvHandler(csv_file, self.sensors,
+                                                 self.logger)
             self.csv = True
         else:
             self.csv = None
 
-    def __check_sensors(self):
-        """Private function:__check_sensors detects all connected sensors.
+    def __detect_sensors(self):
+        """Private function *__detect_sensors* detects all connected DS18B20
+        sensors.
 
         :return:
-            Returns a list containing all connected sensors.
+            If sensors are detected successfully, a list containing all
+            connected sensors is returned. Otherwise *None* is returned.
         """
         dir_sensors = '/sys/bus/w1/devices'
         if os.path.exists(dir_sensors):
@@ -286,24 +268,17 @@ class Temp(object):
                 return list_sensors
             else:
                 self.logger.error('No sensors detected')
-                # self.logger.warning('Application has been stopped')
-                sys.exit()
         else:
             self.logger.error('Path "/sys/bus/w1/devices" does not exist')
-            # self.logger.warning('Application has been stopped')
-            sys.exit()
 
     def __read_slave(self, sensor):
-        """Private function:__read_slave reads the file 'w1_slave' of a
-        connected sensor.
+        """Private function *__read_slave* reads the file *w1_slave* of a
+        connected DS18B20 sensor.
 
         :param sensor:
-            Expects a string argument containing the name of a connected sensor.
-
+            Expects a string containing the name of a connected DS18B20 sensor.
         :return:
-            Returns None. On success the temperature value of the read sensor is
-            passed into the public dictionary-object:sensor_dict by matching the
-            dictionary keys with the sensor string argument.
+            Returns *None*.
         """
         dir_file = '/sys/bus/w1/devices/' + sensor
         for x in range(4):
@@ -312,7 +287,6 @@ class Temp(object):
                     file_content = slave.readlines()
             except IOError as e:
                 self.logger.error('{}'.format(e))
-                # self.logger.warning('Application has been stopped')
             else:
                 if x == 3:
                     self.logger.warning('Sensor: {0} - read failed '
@@ -329,39 +303,31 @@ class Temp(object):
                     time.sleep(0.2)
 
     def __read_sensors(self):
-        """Private function:__read_sensors reads all connected sensors by
-        initializing parallel threads. Function waits until all sensors
+        """Private function *__read_sensors* reads all connected DS18B20 sensors
+        by initializing parallel threads. Function waits until all sensors
         are read.
 
         :return:
-            Returns None.
+            Returns *None*.
         """
         self.read_flag.clear()
         threads = []
         for sensor in self.sensors:
             threads.append(Thread(target=self.__read_slave,
                                   args=(sensor, )))
-            # self.logger.debug('Thread for sensor {0} was '
-            #                   'added'.format(sensor))
         for t in threads:
             t.setDaemon(True)
             t.start()
-            # self.logger.debug('Thread {0} has started'.format(t))
         for t in threads:
             t.join()
-            # self.logger.debug('Thread {0} has joined'.format(t))
         self.read_flag.set()
 
-    def read_once(self, *args, **kwargs):
-        """Public function:read_once reads all connected sensors.
-
-        If attribute Private variable:csv=True, the results are
-        written into the created csv-export file. If internal
-        variable:csv=None, nothing is written into any file.
+    def read(self, *args, **kwargs):
+        """Public function *read* reads all connected DS18B20 sensors once.
 
         :return:
             Returns a dictionary containing sensor names as keys and
-            temperatures as values.
+            sensor values as values.
         """
         del args, kwargs
         if self.csv is None:
@@ -375,31 +341,28 @@ class Temp(object):
             self.CsvHandler.write(result)
             return result
 
-    def start_read(self, interval=None, duration=None):
-        """Public function:start_read starts a thread to read connected
-        sensors within an specified interval.
+    def monitor(self, interval=None, duration=None):
+        """Public function *monitor* starts a thread to read connected
+        DS18B20 sensors within an interval over a duration.
 
         :param interval:
-            If interval=None, the interval time is set to 60 seconds. Otherwise
-            an integer is expected telling the interval time.
-
+            Expects an integer containing the interval time in seconds. If
+            *interval=None*, the default interval is set to 60 seconds.
         :param duration:
-            If duration=None, the duration is infinite and the thread needs to
-            be stopped manually. Otherwise an integer is expected to determine
-            maximum duration.
-
+            Expects an integer containing the duration time in seconds. If
+            *duration=None*, the duration is infinite and the thread needs to
+            be stopped manually by pressing Ctrl+C.
         :return:
-            Returns None.
+            Returns *None*.
         """
         if self.flag is False:
             if interval is None:
                 interval = 60
             elif interval < 2:
                 self.logger.error('Interval must be >= 2s')
-                # self.logger.warning('Application has been stopped')
                 sys.exit()
             worker = Thread(target=self.__start_read, args=(interval,))
-            self.logger.debug('Thread start_read was added')
+            self.logger.debug('Thread monitor was added')
             if duration is None:
                 pass
             else:
@@ -413,14 +376,10 @@ class Temp(object):
                 else:
                     self.logger.error('Duration must be longer than the '
                                       'interval')
-                    # self.logger.warning('Application has been stopped')
                     sys.exit()
-            # if daemon is True:
-            # worker.setDaemon(True)
-            # self.logger.debug('Thread start_read was set daemon=True')
             worker.start()
             self.flag = True
-            self.logger.debug('Thread start_read has started with an '
+            self.logger.debug('Thread monitor has started with an '
                               'interval of {1}s'.format(worker, interval))
             try:
                 while self.stop is False:
@@ -428,24 +387,20 @@ class Temp(object):
             except KeyboardInterrupt:
                 self.read_flag.wait()
                 self.__stop_read(trigger='keyboard')
-            # finally:
-                # self.logger.info('Application has been stopped')
         else:
             self.logger.warning('Already one read thread is running, '
                                 'start of a second thread was stopped')
 
     def __watchdog(self, duration, interval):
-        """Private function:__watchdog stops the read process after a defined
-        duration.
+        """Private function *__watchdog* handles stopping of the function
+        *monitor* if a used defined duration was passed.
 
         :param duration:
-            Expects an integer for the duration.
-
+            Expects an integer containing the duration in seconds.
         :param interval:
-            Expects an integer for the interval.
-
+            Expects an integer containing the interval in seconds.
         :return:
-            Returns None.
+            Returns *None*.
         """
         timestamp = int(time.time() / interval) * interval
         timestamp += interval
@@ -455,14 +410,13 @@ class Temp(object):
         self.__stop_read(trigger='watchdog')
 
     def __start_read(self, interval):
-        """Private function:__start_read manages the loop in which the
-        Private function:__read_sensors is called.
+        """Private function *__start_read* manages the loop in which the
+        function *__read_sensors* is called.
 
         :param interval:
-            Expects an integer for the interval.
-
+            Expects an integer containing the interval in seconds.
         :return:
-            Returns None.
+            Returns *None*.
         """
         timestamp = int(time.time() / interval) * interval
         timestamp += interval
@@ -479,24 +433,23 @@ class Temp(object):
             timestamp += interval
 
     def __stop_read(self, trigger):
-        """Private function:__stop_read stops the started thread to read the
-        connected sensors in a fixed interval.
+        """Private function *__stop_read* stops the thread started by calling
+        the function *monitor*
 
         :param trigger:
-            Expects either 'watchdog' or 'keyboard' to trigger varying info
-            messages.
-
+            Expects a string. Either *watchdog* or *keyboard* to trigger
+            varying info messages.
         :return:
-            Returns None.
+            Returns *None*.
         """
         message = ''
         if self.event.is_set() is False:
             self.event.set()
             if trigger == 'watchdog':
-                message = 'Function:start_read has been stopped due to ' \
+                message = 'Thread *monitor* has been stopped due to ' \
                           'expiring duration'
             elif trigger == 'keyboard':
-                message = 'Function:start_read has been stopped manually by ' \
+                message = 'Thread *monitor* has been stopped manually by ' \
                           'pressing Ctrl-C'
             self.logger.debug(message)
             self.flag = False

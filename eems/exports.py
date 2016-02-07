@@ -27,6 +27,7 @@ class CsvHandler(object):
             If *logger=None*, an own logger object of the standard
             library module *logging* is added to handle outputs.
         :return:
+            Returns an object providing the public function *write*.
         """
         # validating the passed parameter *logger*
         if logger is None:
@@ -85,7 +86,7 @@ class CsvHandler(object):
         :param header:
             Expects a list containing all header elements for the csv file.
         :return:
-            Returns None.
+            Returns *None*.
         """
         # validate if csv file already exists
         if os.path.exists(self.csv_file) is False:
@@ -112,7 +113,7 @@ class CsvHandler(object):
             Expects a dictionary containing the same keys as passed to the
             header. All values of the passed dictionary are added to the csv.
         :return:
-            Returns None.
+            Returns *None*.
         """
         # validate if the csv file  has been created
         if os.path.exists(self.csv_file) is True:
