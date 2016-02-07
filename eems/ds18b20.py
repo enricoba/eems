@@ -147,6 +147,9 @@ class Check(object):
                                   '"w1-therm" are/is not set')
                 return False
 
+    def preparation(self):
+        print 'test'
+
 
 class Temp(object):
     def __init__(self, check=None, csv=None, log=None, console=None):
