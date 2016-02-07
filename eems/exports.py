@@ -89,8 +89,11 @@ class CsvHandler(object):
         :return:
             Returns None.
         """
+        # validate if csv file already exists
         if os.path.exists(self.csv_file) is False:
+            # validate if passed parameter *header* is a list
             if isinstance(header, list) is True:
+                # adding the columns id, date and time
                 header = ['id', 'date', 'time'] + sorted(header)
                 try:
                     with open(self.csv_file, 'wb') as _csv:
@@ -104,15 +107,29 @@ class CsvHandler(object):
             self.logger.error('File {} already exists'.format(self.csv_file))
 
     def write(self, data):
+        """Public function *write* adds a new row/entry to the handled csv
+        file.
+
+        :param data:
+            Expects a dictionary containing the same keys as passed to the
+            header. All values of the passed dictionary are added to the csv.
+        :return:
+            Returns None.
+        """
+        # validate if the csv file  has been created
         if os.path.exists(self.csv_file) is True:
+            # validates if the passed parameter *data* is a dictionary
             if isinstance(data, dict) is True:
                 columns = self.__count_col() - 3
                 entries = len(data.keys())
+                # validates if the amount of columns is similar to the passed
+                # keys of the dictionary
                 if entries == columns:
                     row = self.__count_rows()
                     str_date = time.strftime('%Y-%m-%d')
                     str_time = time.strftime('%H:%M:%S')
-                    data = [row, str_date, str_time] + sorted(data.keys())
+                    values = sorted(data)
+                    data = [row, str_date, str_time] + sorted(values.keys())
                     try:
                         with open(self.csv_file, 'ab') as _csv:
                             csv_writer = csv.writer(_csv, delimiter=';')
