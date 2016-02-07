@@ -129,6 +129,10 @@ class CsvHandler(object):
                     str_time = time.strftime('%H:%M:%S')
                     values = sorted(data)
                     data = [row, str_date, str_time] + sorted(values.keys())
+                    # VORSCHLAG
+                    # start = [row, str_date, str_time]
+                    # end = [values[i] for i in sorted(values.keys())]
+                    # data = start + end
                     try:
                         with open(self.csv_file, 'ab') as _csv:
                             csv_writer = csv.writer(_csv, delimiter=';')
