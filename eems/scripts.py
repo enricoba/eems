@@ -59,7 +59,7 @@ def main():
 
     elif args.command == 'read':
         t = ds18b20.Temp()
-        t.read_once()
+        t.read()
 
     elif args.command == 'monitor':
         if args.check is True:
@@ -87,7 +87,7 @@ def main():
         else:
             duration = None
         t = ds18b20.Temp(check=check, csv=csv, log=log, console=console)
-        t.start_read(interval=interval, duration=duration)
+        t.monitor(interval=interval, duration=duration)
     else:
         print read_help()
 
