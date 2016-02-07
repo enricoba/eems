@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-
-
 """
 This module handles file exports and provides functions and classes to call
 for other modules inside this package.
