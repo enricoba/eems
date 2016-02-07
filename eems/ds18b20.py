@@ -12,7 +12,7 @@ import collections
 from threading import Thread, Lock, Event
 
 
-__version__ = '0.1.0.1b1'
+__version__ = '0.1.0.2b1'
 
 
 """
