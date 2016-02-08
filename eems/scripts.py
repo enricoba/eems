@@ -57,8 +57,12 @@ def main():
             c.w1_config()
             c.w1_config()
 
+    elif args.command == 'prepare':
+        c = ds18b20.Check()
+        c.prepare()
+
     elif args.command == 'read':
-        t = ds18b20.Temp()
+        t = ds18b20.Temp(console=True)
         t.read()
 
     elif args.command == 'monitor':
@@ -81,7 +85,7 @@ def main():
         if args.interval:
             interval = args.interval
         else:
-            interval = None
+            interval = 60
         if args.duration:
             duration = args.duration
         else:

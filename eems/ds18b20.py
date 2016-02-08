@@ -12,7 +12,7 @@ import collections
 from threading import Thread, Lock, Event
 
 
-__version__ = '0.1.0.2b1'
+__version__ = '0.1.0.3b1'
 
 
 """
@@ -98,54 +98,114 @@ class Check(object):
         else:
             self.logger = logger
 
-    def w1_config(self):
+        self.dir_modules = '/etc/modules'
+        self.dir_config = '/boot/config.txt'
+        self.flag = {'w1-therm': False,
+                     'w1-gpio': False}
+
+    def w1_config(self, quiet=None):
         """Public function *w1_config* checks the config.txt file for the
         entry *dtoverlay=w1-gpio*.
 
+        :param quiet:
+            Expects the boolean *True* or *None*. If *quiet=True*, all outputs
+            of the function *w1_config* are disabled.
         :return:
             Returns *True* if check passed. Otherwise *False*.
         """
-        dir_config = '/boot/config.txt'
+        if quiet is True:
+            self.logger.disabled = True
         try:
-            with open(dir_config, 'r') as config_file:
+            with open(self.dir_config, 'r') as config_file:
                 config = config_file.readlines()
         except IOError as e:
             self.logger.error('{}'.format(e))
         else:
-            check = [c for c in config if c.strip('\n') == 'dtoverlay=w1-gpio']
+            check = [c for c in config if c.strip('\n')[:17] ==
+                     'dtoverlay=w1-gpio']
             if len(check) == 0:
                 self.logger.error('Config.txt check failed: "dtoverlay=w1-gpio"'
                                   ' is not set')
+                self.logger.info('Please use the command script <sudo eems '
+                                 'prepare> to prepare "/boot/config.txt"')
                 return False
             else:
                 self.logger.info('Config.txt check ok: "dtoverlay=w1-gpio" '
                                  'is set')
                 return True
 
-    def w1_modules(self):
+    def w1_modules(self, quiet=None):
         """Public function *w1_modules* checks the file */etc/modules* for the
         entries *w1-therm* and *w1-gpio*.
 
+        :param quiet:
+            Expects the boolean *True* or *None*. If *quiet=True*, all outputs
+            of the function *w1_modules* are disabled.
         :return:
-            Returns True if check passed. Otherwise False.
+            Returns *True* if check passed. Otherwise returns *False*.
         """
-        dir_modules = '/etc/modules'
+        if quiet is True:
+            self.logger.disabled = True
         try:
-            with open(dir_modules, 'r') as modules_file:
+            with open(self.dir_modules, 'r') as modules_file:
                 modules = modules_file.readlines()
         except IOError as e:
             self.logger.error('{}'.format(e))
         else:
-            check = [c for c in modules if c.strip('\n') == 'w1-therm' or
-                     c.strip('\n') == 'w1-gpio']
-            if len(check) == 2:
-                self.logger.info('Modules check ok: "w1-gpio" and "w1-therm" '
-                                 'are set')
+            check_therm = [c for c in modules if c.strip('\n') == 'w1-therm']
+            check_gpio = [c for c in modules if c.strip('\n') == 'w1-gpio']
+            if len(check_therm) == 1:
+                self.logger.info('Module check ok: "w1-therm" is set')
+                self.flag['w1-therm'] = True
+            else:
+                self.logger.error('Module check failed: "w1-therm" is not set')
+            if len(check_gpio) == 1:
+                self.logger.info('Module check ok: "w1-gpio" is set')
+                self.flag['w1-gpio'] = True
+            else:
+                self.logger.error('Module check failed: "w1-gpio" is not set')
+            if self.flag['w1-therm'] is True and self.flag['w1-gpio'] is True:
                 return True
             else:
-                self.logger.error('Modules check failed: "w1-gpio" and/or '
-                                  '"w1-therm" are/is not set')
+                self.logger.info('Please use the command script <sudo eems '
+                                 'prepare> to prepare "/etc/modules"')
                 return False
+
+    def prepare(self):
+        """Public function *prepare* modifies the files */boot/config.txt* and
+        */etc/modules* to enable DS18B20 functionality. Function requires *sudo*
+        rights!!!
+
+        :return:
+            Returns *None*.
+        """
+        if self.w1_config(quiet=True) is False:
+            self.logger.disabled = False
+            try:
+                with open(self.dir_config, 'a') as config_file:
+                    config_file.write('dtoverlay=w1-gpio\n')
+            except IOError as e:
+                self.logger.error('{}'.format(e))
+            else:
+                self.logger.info('Config.txt has been prepared successfully')
+        else:
+            self.logger.disabled = False
+
+        if self.w1_modules(quiet=True) is False:
+            self.logger.disabled = False
+            try:
+                if self.flag['w1-therm'] is False:
+                    with open(self.dir_modules, 'a') as modules_file:
+                        modules_file.write('w1-therm\n')
+                if self.flag['w1-gpio'] is False:
+                    with open(self.dir_modules, 'a') as modules_file:
+                        modules_file.write('w1-gpio\n')
+            except IOError as e:
+                self.logger.error('{}'.format(e))
+            else:
+                self.logger.info('Modules have been prepared successfully')
+        else:
+            self.logger.disabled = False
 
 
 class Temp(object):
@@ -386,7 +446,7 @@ class Temp(object):
                     time.sleep(0.25)
             except KeyboardInterrupt:
                 self.read_flag.wait()
-                self.__stop_read(trigger='keyboard')
+                self.__stop(trigger='keyboard')
         else:
             self.logger.warning('Already one read thread is running, '
                                 'start of a second thread was stopped')
@@ -407,7 +467,7 @@ class Temp(object):
         t = timestamp - time.time()
         time.sleep(duration + t)
         self.read_flag.wait()
-        self.__stop_read(trigger='watchdog')
+        self.__stop(trigger='watchdog')
 
     def __start_read(self, interval):
         """Private function *__start_read* manages the loop in which the
@@ -432,8 +492,8 @@ class Temp(object):
                 self.CsvHandler.write(result.values())
             timestamp += interval
 
-    def __stop_read(self, trigger):
-        """Private function *__stop_read* stops the thread started by calling
+    def __stop(self, trigger):
+        """Private function *__stop* stops the thread started by calling
         the function *monitor*
 
         :param trigger:
@@ -446,13 +506,12 @@ class Temp(object):
         if self.event.is_set() is False:
             self.event.set()
             if trigger == 'watchdog':
-                message = 'Thread *monitor* has been stopped due to ' \
-                          'expiring duration'
+                message = 'Monitor has been stopped due to expiring duration'
             elif trigger == 'keyboard':
-                message = 'Thread *monitor* has been stopped manually by ' \
+                message = 'Monitor has been stopped manually by ' \
                           'pressing Ctrl-C'
             self.logger.debug(message)
             self.flag = False
             self.stop = True
         else:
-            self.logger.warning('No read function to stop ...')
+            self.logger.warning('No monitor function to stop ...')
