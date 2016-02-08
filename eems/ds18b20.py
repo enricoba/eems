@@ -12,7 +12,7 @@ import collections
 from threading import Thread, Lock, Event
 
 
-__version__ = '0.1.0.3b1'
+__version__ = '0.1.0.4b1'
 
 
 """
@@ -209,15 +209,11 @@ class Check(object):
 
 
 class Temp(object):
-    def __init__(self, check=None, csv=None, log=None, console=None):
+    def __init__(self, csv=None, log=None, console=None):
         """Public Class *Temp* detects connected DS18B20 one-wire sensors
         and provides functions to read the sensors. This class uses the
         standard library module *logging* for handling outputs.
 
-        :param check:
-            Expects the boolean *True* or *None*. If *check=True*, the public
-            class *Check* is initialised and both public functions, *w1_config*
-            and *w1_modules* are called.
         :param csv:
             Expects the boolean *True* or *None*. If *csv=True*, a csv file is
             created in the same directory as this script. Afterwards all public
@@ -283,15 +279,6 @@ class Temp(object):
 
         pid = os.getpid()
         self.logger.debug('Process PID: {0}'.format(pid))
-
-        if check is True:
-            check = Check(self.logger)
-            if check.w1_config() is True and check.w1_modules() is True:
-                pass
-            else:
-                sys.exit()
-        else:
-            pass
 
         sensors = self.__detect_sensors()
         if sensors is False:
