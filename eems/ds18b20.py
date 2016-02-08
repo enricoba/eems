@@ -173,7 +173,7 @@ class Check(object):
 
     def prepare(self):
         """Public function *prepare* modifies the files */boot/config.txt* and
-        */etc/modules* to enable DS18B20 functionality. Function requires sudo
+        */etc/modules* to enable DS18B20 functionality. Function requires *sudo*
         rights!!!
 
         :return:
@@ -446,7 +446,7 @@ class Temp(object):
                     time.sleep(0.25)
             except KeyboardInterrupt:
                 self.read_flag.wait()
-                self.__stop_read(trigger='keyboard')
+                self.__stop(trigger='keyboard')
         else:
             self.logger.warning('Already one read thread is running, '
                                 'start of a second thread was stopped')
@@ -467,7 +467,7 @@ class Temp(object):
         t = timestamp - time.time()
         time.sleep(duration + t)
         self.read_flag.wait()
-        self.__stop_read(trigger='watchdog')
+        self.__stop(trigger='watchdog')
 
     def __start_read(self, interval):
         """Private function *__start_read* manages the loop in which the
@@ -492,8 +492,8 @@ class Temp(object):
                 self.CsvHandler.write(result.values())
             timestamp += interval
 
-    def __stop_read(self, trigger):
-        """Private function *__stop_read* stops the thread started by calling
+    def __stop(self, trigger):
+        """Private function *__stop* stops the thread started by calling
         the function *monitor*
 
         :param trigger:
@@ -506,13 +506,12 @@ class Temp(object):
         if self.event.is_set() is False:
             self.event.set()
             if trigger == 'watchdog':
-                message = 'Thread *monitor* has been stopped due to ' \
-                          'expiring duration'
+                message = 'Monitor has been stopped due to expiring duration'
             elif trigger == 'keyboard':
-                message = 'Thread *monitor* has been stopped manually by ' \
+                message = 'Monitor has been stopped manually by ' \
                           'pressing Ctrl-C'
             self.logger.debug(message)
             self.flag = False
             self.stop = True
         else:
-            self.logger.warning('No read function to stop ...')
+            self.logger.warning('No monitor function to stop ...')

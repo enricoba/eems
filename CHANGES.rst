@@ -8,7 +8,7 @@ Version 0.1.0.3b1
 ~~~~~~~~~~~~~~~~~
 
 - Add function to prepare system configurations for DS18B20 sensors
-- Documentation updated (beginners guide)
+- Bug fixes in eems console script
 
 Version 0.1.0.2b1
 ~~~~~~~~~~~~~~~~~
