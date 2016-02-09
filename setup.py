@@ -2,7 +2,8 @@
 
 
 from setuptools import setup, find_packages
-from eems.ds18b20 import __version__
+from eems import __version__
+
 
 setup(
     name='eems',

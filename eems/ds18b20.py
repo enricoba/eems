@@ -12,9 +12,6 @@ import collections
 from threading import Thread, Lock, Event
 
 
-__version__ = '0.1.0.4b1'
-
-
 """
 Private classes / functions
 """
