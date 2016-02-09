@@ -8,6 +8,9 @@ test.py
 # Package files
 *.egg-info
 
+# bat files
+*.bat
+
 # Build and docs folder/files
 dist/*
 build/*
