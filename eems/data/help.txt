@@ -13,8 +13,8 @@ Options for check:
   -c, --config          Check config.txt file.
   -h, --help            Show help for command check.
 Options for monitor:
-  --interval <sec>      Define measurement interval (default is 60s).
-  --duration <sec>      Define maximum duration (default is infinity).
+  -i, --interval <sec>  Define measurement interval (default is 60s).
+  -d, --duration <sec>  Define maximum duration (default is infinity).
   --csv                 Write values into csv file.
   --log                 Write log file.
   --console             Enable console output.
