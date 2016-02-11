@@ -2,17 +2,17 @@
 
 
 from setuptools import setup, find_packages
-from eems import __version__
+from eems import __project__, __version__, __author__
 
 
 setup(
-    name='eems',
+    name=__project__,
     version=__version__,
     description='eems - easy energy monitoring system',
     long_description='An easy application to establish an energy monitoring '
                      'system for raspberry pi and ds18b20 temperature sensors.',
     url='https://github.com/enricoba/eems',
-    author='Henrik Baran, Aurofree Hoehn',
+    author=__author__,
     author_email='henrik.baran@online.de, a.hoehn@mailbox.org',
     license='MIT',
     platforms='',
@@ -25,8 +25,8 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 2.7'
     ],
-    keywords='easy energy monitoring system',
-    packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
+    keywords='easy energy monitoring system raspberrry pi',
+    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     package_data={
         'eems': ['data/*.txt'],
     },
