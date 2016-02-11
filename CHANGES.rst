@@ -4,6 +4,11 @@ Changelog
 
 All major versions including are listed below.
 
+0.1.0.5b1
+~~~~~~~~~
+
+- tbd
+
 0.1.0.4b1
 ~~~~~~~~~
 
