@@ -1,4 +1,4 @@
-from ds18b20 import *
+from ds18b20 import Temp, Check
 
 
 __project__ = 'eems'
