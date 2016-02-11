@@ -137,6 +137,6 @@ class CsvHandler(object):
                     self.logger.error('Passed elements do not have the same '
                                       'length as columns in csv')
             else:
-                self.logger.error('Function "write" expects a dictionary')
+                self.logger.error('Function "write" expects a list')
         else:
             self.logger.error('File {} does not exist'.format(self.csv_file))
