@@ -34,12 +34,11 @@ def main():
     parser.add_argument('-c', '--config', action='store_true')
 
     # optional arguments for monitor
-    parser.add_argument('--check', action='store_true')
     parser.add_argument('--csv', action='store_true')
     parser.add_argument('--log', action='store_true')
     parser.add_argument('--console', action='store_true')
-    parser.add_argument('--interval', type=int)
-    parser.add_argument('--duration', type=int)
+    parser.add_argument('-i', '--interval', type=int)
+    parser.add_argument('-d', '--duration', type=int)
 
     try:
         args = parser.parse_args()
@@ -66,10 +65,6 @@ def main():
         t.read()
 
     elif args.command == 'monitor':
-        if args.check is True:
-            check = True
-        else:
-            check = None
         if args.csv is True:
             csv = True
         else:
@@ -90,7 +85,7 @@ def main():
             duration = args.duration
         else:
             duration = None
-        t = ds18b20.Temp(check=check, csv=csv, log=log, console=console)
+        t = ds18b20.Temp(csv=csv, log=log, console=console)
         t.monitor(interval=interval, duration=duration)
     else:
         print read_help()

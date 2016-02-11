@@ -6,8 +6,8 @@ An easy application to establish an energy monitoring system for raspberry pi
 and ds18b20 temperature sensors.
 
 
-Installation
-============
+1. Installation
+===============
 
 Install via pip::
 
@@ -19,14 +19,14 @@ Install via git::
     cd eems/
     python setup.py install
 
-Usage
-=====
+2. Usage
+========
 
 The application can be used directly in the command line or be imported
 into a python file.
 
-1. Command line
-~~~~~~~~~~~~~~~
+2.1 Command line
+----------------
 
 Usage::
 
@@ -37,8 +37,8 @@ Show help::
 
    eems help
 
-2. Python script
-~~~~~~~~~~~~~~~~
+2.2 Python script
+-----------------
 
 Quick start::
 
@@ -53,7 +53,7 @@ Quick start::
    c.w1_config()
 
    # generate temp-object to read sensors
-   t = eems.Temp()
+   t = eems.Temp(console=True)
 
    # Read all connected DS18B20 sensors once.
    t.read()
