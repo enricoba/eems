@@ -6,4 +6,5 @@ def analysis():
 
 
 def import_data():
-    print 'import data from source'
+    if True:
+        'print test'
