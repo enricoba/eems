@@ -15,7 +15,9 @@ setup(
     author=__author__,
     author_email='henrik.baran@online.de, a.hoehn@mailbox.org',
     license='MIT',
-    platforms='',
+    install_requires=[
+        'numpy'
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: End Users/Desktop',
