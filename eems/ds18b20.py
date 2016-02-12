@@ -107,7 +107,7 @@ class Check(object):
         :return:
             Returns *True* if check passed. Otherwise *False*.
         """
-        self.__w1_config()
+        return self.__w1_config()
 
     def __w1_config(self, quiet=None):
         """Private function *__w1_config* checks the config.txt file for the
@@ -147,7 +147,7 @@ class Check(object):
         :return:
             Returns *True* if check passed. Otherwise returns *False*.
         """
-        self.__w1_modules()
+        return self.__w1_modules()
 
     def __w1_modules(self, quiet=None):
         """Private function *__w1_modules* checks the file */etc/modules* for the
