@@ -7,7 +7,9 @@ All major versions including are listed below.
 0.1.0.5b1
 ~~~~~~~~~
 
-- tbd
+- Documentation updated
+- Parameter *quiet* removed from public functions w1_modules and w1_config
+- Small bug fixes
 
 0.1.0.4b1
 ~~~~~~~~~
