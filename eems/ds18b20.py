@@ -100,8 +100,17 @@ class Check(object):
         self.flag = {'w1-therm': False,
                      'w1-gpio': False}
 
-    def w1_config(self, quiet=None):
+    def w1_config(self):
         """Public function *w1_config* checks the config.txt file for the
+        entry *dtoverlay=w1-gpio*.
+
+        :return:
+            Returns *True* if check passed. Otherwise *False*.
+        """
+        self.__w1_config()
+
+    def __w1_config(self, quiet=None):
+        """Private function *__w1_config* checks the config.txt file for the
         entry *dtoverlay=w1-gpio*.
 
         :param quiet:
@@ -131,8 +140,17 @@ class Check(object):
                                  'is set')
                 return True
 
-    def w1_modules(self, quiet=None):
+    def w1_modules(self):
         """Public function *w1_modules* checks the file */etc/modules* for the
+        entries *w1-therm* and *w1-gpio*.
+
+        :return:
+            Returns *True* if check passed. Otherwise returns *False*.
+        """
+        self.__w1_modules()
+
+    def __w1_modules(self, quiet=None):
+        """Private function *__w1_modules* checks the file */etc/modules* for the
         entries *w1-therm* and *w1-gpio*.
 
         :param quiet:
@@ -176,7 +194,7 @@ class Check(object):
         :return:
             Returns *None*.
         """
-        if self.w1_config(quiet=True) is False:
+        if self.__w1_config(quiet=True) is False:
             self.logger.disabled = False
             try:
                 with open(self.dir_config, 'a') as config_file:
@@ -188,7 +206,7 @@ class Check(object):
         else:
             self.logger.disabled = False
 
-        if self.w1_modules(quiet=True) is False:
+        if self.__w1_modules(quiet=True) is False:
             self.logger.disabled = False
             try:
                 if self.flag['w1-therm'] is False:
