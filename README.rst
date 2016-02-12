@@ -62,4 +62,3 @@ Quick start::
    # duration of 10s
    t.monitor(interval=2, duration=10)
 
-More features can be found here: :ref:`module`
