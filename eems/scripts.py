@@ -53,7 +53,7 @@ def main():
         elif args.config is True:
             c.w1_config()
         else:
-            c.w1_config()
+            c.w1_modules()
             c.w1_config()
 
     elif args.command == 'prepare':
