@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from numpy import genfromtxt
+import pandas
 
 
 def analysis():
@@ -9,7 +9,5 @@ def analysis():
 
 
 def import_data(csv_file):
-    content = genfromtxt(csv_file, delimiter=";", skip_header=1, dtype=None,
-                         unpack=True)
+    content = pandas.read_csv(filepath_or_buffer=csv_file, sep=';')
     return content
-
