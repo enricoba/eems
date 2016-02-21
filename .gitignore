@@ -3,7 +3,6 @@
 
 # Python files
 *.pyc
-test.py
 
 # Package files
 *.egg-info
@@ -15,3 +14,6 @@ test.py
 dist/*
 build/*
 docs/*
+
+# test files
+test.*
