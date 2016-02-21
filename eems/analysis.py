@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 
 
-import pandas
+import numpy as np
 
 
-def analysis():
-    print 'statistische auswertung'
+def analysis(content):
+    return np.mean(content)
 
 
 def import_data(csv_file):
-    content = pandas.read_csv(filepath_or_buffer=csv_file, sep=';')
-    return content
+    if isinstance(csv_file, basestring) is True:
+        content = np.genfromtxt(csv_file, delimiter=';', skip_header=True)
+        return content
+
