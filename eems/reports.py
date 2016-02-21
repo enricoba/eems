@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
 
-
-import time
-import datetime
-import numpy as np
+import analysis
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-from matplotlib.ticker import MultipleLocator
 
 
 def summary():
@@ -14,52 +10,38 @@ def summary():
     # TODO: Projektdaten + Kopfzeile
 
 
-class ConvertingData(object):  # TODO: oder wird das schon in analysis gemacht?
-    def __init__(self):
-        self.date_format = '%Y-%m-%d %H:%M:%S'
-
-    def str_time2date_time(self, str_date, str_time):
-        date_time = str_date + ' ' + str_time
-
-        timestamp = []
-        for i in date_time:
-            time_converter = time.strptime(i, self.date_format)
-            dt = datetime.datetime.fromtimestamp(time.mktime(time_converter))
-            timestamp.append(dt)
-        return np.array(timestamp)
-
-    def timestamp2date_time(self, timestamp):
-        new_time = datetime.datetime.fromtimestamp(int(timestamp)).strftime(self.date_format)
-        return new_time
-
-
 class Plotting(object):
     def __init__(self, data):
         # TODO: einstell möglichkeiten vom Nutzer festlegen
-        self.converter = ConvertingData()
         self.data = data  # TODO: Stuktur überprüfen bzw. festlegen
         self.date_plot_format = '%Y-%m-%d %H:%M'  # TODO: Darstellung vom Timestamp klären
         self.line_width = 3
         self.line_style = '-'
         # TODO: Farben für Diagramme festlegen
 
+        # TODO: Darstellungsintervall zentral festlegen
+        x_skalierung = {'step_1': [mdates.HOURLY, 2, mdates.MINUTELY, 30],
+                        'step_2': [mdates.HOURLY, 2, mdates.MINUTELY, 30]}
+        self.x_major_steps = x_skalierung['step_1'][0]
+        self.x_major_interval = x_skalierung['step_1'][1]
+        self.x_minor_steps = x_skalierung['step_1'][2]
+        self.x_minor_interval = x_skalierung['step_1'][3]
+
     def plot_all(self, save=False):
         fig, ax = plt.subplots()
         fig.set_size_inches(11.8, 8.5, forward=True)  # TODO: Diagramm größe festlegen
         fig.set_tight_layout(True)
         for name in self.data.dtype.names:
-            timestamp = self.data['Date'] + ' ' + self.data['Time']
-            # self.converter.str_time2date_time(str_date=self.data['Date'],
-            # str_time=self.data['Time'])
-            ax.plot(timestamp,
+            ax.plot(self.data['timestamp'],
                     self.data[name],
                     lw=self.line_width,
                     ls=self.line_style,
-                    label=name)  # TODO: Label zuweisung klären
+                    label=name)
 
+        # TODO: x-Achsenformatierung in funktion auslagern
         # graphic options
         date_format = mdates.DateFormatter(self.date_plot_format)
-        rule = mdates.rrulewrapper(mdates.HOURLY, interval=2)  # TODO: Darstellungsintervall für major-grid festlegen
+        rule = mdates.rrulewrapper(self.x_major_steps, interval=self.x_major_interval)
         loc = mdates.RRuleLocator(rule)
         ax.xaxis.set_major_locator(loc)
         ax.xaxis.set_major_formatter(date_format)
@@ -67,20 +49,15 @@ class Plotting(object):
         ax.grid(True, 'major')
 
         # Minor Grid
-        rule_minor = mdates.rrulewrapper(mdates.MINUTELY, interval=2)
+        rule_minor = mdates.rrulewrapper(self.x_minor_steps, interval=self.x_minor_interval)
         loc_minor = mdates.RRuleLocator(rule_minor)
         ax.xaxis.set_minor_locator(loc_minor)
-        ax.yaxis.set_minor_locator(MultipleLocator(0.02))
         ax.grid(True, 'minor')
 
         # Labels
         ax.set_ylabel(u'Temperature in °C')
         ax.set_xlabel(u'Time')
-
-        handles, labels = ax.get_legend_handles_labels()
-        # sort both labels and handles by labels
-        labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
-        ax.legend(handles, labels, fontsize=11, ncol=3, loc='best')
+        ax.legend(fontsize=11, ncol=3, loc='best')
 
         if save is True:
             filename = '.jpg'  # TODO: filename
@@ -92,16 +69,15 @@ class Plotting(object):
             fig, ax = plt.subplots()
             fig.set_size_inches(11.8, 8.5, forward=True)   # TODO: Diagramm größe festlegen
             fig.set_tight_layout(True)
-            ax.plot(self.converter.str_time2date_time(str_date=self.data['Date'],
-                                                      str_time=self.data['Time']),
+            ax.plot(self.data['timestamp'],
                     self.data[name],
                     lw=self.line_width,
                     ls=self.line_style,
-                    label=name)  # TODO: Label zuweisung klären
+                    label=name)
 
             # graphic options
             date_format = mdates.DateFormatter(self.date_plot_format)
-            rule = mdates.rrulewrapper(mdates.HOURLY, interval=2)  # TODO: Darstellungsintervall festlegen
+            rule = mdates.rrulewrapper(self.x_major_steps, interval=self.x_major_interval)
             loc = mdates.RRuleLocator(rule)
             ax.xaxis.set_major_locator(loc)
             ax.xaxis.set_major_formatter(date_format)
@@ -109,10 +85,9 @@ class Plotting(object):
             ax.grid(True, 'major')
 
             # Minor Grid
-            rule_minor = mdates.rrulewrapper(mdates.MINUTELY, interval=2)  # TODO: Darstellungsintervall festlegen
+            rule_minor = mdates.rrulewrapper(self.x_minor_steps, interval=self.x_minor_interval)
             loc_minor = mdates.RRuleLocator(rule_minor)
             ax.xaxis.set_minor_locator(loc_minor)
-            ax.yaxis.set_minor_locator(MultipleLocator(0.02))  # TODO: Darstellungsintervall
             ax.grid(True, 'minor')
 
             ax.set_ylabel(u'Temperature in °C')
