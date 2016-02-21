@@ -22,8 +22,7 @@ Install via git::
 2. Usage
 ========
 
-The application can be used directly in the command line or be imported
-into a python file.
+The application can be used directly in the command line or be used via API.
 
 2.1 Command line
 ----------------
@@ -37,8 +36,8 @@ Show help::
 
    eems help
 
-2.2 Python script
------------------
+2.2 API
+-------
 
 Quick start::
 

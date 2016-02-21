@@ -14,7 +14,7 @@ def summary():
     # TODO: Projektdaten + Kopfzeile
 
 
-class ConvertingData(object):  #TODO: oder wird das schon in analysis gemacht?
+class ConvertingData(object):  # TODO: oder wird das schon in analysis gemacht?
     def __init__(self):
         self.date_format = '%Y-%m-%d %H:%M:%S'
 
@@ -22,7 +22,6 @@ class ConvertingData(object):  #TODO: oder wird das schon in analysis gemacht?
         date_time = str_date + ' ' + str_time
 
         timestamp = []
-
         for i in date_time:
             time_converter = time.strptime(i, self.date_format)
             dt = datetime.datetime.fromtimestamp(time.mktime(time_converter))
@@ -49,8 +48,10 @@ class Plotting(object):
         fig.set_size_inches(11.8, 8.5, forward=True)  # TODO: Diagramm größe festlegen
         fig.set_tight_layout(True)
         for name in self.data.dtype.names:
-            ax.plot(self.converter.str_time2date_time(str_date=self.data['Date'],
-                                                      str_time=self.data['Time']),
+            timestamp = self.data['Date'] + ' ' + self.data['Time']
+            # self.converter.str_time2date_time(str_date=self.data['Date'],
+            # str_time=self.data['Time'])
+            ax.plot(timestamp,
                     self.data[name],
                     lw=self.line_width,
                     ls=self.line_style,

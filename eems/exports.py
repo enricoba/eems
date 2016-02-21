@@ -36,7 +36,7 @@ class CsvHandler(object):
             logging.basicConfig(level=logging.INFO,
                                 format=log_format,
                                 datefmt=log_date_format)
-            self.logger = self.logger = logging.getLogger('eems')
+            self.logger = logging.getLogger('eems')
         else:
             self.logger = logger
 
@@ -45,7 +45,7 @@ class CsvHandler(object):
             self.csv_file = csv_file
         else:
             self.csv_file = 'default.csv'
-            self.logger.warning('Passed parameter *csv_file* was no string, '
+            self.logger.warning('Passed parameter *csv_file* is no string, '
                                 'filename has been changed to *default.csv*')
         # adding the csv file
         self.__add(header)
@@ -93,7 +93,7 @@ class CsvHandler(object):
             # validate if passed parameter *header* is a list
             if isinstance(header, list) is True:
                 # adding the columns id, date and time
-                header = ['id', 'date', 'time'] + header
+                header = ['id', 'timestamp', 'date', 'time'] + header
                 try:
                     with open(self.csv_file, 'wb') as _csv:
                         csv_writer = csv.writer(_csv, delimiter=';')
@@ -124,9 +124,12 @@ class CsvHandler(object):
                 # keys of the dictionary
                 if entries == columns:
                     row = self.__count_rows()
-                    str_date = time.strftime('%Y-%m-%d')
-                    str_time = time.strftime('%H:%M:%S')
-                    data = [row, str_date, str_time] + data
+                    tmp_time = time.localtime()
+                    str_date = time.strftime('%Y-%m-%d', tmp_time)
+                    str_time = time.strftime('%H:%M:%S', tmp_time)
+                    timestamp = time.mktime(tmp_time)
+
+                    data = [row, timestamp, str_date, str_time] + data
                     try:
                         with open(self.csv_file, 'ab') as _csv:
                             csv_writer = csv.writer(_csv, delimiter=';')

@@ -25,7 +25,7 @@ def read_help():
         print '{}'.format(e)
 
 
-def main():
+def main():  # TODO add manipulation of config file & add default
     parser = ThrowingArgumentParser(add_help=False)
     parser.add_argument('command')
 
