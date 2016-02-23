@@ -10,7 +10,7 @@ __author__ = 'Henrik Baran, Aurofree Hoehn'
 
 
 config = ConfigParser.ConfigParser()
-config.read('data/eems.ini')  # TODO muss noch in package data geladen werden
+config.read('data/config.ini')  # TODO muss noch in package data geladen werden
 print config.sections()
 log = ast.literal_eval(config.get('log', 'log'))
 
