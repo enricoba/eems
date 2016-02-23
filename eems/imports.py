@@ -5,18 +5,8 @@ inside this package.
 """
 
 import time
-import ConfigParser
-import ast
 import numpy as np
 from eems import __logger__ as logger
-
-
-def read_config():  # TODO Funktion soll config.ini lesen und inhalt zurückgeben
-    config = ConfigParser.ConfigParser()
-    config.read('data/config.ini')
-    __log = ast.literal_eval(config.get('log', 'log'))
-    __console = True
-    return __log, __console
 
 
 class CSV:

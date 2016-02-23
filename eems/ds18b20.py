@@ -208,23 +208,11 @@ class Check(object):
 
 
 class Temp(object):
-    def __init__(self, csv=None, log=None, console=None):  # TODO parameter übergabe checken
+    def __init__(self):
         """Public Class *Temp* detects connected DS18B20 one-wire sensors
         and provides functions to read the sensors. This class uses the
         standard library module *logging* for handling outputs.
 
-        :param csv:
-            Expects the boolean *True* or *None*. If *csv=True*, a csv file is
-            created in the same directory as this script. Afterwards all public
-            functions of this object write entries into the csv file after
-            been called.
-        :param log:
-            Expects the boolean *True* or *None*. If *log=True*, a .txt logfile
-            is created in the same directory as this script. Therefore, all
-            outputs of the *level=DEBUG* are written into the log file.
-        :param console:
-            Expects the boolean *True* or *None*. If *console=True*, outputs
-            of the *level=INFO* are passed to the console.
         :return:
             Returns an object providing the public functions *read* and
             *monitor*.
@@ -240,42 +228,6 @@ class Temp(object):
         self.flag = False
         self.stop = False
 
-        """log_format = '%(asctime)s %(name)-8s %(levelname)-8s %(message)s'
-        log_date_format = '%Y-%m-%d %H:%M:%S'
-
-        if log is True:
-            log_file = '{0}_{1}_{2}.txt'.format(self.str_date,
-                                                self.str_time,
-                                                self.filename_script)
-            logging.basicConfig(level=logging.DEBUG,
-                                format=log_format,
-                                datefmt=log_date_format,
-                                filename=log_file)
-            if console is True:
-                console = logging.StreamHandler()
-                console.setLevel(logging.INFO)
-                formatter = logging.Formatter(fmt=log_format,
-                                              datefmt=log_date_format)
-                console.setFormatter(formatter)
-                logging.getLogger('').addHandler(console)
-                self.logger = logging.getLogger('eems')
-            else:
-                self.logger = logging.getLogger('eems')
-        else:
-            logging.basicConfig(level=logging.INFO,
-                                format=log_format,
-                                datefmt=log_date_format)
-            if console is True:
-                self.logger = logging.getLogger('eems')
-            else:
-                self.logger = logging.getLogger('eems')
-                self.logger.disabled = True"""
-
-        if log is True:
-            logger.debug('Logfile has been created')
-        else:
-            logger.debug('No logfile has been created')
-
         pid = os.getpid()
         logger.debug('Process PID: {0}'.format(pid))
 
@@ -285,7 +237,7 @@ class Temp(object):
         else:
             self.sensor_dict = _SensorDictionary(sensors)
 
-        if csv is True:
+        """if csv is True:
             csv_file = '{0}_{1}_{2}.csv'.format(self.str_date,
                                                 self.str_time,
                                                 self.filename_script)
@@ -293,7 +245,7 @@ class Temp(object):
             self.CsvHandler = exports.CsvHandler(csv_file, dic.keys())
             self.csv = True
         else:
-            self.csv = None
+            self.csv = None"""
 
     def __detect_sensors(self):
         """Private function *__detect_sensors* detects all connected DS18B20
@@ -307,7 +259,7 @@ class Temp(object):
         if os.path.exists(dir_sensors):
             list_sensors = [fn for fn in os.listdir(dir_sensors)
                             if fn.startswith('28')]
-            if len(list_sensors) != 0:
+            if len(list_sensors) != 0:  # TODO MEssung mit folgenden Sensroengestartet
                 logger.info('Sensors detected: {0}'.format(
                     len(list_sensors)))
                 return list_sensors
@@ -368,14 +320,13 @@ class Temp(object):
             t.join()
         self.read_flag.set()
 
-    def read(self, *args, **kwargs):
+    def read(self):
         """Public function *read* reads all connected DS18B20 sensors once.
 
         :return:
             Returns a dictionary containing sensor names as keys and
             sensor values as values.
         """
-        del args, kwargs
         if self.csv is None:
             self.sensor_dict.reset_dic()
             self.__read_sensors()
