@@ -6,10 +6,10 @@ Main module for DS18B2 sensors.
 import os
 import time
 import sys
-import logging
 import exports
 import collections
 from threading import Thread, Lock, Event
+from eems import __logger__ as logger
 
 
 """
@@ -72,29 +72,14 @@ Public classes / functions
 
 
 class Check(object):
-    def __init__(self, logger=None):
+    def __init__(self):
         """Public class *Check* provides functions to validate system
         configuration enabling DS18B20 sensors.
 
-        :param logger:
-            Expects a logger object of the standard library module *logging*.
-            If *logger=None*, an own logger object of the standard
-            library module *logging* is added to handle outputs.
         :return:
             Returns an object providing the public functions *w1_config* and
             *w1_modules*.
         """
-        # validating the passed parameter *logger*
-        if logger is None:
-            log_format = '%(asctime)s %(name)-8s %(levelname)-8s %(message)s'
-            log_date_format = '%Y-%m-%d %H:%M:%S'
-            logging.basicConfig(level=logging.INFO,
-                                format=log_format,
-                                datefmt=log_date_format)
-            self.logger = self.logger = logging.getLogger('eems')
-        else:
-            self.logger = logger
-
         self.dir_modules = '/etc/modules'
         self.dir_config = '/boot/config.txt'
         self.flag = {'w1-therm': False,
@@ -120,24 +105,23 @@ class Check(object):
             Returns *True* if check passed. Otherwise *False*.
         """
         if quiet is True:
-            self.logger.disabled = True
+            logger.disabled = True
         try:
             with open(self.dir_config, 'r') as config_file:
                 config = config_file.readlines()
         except IOError as e:
-            self.logger.error('{}'.format(e))
+            logger.error('{}'.format(e))
         else:
             check = [c for c in config if c.strip('\n')[:17] ==
                      'dtoverlay=w1-gpio']
             if len(check) == 0:
-                self.logger.error('Config.txt check failed: "dtoverlay=w1-gpio"'
-                                  ' is not set')
-                self.logger.info('Please use the command script <sudo eems '
-                                 'prepare> to prepare "/boot/config.txt"')
+                logger.error('Config.txt check failed: "dtoverlay=w1-gpio"'
+                             ' is not set')
+                logger.info('Please use the command script <sudo eems '
+                            'prepare> to prepare "/boot/config.txt"')
                 return False
             else:
-                self.logger.info('Config.txt check ok: "dtoverlay=w1-gpio" '
-                                 'is set')
+                logger.info('Config.txt check ok: "dtoverlay=w1-gpio" is set')
                 return True
 
     def w1_modules(self):
@@ -160,30 +144,30 @@ class Check(object):
             Returns *True* if check passed. Otherwise returns *False*.
         """
         if quiet is True:
-            self.logger.disabled = True
+            logger.disabled = True
         try:
             with open(self.dir_modules, 'r') as modules_file:
                 modules = modules_file.readlines()
         except IOError as e:
-            self.logger.error('{}'.format(e))
+            logger.error('{}'.format(e))
         else:
             check_therm = [c for c in modules if c.strip('\n') == 'w1-therm']
             check_gpio = [c for c in modules if c.strip('\n') == 'w1-gpio']
             if len(check_therm) == 1:
-                self.logger.info('Module check ok: "w1-therm" is set')
+                logger.info('Module check ok: "w1-therm" is set')
                 self.flag['w1-therm'] = True
             else:
-                self.logger.error('Module check failed: "w1-therm" is not set')
+                logger.error('Module check failed: "w1-therm" is not set')
             if len(check_gpio) == 1:
-                self.logger.info('Module check ok: "w1-gpio" is set')
+                logger.info('Module check ok: "w1-gpio" is set')
                 self.flag['w1-gpio'] = True
             else:
-                self.logger.error('Module check failed: "w1-gpio" is not set')
+                logger.error('Module check failed: "w1-gpio" is not set')
             if self.flag['w1-therm'] is True and self.flag['w1-gpio'] is True:
                 return True
             else:
-                self.logger.info('Please use the command script <sudo eems '
-                                 'prepare> to prepare "/etc/modules"')
+                logger.info('Please use the command script <sudo eems '
+                            'prepare> to prepare "/etc/modules"')
                 return False
 
     def prepare(self):
@@ -195,19 +179,19 @@ class Check(object):
             Returns *None*.
         """
         if self.__w1_config(quiet=True) is False:
-            self.logger.disabled = False
+            logger.disabled = False
             try:
                 with open(self.dir_config, 'a') as config_file:
                     config_file.write('dtoverlay=w1-gpio\n')
             except IOError as e:
-                self.logger.error('{}'.format(e))
+                logger.error('{}'.format(e))
             else:
-                self.logger.info('Config.txt has been prepared successfully')
+                logger.info('Config.txt has been prepared successfully')
         else:
-            self.logger.disabled = False
+            logger.disabled = False
 
         if self.__w1_modules(quiet=True) is False:
-            self.logger.disabled = False
+            logger.disabled = False
             try:
                 if self.flag['w1-therm'] is False:
                     with open(self.dir_modules, 'a') as modules_file:
@@ -216,15 +200,15 @@ class Check(object):
                     with open(self.dir_modules, 'a') as modules_file:
                         modules_file.write('w1-gpio\n')
             except IOError as e:
-                self.logger.error('{}'.format(e))
+                logger.error('{}'.format(e))
             else:
-                self.logger.info('Modules have been prepared successfully')
+                logger.info('Modules have been prepared successfully')
         else:
-            self.logger.disabled = False
+            logger.disabled = False
 
 
 class Temp(object):
-    def __init__(self, csv=None, log=None, console=None):
+    def __init__(self, csv=None, log=None, console=None):  # TODO parameter übergabe checken
         """Public Class *Temp* detects connected DS18B20 one-wire sensors
         and provides functions to read the sensors. This class uses the
         standard library module *logging* for handling outputs.
@@ -256,7 +240,7 @@ class Temp(object):
         self.flag = False
         self.stop = False
 
-        log_format = '%(asctime)s %(name)-8s %(levelname)-8s %(message)s'
+        """log_format = '%(asctime)s %(name)-8s %(levelname)-8s %(message)s'
         log_date_format = '%Y-%m-%d %H:%M:%S'
 
         if log is True:
@@ -285,15 +269,15 @@ class Temp(object):
                 self.logger = logging.getLogger('eems')
             else:
                 self.logger = logging.getLogger('eems')
-                self.logger.disabled = True
+                self.logger.disabled = True"""
 
         if log is True:
-            self.logger.debug('Logfile has been created')
+            logger.debug('Logfile has been created')
         else:
-            self.logger.debug('No logfile has been created')
+            logger.debug('No logfile has been created')
 
         pid = os.getpid()
-        self.logger.debug('Process PID: {0}'.format(pid))
+        logger.debug('Process PID: {0}'.format(pid))
 
         sensors = self.__detect_sensors()
         if sensors is False:
@@ -306,9 +290,7 @@ class Temp(object):
                                                 self.str_time,
                                                 self.filename_script)
             dic = self.sensor_dict.get_dic()
-            self.CsvHandler = exports.CsvHandler(csv_file,
-                                                 dic.keys(),
-                                                 self.logger)
+            self.CsvHandler = exports.CsvHandler(csv_file, dic.keys())
             self.csv = True
         else:
             self.csv = None
@@ -326,13 +308,13 @@ class Temp(object):
             list_sensors = [fn for fn in os.listdir(dir_sensors)
                             if fn.startswith('28')]
             if len(list_sensors) != 0:
-                self.logger.info('Sensors detected: {0}'.format(
+                logger.info('Sensors detected: {0}'.format(
                     len(list_sensors)))
                 return list_sensors
             else:
-                self.logger.error('No sensors detected')
+                logger.error('No sensors detected')
         else:
-            self.logger.error('Path "/sys/bus/w1/devices" does not exist')
+            logger.error('Path "/sys/bus/w1/devices" does not exist')
 
     def __read_slave(self, sensor):
         """Private function *__read_slave* reads the file *w1_slave* of a
@@ -349,18 +331,18 @@ class Temp(object):
                 with open(dir_file + '/w1_slave', 'r') as slave:
                     file_content = slave.readlines()
             except IOError as e:
-                self.logger.error('{}'.format(e))
+                logger.error('{}'.format(e))
             else:
                 if x == 3:
-                    self.logger.warning('Sensor: {0} - read failed '
-                                        '(Wrong CRC?)'.format(sensor))
+                    logger.warning('Sensor: {0} - read failed '
+                                   '(Wrong CRC?)'.format(sensor))
                     self.sensor_dict.set_temp(sensor, 'n/a')
                 elif file_content[0].strip()[-3:] == 'YES':
                     value = file_content[1].strip()[29:]
                     t = round(float(value) / 1000, 2)
                     self.sensor_dict.set_temp(sensor, t)
-                    self.logger.info('Sensor: {0} - read successful - '
-                                     '{1}°C'.format(sensor, t))
+                    logger.info('Sensor: {0} - read successful - '
+                                '{1}°C'.format(sensor, t))
                     break
                 else:
                     time.sleep(0.2)
@@ -421,10 +403,10 @@ class Temp(object):
         """
         if self.flag is False:
             if interval < 2:
-                self.logger.error('Interval must be >= 2s')
+                logger.error('Interval must be >= 2s')
                 sys.exit()
             worker = Thread(target=self.__start_read, args=(interval,))
-            self.logger.debug('Thread monitor was added')
+            logger.debug('Thread monitor was added')
             if duration is None:
                 pass
             else:
@@ -432,17 +414,16 @@ class Temp(object):
                     watchdog = Thread(target=self.__watchdog,
                                       args=(duration, interval))
                     watchdog.setDaemon(True)
-                    self.logger.debug('Watchdog_one has started with a duration'
-                                      ' of {0}s'.format(duration))
+                    logger.debug('Watchdog_one has started with a duration'
+                                 ' of {0}s'.format(duration))
                     watchdog.start()
                 else:
-                    self.logger.error('Duration must be longer than the '
-                                      'interval')
+                    logger.error('Duration must be longer than the interval')
                     sys.exit()
             worker.start()
             self.flag = True
-            self.logger.debug('Thread monitor has started with an '
-                              'interval of {1}s'.format(worker, interval))
+            logger.debug('Thread monitor has started with an '
+                         'interval of {1}s'.format(worker, interval))
             try:
                 while self.stop is False:
                     time.sleep(0.25)
@@ -450,8 +431,8 @@ class Temp(object):
                 self.read_flag.wait()
                 self.__stop(trigger='keyboard')
         else:
-            self.logger.warning('Already one read thread is running, '
-                                'start of a second thread was stopped')
+            logger.warning('Already one read thread is running, '
+                           'start of a second thread was stopped')
 
     def __watchdog(self, duration, interval):
         """Private function *__watchdog* handles stopping of the function
@@ -512,8 +493,8 @@ class Temp(object):
             elif trigger == 'keyboard':
                 message = 'Monitor has been stopped manually by ' \
                           'pressing Ctrl-C'
-            self.logger.debug(message)
+            logger.debug(message)
             self.flag = False
             self.stop = True
         else:
-            self.logger.warning('No monitor function to stop ...')
+            logger.warning('No monitor function to stop ...')

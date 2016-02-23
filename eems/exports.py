@@ -4,15 +4,14 @@ This module handles file exports and provides functions and classes to call
 for other modules inside this package.
 """
 
-
 import csv
 import os
-import logging
 import time
+from eems import __logger__ as logger
 
 
 class CsvHandler(object):
-    def __init__(self, csv_file, header, logger=None):
+    def __init__(self, csv_file, header):
         """Public class *CsvHandler* provides functions to manipulate csv files
         passed via the parameter *csv_file*. Therefore, the standard library
         module *csv* is used.
@@ -22,31 +21,16 @@ class CsvHandler(object):
             provided, default file name *default.csv* is assumed.
         :param header:
             Expects a list containing all header elements for the csv file.
-        :param logger:
-            Expects a logger object of the standard library module *logging*.
-            If *logger=None*, an own logger object of the standard
-            library module *logging* is added to handle outputs.
         :return:
             Returns an object providing the public function *write*.
         """
-        # validating the passed parameter *logger*
-        if logger is None:
-            log_format = '%(asctime)s %(name)-8s %(levelname)-8s %(message)s'
-            log_date_format = '%Y-%m-%d %H:%M:%S'
-            logging.basicConfig(level=logging.INFO,
-                                format=log_format,
-                                datefmt=log_date_format)
-            self.logger = logging.getLogger('eems')
-        else:
-            self.logger = logger
-
         # validating the passed parameter *csv_file*
         if isinstance(csv_file, basestring) is True:
             self.csv_file = csv_file
         else:
             self.csv_file = 'default.csv'
-            self.logger.warning('Passed parameter *csv_file* is no string, '
-                                'filename has been changed to *default.csv*')
+            logger.warning('Passed parameter *csv_file* is no string, '
+                           'filename has been changed to *default.csv*')
         # adding the csv file
         self.__add(header)
 
@@ -62,7 +46,7 @@ class CsvHandler(object):
                 csv_reader = csv.reader(_csv, delimiter=';')
                 return len(csv_reader.next())
         except IOError as e:
-            self.logger.error('{}'.format(e))
+            logger.error('{}'.format(e))
 
     def __count_rows(self):
         """Private function *__count_rows* reads the csv file handled by the
@@ -77,7 +61,7 @@ class CsvHandler(object):
                 rows = sum(1 for row in csv_reader)
                 return rows
         except IOError as e:
-            self.logger.error('{}'.format(e))
+            logger.error('{}'.format(e))
 
     def __add(self, header):
         """Private function *__add* creates the csv file using the file name of
@@ -99,11 +83,11 @@ class CsvHandler(object):
                         csv_writer = csv.writer(_csv, delimiter=';')
                         csv_writer.writerow(header)
                 except IOError as e:
-                    self.logger.error('{}'.format(e))
+                    logger.error('{}'.format(e))
             else:
-                self.logger.error('Function "add" expects a list')
+                logger.error('Function "add" expects a list')
         else:
-            self.logger.error('File {} already exists'.format(self.csv_file))
+            logger.error('File {} already exists'.format(self.csv_file))
 
     def write(self, data):
         """Public function *write* adds a new row/entry to the handled csv
@@ -135,11 +119,11 @@ class CsvHandler(object):
                             csv_writer = csv.writer(_csv, delimiter=';')
                             csv_writer.writerow(data)
                     except IOError as e:
-                        self.logger.error('{}'.format(e))
+                        logger.error('{}'.format(e))
                 else:
-                    self.logger.error('Passed elements do not have the same '
-                                      'length as columns in csv')
+                    logger.error('Passed elements do not have the same '
+                                 'length as columns in csv')
             else:
-                self.logger.error('Function "write" expects a list')
+                logger.error('Function "write" expects a list')
         else:
-            self.logger.error('File {} does not exist'.format(self.csv_file))
+            logger.error('File {} does not exist'.format(self.csv_file))

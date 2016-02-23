@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-
+"""
+Setup file for eems.
+"""
 
 from setuptools import setup, find_packages
 from eems import __project__, __version__, __author__
@@ -30,7 +32,7 @@ setup(
     keywords='easy energy monitoring system raspberrry pi',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     package_data={
-        'eems': ['data/*.txt'],
+        'eems': ['data/*'],
     },
     entry_points={
         'console_scripts': ['eems = eems.scripts:main']

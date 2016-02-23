@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-
+"""
+Scripts for eems.
+"""
 
 import ds18b20
 import argparse
