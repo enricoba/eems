@@ -6,7 +6,14 @@ inside this package.
 
 import time
 import numpy as np
-from eems import __logger__ as logger
+import logging
+
+
+"""
+defining logger
+"""
+
+logger = logging.getLogger(__name__)
 
 
 class CSV:

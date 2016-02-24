@@ -3,10 +3,11 @@
 Scripts for eems.
 """
 
-import ds18b20
 import argparse
-import sys
 import os
+import sys
+
+from eems.sensors import ds18b20
 
 
 class ArgumentParserError(Exception):

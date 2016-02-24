@@ -3,13 +3,20 @@
 Main module for DS18B2 sensors.
 """
 
-import os
-import time
-import sys
-import exports
 import collections
+import os
+import sys
+import time
+import logging
+from eems.support.detects import detect_ds18b20_sensors
 from threading import Thread, Lock, Event
-from eems import __logger__ as logger
+
+
+"""
+defining logger
+"""
+
+logger = logging.getLogger(__name__)
 
 
 """
@@ -71,156 +78,16 @@ Public classes / functions
 """
 
 
-class Check(object):
-    def __init__(self):
-        """Public class *Check* provides functions to validate system
-        configuration enabling DS18B20 sensors.
-
-        :return:
-            Returns an object providing the public functions *w1_config* and
-            *w1_modules*.
-        """
-        self.dir_modules = '/etc/modules'
-        self.dir_config = '/boot/config.txt'
-        self.flag = {'w1-therm': False,
-                     'w1-gpio': False}
-
-    def w1_config(self):
-        """Public function *w1_config* checks the config.txt file for the
-        entry *dtoverlay=w1-gpio*.
-
-        :return:
-            Returns *True* if check passed. Otherwise *False*.
-        """
-        return self.__w1_config()
-
-    def __w1_config(self, quiet=None):
-        """Private function *__w1_config* checks the config.txt file for the
-        entry *dtoverlay=w1-gpio*.
-
-        :param quiet:
-            Expects the boolean *True* or *None*. If *quiet=True*, all outputs
-            of the function *w1_config* are disabled.
-        :return:
-            Returns *True* if check passed. Otherwise *False*.
-        """
-        if quiet is True:
-            logger.disabled = True
-        try:
-            with open(self.dir_config, 'r') as config_file:
-                config = config_file.readlines()
-        except IOError as e:
-            logger.error('{}'.format(e))
-        else:
-            check = [c for c in config if c.strip('\n')[:17] ==
-                     'dtoverlay=w1-gpio']
-            if len(check) == 0:
-                logger.error('Config.txt check failed: "dtoverlay=w1-gpio"'
-                             ' is not set')
-                logger.info('Please use the command script <sudo eems '
-                            'prepare> to prepare "/boot/config.txt"')
-                return False
-            else:
-                logger.info('Config.txt check ok: "dtoverlay=w1-gpio" is set')
-                return True
-
-    def w1_modules(self):
-        """Public function *w1_modules* checks the file */etc/modules* for the
-        entries *w1-therm* and *w1-gpio*.
-
-        :return:
-            Returns *True* if check passed. Otherwise returns *False*.
-        """
-        return self.__w1_modules()
-
-    def __w1_modules(self, quiet=None):
-        """Private function *__w1_modules* checks the file */etc/modules* for the
-        entries *w1-therm* and *w1-gpio*.
-
-        :param quiet:
-            Expects the boolean *True* or *None*. If *quiet=True*, all outputs
-            of the function *w1_modules* are disabled.
-        :return:
-            Returns *True* if check passed. Otherwise returns *False*.
-        """
-        if quiet is True:
-            logger.disabled = True
-        try:
-            with open(self.dir_modules, 'r') as modules_file:
-                modules = modules_file.readlines()
-        except IOError as e:
-            logger.error('{}'.format(e))
-        else:
-            check_therm = [c for c in modules if c.strip('\n') == 'w1-therm']
-            check_gpio = [c for c in modules if c.strip('\n') == 'w1-gpio']
-            if len(check_therm) == 1:
-                logger.info('Module check ok: "w1-therm" is set')
-                self.flag['w1-therm'] = True
-            else:
-                logger.error('Module check failed: "w1-therm" is not set')
-            if len(check_gpio) == 1:
-                logger.info('Module check ok: "w1-gpio" is set')
-                self.flag['w1-gpio'] = True
-            else:
-                logger.error('Module check failed: "w1-gpio" is not set')
-            if self.flag['w1-therm'] is True and self.flag['w1-gpio'] is True:
-                return True
-            else:
-                logger.info('Please use the command script <sudo eems '
-                            'prepare> to prepare "/etc/modules"')
-                return False
-
-    def prepare(self):
-        """Public function *prepare* modifies the files */boot/config.txt* and
-        */etc/modules* to enable DS18B20 functionality. Function requires *sudo*
-        rights!!!
-
-        :return:
-            Returns *None*.
-        """
-        if self.__w1_config(quiet=True) is False:
-            logger.disabled = False
-            try:
-                with open(self.dir_config, 'a') as config_file:
-                    config_file.write('dtoverlay=w1-gpio\n')
-            except IOError as e:
-                logger.error('{}'.format(e))
-            else:
-                logger.info('Config.txt has been prepared successfully')
-        else:
-            logger.disabled = False
-
-        if self.__w1_modules(quiet=True) is False:
-            logger.disabled = False
-            try:
-                if self.flag['w1-therm'] is False:
-                    with open(self.dir_modules, 'a') as modules_file:
-                        modules_file.write('w1-therm\n')
-                if self.flag['w1-gpio'] is False:
-                    with open(self.dir_modules, 'a') as modules_file:
-                        modules_file.write('w1-gpio\n')
-            except IOError as e:
-                logger.error('{}'.format(e))
-            else:
-                logger.info('Modules have been prepared successfully')
-        else:
-            logger.disabled = False
-
-
-class Temp(object):
+class DS18B20(object):
     def __init__(self):
         """Public Class *Temp* detects connected DS18B20 one-wire sensors
         and provides functions to read the sensors. This class uses the
-        standard library module *logging* for handling outputs.
+        standard library module *logger* for handling outputs.
 
         :return:
             Returns an object providing the public functions *read* and
             *monitor*.
         """
-        if os.path.basename(sys.argv[0])[-3:] == '.py':
-            self.filename_script = os.path.basename(sys.argv[0])[:-3]
-        else:
-            self.filename_script = 'eems'
         self.str_date = time.strftime('%Y-%m-%d')
         self.str_time = time.strftime('%H-%M-%S')
         self.event = Event()
@@ -231,42 +98,11 @@ class Temp(object):
         pid = os.getpid()
         logger.debug('Process PID: {0}'.format(pid))
 
-        sensors = self.__detect_sensors()
+        sensors = detect_ds18b20_sensors()
         if sensors is False:
             sys.exit()
         else:
             self.sensor_dict = _SensorDictionary(sensors)
-
-        """if csv is True:
-            csv_file = '{0}_{1}_{2}.csv'.format(self.str_date,
-                                                self.str_time,
-                                                self.filename_script)
-            dic = self.sensor_dict.get_dic()
-            self.CsvHandler = exports.CsvHandler(csv_file, dic.keys())
-            self.csv = True
-        else:
-            self.csv = None"""
-
-    def __detect_sensors(self):
-        """Private function *__detect_sensors* detects all connected DS18B20
-        sensors.
-
-        :return:
-            If sensors are detected successfully, a list containing all
-            connected sensors is returned. Otherwise *None* is returned.
-        """
-        dir_sensors = '/sys/bus/w1/devices'
-        if os.path.exists(dir_sensors):
-            list_sensors = [fn for fn in os.listdir(dir_sensors)
-                            if fn.startswith('28')]
-            if len(list_sensors) != 0:  # TODO MEssung mit folgenden Sensroengestartet
-                logger.info('Sensors detected: {0}'.format(
-                    len(list_sensors)))
-                return list_sensors
-            else:
-                logger.error('No sensors detected')
-        else:
-            logger.error('Path "/sys/bus/w1/devices" does not exist')
 
     def __read_slave(self, sensor):
         """Private function *__read_slave* reads the file *w1_slave* of a

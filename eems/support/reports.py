@@ -1,8 +1,15 @@
 # -*- coding: utf-8 -*-
 
-import imports
-import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+import logging
+
+
+"""
+defining logger
+"""
+
+logger = logging.getLogger(__name__)
 
 
 def summary():
