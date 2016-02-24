@@ -9,9 +9,36 @@ import ConfigParser
 import ast
 import os
 import sys
-from eems.support.checks import Check
-from eems.support.detects import detect_ds18b20_sensors
+# from eems.support.checks import Check
+# from eems.support.detects import detect_ds18b20_sensors
 from eems.support.exports import CsvHandler
+import cPickle as Pickle
+
+
+class ObjectHandler(object):
+    def __init__(self):
+        """
+
+        :return:
+        """
+        self.filename = 'data/CsvHandler.pkl'
+
+    def save_object(self, obj):
+        """
+
+        :param obj:
+        :return:
+        """
+        with open(self.filename, 'wb') as _output:
+            Pickle.dump(obj, _output, -1)
+
+    def load_object(self):
+        """
+
+        :return:
+        """
+        with open(self.filename, 'rb') as _input:
+            return Pickle.load(_input)
 
 
 def read_config():
@@ -78,7 +105,7 @@ def init(log=None, console=None, csv=None):
         logger.info('No logfile has been created')
 
     # check if any sensors are connected
-    c = Check()
+    # c = Check()
 
     # DS1820
     """if c.w1_config() is True and c.w1_modules() is True:
@@ -100,5 +127,5 @@ def init(log=None, console=None, csv=None):
             pass"""
         sensors = ['s1', 's2']
         handler = CsvHandler(csv_file, sensors)
-        # TODO CSV OBJEKT PROCESS START
-
+        object_handler = ObjectHandler()
+        object_handler.save_object(handler)

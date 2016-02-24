@@ -16,7 +16,7 @@ defining logger
 logger = logging.getLogger(__name__)
 
 
-class CSV:
+class CSV:  # TODO merge into handlers and merge imports export to handlers
     def __init__(self, csv_file, sensor_count):
         """Public function *import_data* reads a passed csv file and
         returns content, interval and duration.

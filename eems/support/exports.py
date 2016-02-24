@@ -109,7 +109,7 @@ class CsvHandler(object):
         if os.path.exists(self.csv_file) is True:
             # validates if the passed parameter *data* is a dictionary
             if isinstance(data, list) is True:
-                columns = self.__count_col() - 3
+                columns = self.__count_col() - 4
                 entries = len(data)
                 # validates if the amount of columns is similar to the passed
                 # keys of the dictionary

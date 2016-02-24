@@ -4,7 +4,7 @@ Initiation module for eems.
 """
 
 from sensors.ds18b20 import DS18B20
-from main.logger import init
+from main.init import init
 import logging
 
 
