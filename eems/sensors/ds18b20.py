@@ -10,6 +10,7 @@ import time
 import logging
 from eems.support.detects import detect_ds18b20_sensors
 from threading import Thread, Lock, Event
+from eems.support.handlers import ObjectHandler, ConfigHandler
 
 
 """
@@ -104,6 +105,14 @@ class DS18B20(object):
         else:
             self.sensor_dict = _SensorDictionary(sensors)
 
+        config_handler = ConfigHandler()
+        if config_handler.read_config('exports', 'csv', dtype='bool') is True:
+            self.csv = True
+            object_handler = ObjectHandler('csv')
+            self.CsvHandler = object_handler.load_object()
+        else:
+            self.csv = False
+
     def __read_slave(self, sensor):
         """Private function *__read_slave* reads the file *w1_slave* of a
         connected DS18B20 sensor.
@@ -163,11 +172,11 @@ class DS18B20(object):
             Returns a dictionary containing sensor names as keys and
             sensor values as values.
         """
-        if self.csv is None:
+        if self.csv is False:
             self.sensor_dict.reset_dic()
             self.__read_sensors()
             return self.sensor_dict.get_dic()
-        else:
+        elif self.csv is True:
             self.sensor_dict.reset_dic()
             self.__read_sensors()
             result = self.sensor_dict.get_dic()
@@ -252,10 +261,10 @@ class DS18B20(object):
         timestamp += interval
         self.event.clear()
         while not self.event.wait(max(0, timestamp - time.time())):
-            if self.csv is None:
+            if self.csv is False:
                 self.sensor_dict.reset_dic()
                 self.__read_sensors()
-            else:
+            elif self.csv is True:
                 self.sensor_dict.reset_dic()
                 self.__read_sensors()
                 result = self.sensor_dict.get_dic()

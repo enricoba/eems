@@ -9,36 +9,9 @@ import ConfigParser
 import ast
 import os
 import sys
-# from eems.support.checks import Check
-# from eems.support.detects import detect_ds18b20_sensors
-from eems.support.exports import CsvHandler
-import cPickle as Pickle
-
-
-class ObjectHandler(object):
-    def __init__(self):
-        """
-
-        :return:
-        """
-        self.filename = 'data/CsvHandler.pkl'
-
-    def save_object(self, obj):
-        """
-
-        :param obj:
-        :return:
-        """
-        with open(self.filename, 'wb') as _output:
-            Pickle.dump(obj, _output, -1)
-
-    def load_object(self):
-        """
-
-        :return:
-        """
-        with open(self.filename, 'rb') as _input:
-            return Pickle.load(_input)
+from eems.support.checks import Check
+from eems.support.detects import detect_ds18b20_sensors
+from eems.support.handlers import CsvHandler, ObjectHandler, ConfigHandler
 
 
 def read_config():
@@ -105,13 +78,13 @@ def init(log=None, console=None, csv=None):
         logger.info('No logfile has been created')
 
     # check if any sensors are connected
-    # c = Check()
+    c = Check()
 
     # DS1820
-    """if c.w1_config() is True and c.w1_modules() is True:
+    if c.w1_config() is True and c.w1_modules() is True:
         pass
     else:
-        sys.exit()"""
+        sys.exit()
 
     # CSV
     if csv is None:
@@ -120,12 +93,18 @@ def init(log=None, console=None, csv=None):
         csv_file = '{0}_{1}_{2}.csv'.format(str_date,
                                             str_time,
                                             filename_script)
-        """sensors = detect_ds18b20_sensors()
+        sensors = detect_ds18b20_sensors()
         if sensors is False:
             sys.exit()
         else:
-            pass"""
-        sensors = ['s1', 's2']
-        handler = CsvHandler(csv_file, sensors)
-        object_handler = ObjectHandler()
-        object_handler.save_object(handler)
+            pass
+
+        # generate config handler and save parameter to config file
+        config_handler = ConfigHandler()
+        config_handler.set_config('exports', 'csv', True)
+        config_handler.write_config()
+
+        # generate csv handler and save to pkl file
+        csv_handler = CsvHandler(csv_file, sensors)
+        object_handler = ObjectHandler('csv')
+        object_handler.save_object(csv_handler)

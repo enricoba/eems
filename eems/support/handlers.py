@@ -8,6 +8,8 @@ import csv
 import os
 import time
 import logging
+import cPickle as Pickle
+import ConfigParser
 
 
 """
@@ -15,6 +17,68 @@ defining logger
 """
 
 logger = logging.getLogger(__name__)
+
+
+class ConfigHandler(object):
+    def __init__(self):
+        self.parser = ConfigParser.ConfigParser()
+        self.path_config = 'data/config.ini'
+
+    def read_all_config(self):
+        self.parser.read(self.path_config)
+        c_log = self.parser.getboolean('general', 'log')
+        c_console = self.parser.getboolean('general', 'console')
+        c_check = self.parser.getboolean('general', 'check')
+        c_csv = self.parser.getboolean('exports', 'csv')
+        return c_log, c_console, c_check, c_csv
+
+    def read_config(self, section, option, dtype=None):
+        self.parser.read(self.path_config)
+        if dtype == 'bool':
+            return self.parser.getboolean(section, option)
+        elif dtype == 'int':
+            return self.parser.getint(section, option)
+        elif dtype == 'float':
+            return self.parser.getfloat(section, option)
+        elif dtype is None:
+            return self.parser.get(section, option)
+
+    def set_config(self, section, option, value):
+        self.parser.set(section, option, value)
+
+    def write_config(self):
+        with open(self.path_config, 'wb') as config:
+            self.parser.write(config)
+
+
+class ObjectHandler(object):
+    def __init__(self, handler):
+        """
+
+        :param handler:
+        :return:
+        """
+        if handler == 'csv':
+            self.filename = 'data/CsvHandler.pkl'
+        else:
+            self.filename = ''
+
+    def save_object(self, obj):
+        """
+
+        :param obj:
+        :return:
+        """
+        with open(self.filename, 'wb') as _output:
+            Pickle.dump(obj, _output, -1)
+
+    def load_object(self):
+        """
+
+        :return:
+        """
+        with open(self.filename, 'rb') as _input:
+            return Pickle.load(_input)
 
 
 class CsvHandler(object):
