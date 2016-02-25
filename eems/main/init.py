@@ -5,27 +5,11 @@ logger module
 
 import time
 import logging
-import ConfigParser
-import ast
 import os
 import sys
 from eems.support.checks import Check
 from eems.support.detects import detect_ds18b20_sensors
 from eems.support.handlers import CsvHandler, ObjectHandler, ConfigHandler
-
-
-def read_config():
-    """
-
-    :return:
-    """
-    config = ConfigParser.ConfigParser()
-    config.read('data/config.ini')  # TODO Absoluter pfad muss getestet werden
-    c_log = ast.literal_eval(config.get('general', 'log'))
-    c_console = ast.literal_eval(config.get('general', 'console'))
-    c_check = ast.literal_eval(config.get('general', 'check'))
-    c_csv = ast.literal_eval(config.get('exports', 'csv'))
-    return c_log, c_console, c_check, c_csv
 
 
 def init(log=None, console=None, csv=None):
@@ -36,7 +20,8 @@ def init(log=None, console=None, csv=None):
     :param csv:
     :return:
     """
-    c_log, c_console, c_check, c_csv = read_config()
+    config_handler = ConfigHandler()
+    c_log, c_console, c_check, c_csv = config_handler.read_all_config()
     if log is None:
         log = c_log
     if console is None:
@@ -100,7 +85,6 @@ def init(log=None, console=None, csv=None):
             pass
 
         # generate config handler and save parameter to config file
-        config_handler = ConfigHandler()
         config_handler.set_config('exports', 'csv', True)
         config_handler.write_config()
 
