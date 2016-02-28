@@ -14,6 +14,11 @@ defining logger
 logger = logging.getLogger(__name__)
 
 
+"""
+detect ds18b20 sensors
+"""
+
+
 def detect_ds18b20_sensors():
     """Private function *detect_ds18b20_sensors* detects all connected DS18B20
     sensors.
