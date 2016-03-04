@@ -17,9 +17,7 @@ setup(
     author=__author__,
     author_email='henrik.baran@online.de, a.hoehn@mailbox.org',
     license='MIT',
-    install_requires=[
-        'numpy', 'matplotlib'
-    ],
+    install_requires=[],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: End Users/Desktop',
