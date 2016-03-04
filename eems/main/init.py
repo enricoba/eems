@@ -21,7 +21,7 @@ def init(log=None, console=None, csv=None):
     :return:
     """
     config_handler = ConfigHandler()
-    c_log, c_console, c_check, c_csv = config_handler.read_all_config()
+    c_log, c_console, c_csv = config_handler.read_all_config()
     if log is None:
         log = c_log
     if console is None:
@@ -87,6 +87,7 @@ def init(log=None, console=None, csv=None):
             pass
 
         # generate config handler and save parameter to config file
+        # TODO think about this!
         config_handler.set_config('exports', 'csv', True)
         config_handler.write_config()
 

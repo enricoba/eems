@@ -28,9 +28,8 @@ class ConfigHandler(object):
         self.parser.read(self.path_config)
         c_log = self.parser.getboolean('general', 'log')
         c_console = self.parser.getboolean('general', 'console')
-        c_check = self.parser.getboolean('general', 'check')
         c_csv = self.parser.getboolean('exports', 'csv')
-        return c_log, c_console, c_check, c_csv
+        return c_log, c_console, c_csv
 
     def read_config(self, section, option, dtype=None):
         self.parser.read(self.path_config)
