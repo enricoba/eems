@@ -8,6 +8,7 @@ import os
 import sys
 
 from eems.sensors import ds18b20
+from eems.support import checks
 
 
 class ArgumentParserError(Exception):
@@ -50,7 +51,7 @@ def main():  # TODO add manipulation of config file & add default
         sys.exit()
 
     if args.command == 'check':
-        c = ds18b20.Check()
+        c = checks.Check()
         if args.modules is True:
             c.w1_modules()
         elif args.config is True:
@@ -60,23 +61,23 @@ def main():  # TODO add manipulation of config file & add default
             c.w1_config()
 
     elif args.command == 'prepare':
-        c = ds18b20.Check()
-        c.prepare()
+        c = checks.Check()
+        c.w1_prepare()
 
     elif args.command == 'read':
-        t = ds18b20.Temp(console=True)
+        t = ds18b20.DS18B20()  # TODO: einstellungen für read überprüfen, console muss True sein
         t.read()
 
     elif args.command == 'monitor':
-        if args.csv is True:
+        if args.csv is True:  # TODO: csv command muss über config-file oder init abgerufen werden
             csv = True
         else:
             csv = None
-        if args.log is True:
+        if args.log is True:  # TODO: log command muss über config-file oder init abgerufen werden
             log = True
         else:
             log = None
-        if args.console is True:
+        if args.console is True:  # TODO: console command muss über config-file oder init abgerufen werden
             console = True
         else:
             console = None
@@ -88,7 +89,7 @@ def main():  # TODO add manipulation of config file & add default
             duration = args.duration
         else:
             duration = None
-        t = ds18b20.Temp(csv=csv, log=log, console=console)
+        t = ds18b20.DS18B20()
         t.monitor(interval=interval, duration=duration)
     else:
         print read_help()

@@ -81,7 +81,7 @@ Public classes / functions
 
 class DS18B20(object):
     def __init__(self):
-        """Public Class *Temp* detects connected DS18B20 one-wire sensors
+        """Public Class *DS18B20* detects connected DS18B20 one-wire sensors
         and provides functions to read the sensors. This class uses the
         standard library module *logger* for handling outputs.
 

@@ -69,6 +69,7 @@ def init(log=None, console=None, csv=None):
     if c.w1_config() is True and c.w1_modules() is True:
         pass
     else:
+        logger.error('Check for DS18B20 failed.')
         sys.exit()
 
     # CSV
@@ -80,6 +81,7 @@ def init(log=None, console=None, csv=None):
                                             filename_script)
         sensors = detect_ds18b20_sensors()
         if sensors is False:
+            logger.error('No DS18B20 sensors detected')
             sys.exit()
         else:
             pass
