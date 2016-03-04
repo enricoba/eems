@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-logger module
+Init module
 """
 
 import time
