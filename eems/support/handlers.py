@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 class ConfigHandler(object):
     def __init__(self):
         self.parser = ConfigParser.ConfigParser()
-        self.path_config = 'data/config.ini'
+        self.path_config = 'eems/data/config.ini'
 
     def read_all_config(self):
         self.parser.read(self.path_config)
