@@ -99,12 +99,6 @@ class DS18B20(object):
         pid = os.getpid()
         logger.debug('Process PID: {0}'.format(pid))
 
-        sensors = detect_ds18b20_sensors(init=False)
-        if sensors is False:
-            sys.exit()
-        else:
-            self.sensor_dict = _SensorDictionary(sensors)
-
         config_handler = ConfigHandler()
         if config_handler.read_config('exports', 'csv', dtype='bool') is True:
             self.csv = True
@@ -112,6 +106,15 @@ class DS18B20(object):
             self.CsvHandler = object_handler.load_object()
         else:
             self.csv = False
+
+        if self.csv is True:
+            sensors = detect_ds18b20_sensors(init=False)
+        else:
+            sensors = detect_ds18b20_sensors()
+        if sensors is False:
+            sys.exit()
+        else:
+            self.sensor_dict = _SensorDictionary(sensors)
 
     def __read_slave(self, sensor):
         """Private function *__read_slave* reads the file *w1_slave* of a
@@ -130,7 +133,6 @@ class DS18B20(object):
         except IOError as e:
             logger.error('{}'.format(e))
         else:
-            # if x == 3:
             if file_content[0].strip()[-3:] == 'YES':
                 value = file_content[1].strip()[29:]
                 t = round(float(value) / 1000, 2)
