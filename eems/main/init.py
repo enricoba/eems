@@ -20,6 +20,15 @@ def init(log=None, console=None, csv=None):
     :param csv:
     :return:
     """
+    config_handler = ConfigHandler()
+    c_log, c_console, c_csv = config_handler.read_all_config()
+    if log is None:
+        log = c_log
+    if console is None:
+        console = c_console
+    if csv is None:
+        csv = c_csv
+
     # validate user input
     if isinstance(log, bool) is True:
         pass
@@ -36,15 +45,6 @@ def init(log=None, console=None, csv=None):
     else:
         print 'Parameter *csv* must be *True* or *False*'
         sys.exit()
-
-    config_handler = ConfigHandler()
-    c_log, c_console, c_csv = config_handler.read_all_config()
-    if log is None:
-        log = c_log
-    if console is None:
-        console = c_console
-    if csv is None:
-        csv = c_csv
 
     # save parameter to config file
     if log is True:
