@@ -10,19 +10,20 @@ import time
 import logging
 import cPickle as Pickle
 import ConfigParser
-
+import eems
 
 """
 defining logger
 """
 
 logger = logging.getLogger(__name__)
+path = eems.__path__[0]
 
 
 class ConfigHandler(object):
     def __init__(self):
         self.parser = ConfigParser.ConfigParser()
-        self.path_config = 'data/config.ini'
+        self.path_config = '{0}/data/config.ini'.format(path)
 
     def read_all_config(self):
         self.parser.read(self.path_config)
@@ -59,7 +60,7 @@ class ObjectHandler(object):
         :return:
         """
         if handler == 'csv':
-            self.filename = 'data/CsvHandler.pkl'
+            self.filename = '{0}/data/CsvHandler.pkl'.format(path)
         else:
             self.filename = ''
 
