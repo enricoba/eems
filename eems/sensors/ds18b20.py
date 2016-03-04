@@ -123,26 +123,24 @@ class DS18B20(object):
             Returns *None*.
         """
         dir_file = '/sys/bus/w1/devices/' + sensor
-        for x in range(4):
-            try:
-                with open(dir_file + '/w1_slave', 'r') as slave:
-                    file_content = slave.readlines()
-            except IOError as e:
-                logger.error('{}'.format(e))
+        # for x in range(4):
+        try:
+            with open(dir_file + '/w1_slave', 'r') as slave:
+                file_content = slave.readlines()
+        except IOError as e:
+            logger.error('{}'.format(e))
+        else:
+            # if x == 3:
+            if file_content[0].strip()[-3:] == 'YES':
+                value = file_content[1].strip()[29:]
+                t = round(float(value) / 1000, 2)
+                self.sensor_dict.set_temp(sensor, t)
+                logger.info('Sensor: {0} - read successful - '
+                            '{1}°C'.format(sensor, t))
             else:
-                if x == 3:
-                    logger.warning('Sensor: {0} - read failed '
-                                   '(Wrong CRC?)'.format(sensor))
-                    self.sensor_dict.set_temp(sensor, 'n/a')
-                elif file_content[0].strip()[-3:] == 'YES':
-                    value = file_content[1].strip()[29:]
-                    t = round(float(value) / 1000, 2)
-                    self.sensor_dict.set_temp(sensor, t)
-                    logger.info('Sensor: {0} - read successful - '
-                                '{1}°C'.format(sensor, t))
-                    break
-                else:
-                    time.sleep(0.2)
+                logger.warning('Sensor: {0} - read failed '
+                               '(Wrong CRC?)'.format(sensor))
+                self.sensor_dict.set_temp(sensor, 'n/a')
 
     def __read_sensors(self):
         """Private function *__read_sensors* reads all connected DS18B20 sensors
