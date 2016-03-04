@@ -161,8 +161,8 @@ class DS18B20(object):
         for t in threads:
             t.setDaemon(True)
             t.start()
-        for t in threads:
-            t.join()
+        # for t in threads:
+        #    t.join()
         # self.read_flag.set()
 
     def read(self):
