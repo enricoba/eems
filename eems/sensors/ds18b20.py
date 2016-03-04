@@ -228,19 +228,16 @@ class DS18B20(object):
                 sys.exit()
             worker = Thread(target=self.__start_read, args=(interval,))
             logger.debug('Thread monitor was added')
-            if duration is None:
-                pass
+            if duration > interval:
+                watchdog = Thread(target=self.__watchdog,
+                                  args=(duration, interval))
+                watchdog.setDaemon(True)
+                logger.debug('Watchdog_one has started with a duration'
+                             ' of {0}s'.format(duration))
+                watchdog.start()
             else:
-                if duration > interval:
-                    watchdog = Thread(target=self.__watchdog,
-                                      args=(duration, interval))
-                    watchdog.setDaemon(True)
-                    logger.debug('Watchdog_one has started with a duration'
-                                 ' of {0}s'.format(duration))
-                    watchdog.start()
-                else:
-                    logger.error('Duration must be longer than the interval')
-                    sys.exit()
+                logger.error('Duration must be longer than the interval')
+                sys.exit()
             worker.start()
             self.flag = True
             logger.debug('Thread monitor has started with an '
