@@ -43,6 +43,7 @@ class ConfigHandler(object):
             return self.parser.get(section, option)
 
     def set_config(self, section, option, value):
+        self.parser.read(self.path_config)
         self.parser.set(section, option, value)
 
     def write_config(self):
