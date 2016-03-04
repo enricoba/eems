@@ -33,17 +33,17 @@ def init(log=None, console=None, csv=None):
     if isinstance(log, bool) is True:
         pass
     else:
-        print 'Parameter *log* must be *True* or *False*'
+        print 'Parameter *log* must be a bool'
         sys.exit()
     if isinstance(console, bool) is True:
         pass
     else:
-        print 'Parameter *console* must be *True* or *False*'
+        print 'Parameter *console* must be a bool'
         sys.exit()
     if isinstance(csv, bool) is True:
         pass
     else:
-        print 'Parameter *csv* must be *True* or *False*'
+        print 'Parameter *csv* must be a bool'
         sys.exit()
 
     # save parameter to config file

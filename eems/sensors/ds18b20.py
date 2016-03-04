@@ -197,6 +197,21 @@ class DS18B20(object):
         :return:
             Returns *None*.
         """
+        # validate user input
+        if isinstance(interval, int) is True:
+            pass
+        else:
+            logger.error('Parameter *interval* must be an integer')
+            sys.exit()
+        if duration is None:
+            pass
+        else:
+            if isinstance(duration, int) is True:
+                pass
+            else:
+                logger.error('Parameter *duration* must be an integer')
+                sys.exit()
+
         if self.flag is False:
             if interval < 2:
                 logger.error('Interval must be >= 2s')
