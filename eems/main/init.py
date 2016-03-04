@@ -20,12 +20,37 @@ def init(log=None, console=None, csv=None):
     :param csv:
     :return:
     """
+    # validate user input
+    if isinstance(log, bool) is True:
+        pass
+    else:
+        print 'Parameter *log* must be *True* or *False*'
+        sys.exit()
+    if isinstance(console, bool) is True:
+        pass
+    else:
+        print 'Parameter *console* must be *True* or *False*'
+        sys.exit()
+    if isinstance(csv, bool) is True:
+        pass
+    else:
+        print 'Parameter *csv* must be *True* or *False*'
+        sys.exit()
+
     config_handler = ConfigHandler()
     c_log, c_console, c_csv = config_handler.read_all_config()
     if log is None:
         log = c_log
     if console is None:
         console = c_console
+    if csv is None:
+        csv = c_csv
+
+    # save parameter to config file
+    if log is True:
+        config_handler.set_config('general', 'log', True)
+    elif log is False:
+        config_handler.set_config('general', 'log', False)
 
     # logger
     str_date = time.strftime('%Y-%m-%d')
@@ -38,6 +63,9 @@ def init(log=None, console=None, csv=None):
         filename_script = 'eems'
 
     if log is True:
+        # save parameter to config file
+        config_handler.set_config('general', 'log', True)
+
         log_file = '{0}_{1}_{2}.txt'.format(str_date, str_time,
                                             filename_script)
         logging.basicConfig(level=logging.DEBUG,
@@ -54,6 +82,9 @@ def init(log=None, console=None, csv=None):
         logger = logging.getLogger(__name__)
         logger.info('Logfile has been created')
     else:
+        # save parameter to config file
+        config_handler.set_config('general', 'log', False)
+
         logging.basicConfig(level=logging.INFO,
                             format=log_format,
                             datefmt=log_date_format)
@@ -73,9 +104,10 @@ def init(log=None, console=None, csv=None):
         sys.exit()
 
     # CSV
-    if csv is None:
-        csv = c_csv
     if csv is True:
+        # save parameter to config file
+        config_handler.set_config('exports', 'csv', True)
+
         csv_file = '{0}_{1}_{2}.csv'.format(str_date,
                                             str_time,
                                             filename_script)
@@ -86,12 +118,9 @@ def init(log=None, console=None, csv=None):
         else:
             pass
 
-        # generate config handler and save parameter to config file
-        # TODO think about this!
-        config_handler.set_config('exports', 'csv', True)
-        config_handler.write_config()
-
         # generate csv handler and save to pkl file
         csv_handler = CsvHandler(csv_file, sensors)
         object_handler = ObjectHandler('csv')
         object_handler.save_object(csv_handler)
+
+    config_handler.write_config()
