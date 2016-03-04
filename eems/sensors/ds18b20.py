@@ -183,7 +183,7 @@ class DS18B20(object):
             self.CsvHandler.write(result.values())
             return result
 
-    def monitor(self, interval=60, duration=None):
+    def monitor(self, interval=None, duration=None):
         """Public function *monitor* starts a thread to read connected
         DS18B20 sensors within an interval over a duration.
 
@@ -197,20 +197,30 @@ class DS18B20(object):
         :return:
             Returns *None*.
         """
+        config_handler = ConfigHandler()
+
         # validate user input
-        if isinstance(interval, int) is True:
+        if interval is None:
+            interval = config_handler.read_config('monitor', 'interval', 'int')
             pass
         else:
-            logger.error('Parameter *interval* must be an integer')
-            sys.exit()
+            if isinstance(interval, int) is True:
+                config_handler.set_config('monitor', 'interval', interval)
+                pass
+            else:
+                logger.error('Parameter *interval* must be an integer')
+                sys.exit()
         if duration is None:
+            duration = config_handler.read_config('monitor', 'duration', 'int')
             pass
         else:
             if isinstance(duration, int) is True:
+                config_handler.set_config('monitor', 'duration', duration)
                 pass
             else:
                 logger.error('Parameter *duration* must be an integer')
                 sys.exit()
+        config_handler.write_config()
 
         if self.flag is False:
             if interval < 2:
