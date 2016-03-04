@@ -92,14 +92,14 @@ class DS18B20(object):
         self.str_date = time.strftime('%Y-%m-%d')
         self.str_time = time.strftime('%H-%M-%S')
         self.event = Event()
-        #self.read_flag = Event()
+        # self.read_flag = Event()
         self.flag = False
         self.stop = False
 
         pid = os.getpid()
         logger.debug('Process PID: {0}'.format(pid))
 
-        sensors = detect_ds18b20_sensors()
+        sensors = detect_ds18b20_sensors(init=False)
         if sensors is False:
             sys.exit()
         else:
@@ -152,7 +152,7 @@ class DS18B20(object):
         :return:
             Returns *None*.
         """
-        #self.read_flag.clear()
+        # self.read_flag.clear()
         threads = []
         dic = self.sensor_dict.get_dic()
         for sensor in dic.keys():
@@ -163,7 +163,7 @@ class DS18B20(object):
             t.start()
         for t in threads:
             t.join()
-        #self.read_flag.set()
+        # self.read_flag.set()
 
     def read(self):
         """Public function *read* reads all connected DS18B20 sensors once.
@@ -224,7 +224,7 @@ class DS18B20(object):
                 while self.stop is False:
                     time.sleep(0.25)
             except KeyboardInterrupt:
-                #self.read_flag.wait()
+                # self.read_flag.wait()
                 self.__stop(trigger='keyboard')
         else:
             logger.warning('Already one read thread is running, '
@@ -245,7 +245,7 @@ class DS18B20(object):
         timestamp += interval
         t = timestamp - time.time()
         time.sleep(duration + t)
-        #self.read_flag.wait()
+        # self.read_flag.wait()
         self.__stop(trigger='watchdog')
 
     def __start_read(self, interval):
