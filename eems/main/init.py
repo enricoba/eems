@@ -49,8 +49,16 @@ def init(log=None, console=None, csv=None):
     # save parameter to config file
     if log is True:
         config_handler.set_config('general', 'log', True)
+        config_handler.write_config()
     elif log is False:
         config_handler.set_config('general', 'log', False)
+        config_handler.write_config()
+    if console is True:
+        config_handler.set_config('general', 'console', True)
+        config_handler.write_config()
+    elif console is False:
+        config_handler.set_config('general', 'console', False)
+        config_handler.write_config()
 
     # logger
     str_date = time.strftime('%Y-%m-%d')
@@ -107,6 +115,7 @@ def init(log=None, console=None, csv=None):
     if csv is True:
         # save parameter to config file
         config_handler.set_config('exports', 'csv', True)
+        config_handler.write_config()
 
         csv_file = '{0}_{1}_{2}.csv'.format(str_date,
                                             str_time,
@@ -122,5 +131,6 @@ def init(log=None, console=None, csv=None):
         csv_handler = CsvHandler(csv_file, sensors)
         object_handler = ObjectHandler('csv')
         object_handler.save_object(csv_handler)
-
-    config_handler.write_config()
+    elif csv is False:
+        config_handler.set_config('exports', 'csv', False)
+        config_handler.write_config()

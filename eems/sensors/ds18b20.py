@@ -206,6 +206,7 @@ class DS18B20(object):
         else:
             if isinstance(interval, int) is True:
                 config_handler.set_config('monitor', 'interval', interval)
+                config_handler.write_config()
                 pass
             else:
                 logger.error('Parameter *interval* must be an integer')
@@ -216,11 +217,11 @@ class DS18B20(object):
         else:
             if isinstance(duration, int) is True:
                 config_handler.set_config('monitor', 'duration', duration)
+                config_handler.write_config()
                 pass
             else:
                 logger.error('Parameter *duration* must be an integer')
                 sys.exit()
-        config_handler.write_config()
 
         if self.flag is False:
             if interval < 2:
