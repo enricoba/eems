@@ -205,6 +205,7 @@ class DS18B20(object):
             pass
         else:
             if isinstance(interval, int) is True:
+                print interval
                 config_handler.set_config('monitor', 'interval', interval)
                 pass
             else:
