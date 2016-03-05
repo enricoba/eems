@@ -4,7 +4,7 @@ Setup file for eems.
 """
 
 from setuptools import setup, find_packages
-from eems import __project__, __version__, __author__, __user__
+from eems import __project__, __version__, __author__
 import subprocess
 
 
@@ -39,11 +39,11 @@ setup(  # TODO SUDO INSTALL REQUIREMENTS
         'console_scripts': ['eems = eems.scripts:main']
     },
     data_files=[
-        ('/home/{}/eems'.format(__user__), ['eems/data/config.ini']),
-        ('/home/{}/eems'.format(__user__), ['eems/data/help.txt'])
+        ('/home/pi/eems', ['eems/data/config.ini']),
+        ('/home/pi/eems', ['eems/data/help.txt'])
     ]
 )
 
 # set correct rights
-args = ['sudo', 'chown', '-cR', '{}'.format(__user__), '/home/pi/eems']
+args = ['sudo', 'chown', '-cR', 'pi:pi', '/home/pi/eems']
 subprocess.Popen(args)
