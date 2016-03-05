@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 from eems import __project__, __version__, __author__
 
 
-setup(
+setup(  # TODO SUDO INSTALL REQUIREMENTS
     name=__project__,
     version=__version__,
     description='eems - easy energy monitoring system',
@@ -17,7 +17,9 @@ setup(
     author=__author__,
     author_email='henrik.baran@online.de, a.hoehn@mailbox.org',
     license='MIT',
-    install_requires=[],
+    install_requires=[
+        'numpy'
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: End Users/Desktop',
@@ -29,10 +31,13 @@ setup(
     ],
     keywords='easy energy monitoring system raspberrry pi',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    package_data={
-        'eems': ['data/*'],
-    },
+    # package_data={
+    #    'eems': ['data/*'],
+    # },
     entry_points={
         'console_scripts': ['eems = eems.scripts:main']
-    }
+    },
+    data_files=[
+        ('/home/pi/eems', ['eems/data/*'])
+    ]
 )
