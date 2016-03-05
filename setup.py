@@ -46,4 +46,4 @@ setup(  # TODO SUDO INSTALL REQUIREMENTS
 )
 
 print 'start popen'
-subprocess.call(['sudo', '/home/pi/eems/./make.sh'])
+subprocess.call(['sudo', 'chown', '-cR', '$USER:$USER', '/home/pi/eems'])
