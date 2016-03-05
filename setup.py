@@ -6,7 +6,7 @@ Setup file for eems.
 from setuptools import setup, find_packages
 from eems import __project__, __version__, __author__
 import subprocess
-import getpass
+import os
 
 
 setup(  # TODO SUDO INSTALL REQUIREMENTS
@@ -47,7 +47,7 @@ setup(  # TODO SUDO INSTALL REQUIREMENTS
 
 # set correct rights
 print 'start'
-user = getpass.getuser()
+user = os.getlogin()
 print user
 args = ['sudo', 'chown', '-cR', '{}'.format(user), '/home/pi/eems']
 subprocess.Popen(args)
