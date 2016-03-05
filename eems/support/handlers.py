@@ -10,6 +10,7 @@ import time
 import logging
 import cPickle as Pickle
 import ConfigParser
+from threading import Lock
 
 
 """
@@ -17,6 +18,23 @@ defining logger
 """
 
 logger = logging.getLogger(__name__)
+
+
+class StatusHandler(object):
+    def __init__(self, bol_status):
+        self.status = bol_status
+        self.lock = Lock()
+
+    def get(self):
+        return self.status
+
+    def on(self):
+        with self.lock:
+            self.status = True
+
+    def off(self):
+        with self.lock:
+            self.status = False
 
 
 class ConfigHandler(object):
