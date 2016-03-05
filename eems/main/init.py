@@ -10,6 +10,7 @@ import sys
 from eems.support.checks import Check
 from eems.support.detects import detect_ds18b20_sensors
 from eems.support.handlers import CsvHandler, ObjectHandler, ConfigHandler
+from eems import __user__
 
 
 def init(log=None, console=None, csv=None):
@@ -20,6 +21,13 @@ def init(log=None, console=None, csv=None):
     :param csv:
     :return:
     """
+    # validate install location
+    if os.getlogin() is __user__:
+        pass
+    else:
+        print 'eems has been installed on another user'
+        sys.exit()
+
     config_handler = ConfigHandler()
     c_log, c_console, c_csv = config_handler.read_all_config()
     if log is None:
