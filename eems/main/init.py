@@ -69,13 +69,14 @@ def init(log=None, console=None, csv=None):
         filename_script = os.path.basename(sys.argv[0])[:-3]
     else:
         filename_script = 'eems'
+    path = '/home/pi/'
 
     if log is True:
         # save parameter to config file
         config_handler.set_config('general', 'log', True)
 
-        log_file = '{0}_{1}_{2}.txt'.format(str_date, str_time,
-                                            filename_script)
+        log_file = '{0}{1}_{2}_{3}.txt'.format(path, str_date, str_time,
+                                               filename_script)
         logging.basicConfig(level=logging.DEBUG,
                             format=log_format,
                             datefmt=log_date_format,
@@ -117,9 +118,8 @@ def init(log=None, console=None, csv=None):
         config_handler.set_config('exports', 'csv', True)
         config_handler.write_config()
 
-        csv_file = '{0}_{1}_{2}.csv'.format(str_date,
-                                            str_time,
-                                            filename_script)
+        csv_file = '{0}{1}_{2}_{3}.csv'.format(path, str_date, str_time,
+                                               filename_script)
         sensors = detect_ds18b20_sensors()
         if sensors is False:
             logger.error('No DS18B20 sensors detected')
