@@ -1,0 +1,3 @@
+#!/bin/bash
+
+chown -cR $USER:$USER /home/pi/eems

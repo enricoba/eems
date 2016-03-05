@@ -5,6 +5,7 @@ Setup file for eems.
 
 from setuptools import setup, find_packages
 from eems import __project__, __version__, __author__
+import subprocess
 
 
 setup(  # TODO SUDO INSTALL REQUIREMENTS
@@ -19,7 +20,7 @@ setup(  # TODO SUDO INSTALL REQUIREMENTS
     license='MIT',
     # install_requires=[
     #    'numpy'
-    #],
+    # ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: End Users/Desktop',
@@ -42,3 +43,4 @@ setup(  # TODO SUDO INSTALL REQUIREMENTS
         ('/home/pi/eems', ['eems/data/help.txt'])
     ]
 )
+
