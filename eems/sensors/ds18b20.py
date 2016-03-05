@@ -11,7 +11,6 @@ import logging
 from eems.support.detects import detect_ds18b20_sensors
 from threading import Thread, Lock, Event
 from eems.support.handlers import ObjectHandler, ConfigHandler
-# from eems import __init__
 
 
 """

@@ -10,7 +10,6 @@ import sys
 from eems.support.checks import Check
 from eems.support.detects import detect_ds18b20_sensors
 from eems.support.handlers import CsvHandler, ObjectHandler, ConfigHandler
-# from eems import __init__
 
 
 def init(log=None, console=None, csv=None):
