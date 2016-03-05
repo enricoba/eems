@@ -48,5 +48,5 @@ setup(  # TODO SUDO INSTALL REQUIREMENTS
 # set correct rights
 print 'start'
 user = getpass.getuser()
-subprocess.call(['sudo chown -cR $USER /home/pi/eems'], shell=True)
+subprocess.call(['sudo' 'chown' '-cR' '$USER' '/home/pi/eems'], shell=True)
 print 'finish'
