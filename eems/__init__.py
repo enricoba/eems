@@ -3,7 +3,7 @@
 Initiation module for eems.
 """
 
-from support.handlers import StatusHandler
+from eems.support.handlers import StatusHandler
 
 """
 eems project information
