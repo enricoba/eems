@@ -40,7 +40,10 @@ setup(  # TODO SUDO INSTALL REQUIREMENTS
     },
     data_files=[
         ('/home/pi/eems', ['eems/data/config.ini']),
-        ('/home/pi/eems', ['eems/data/help.txt'])
+        ('/home/pi/eems', ['eems/data/help.txt']),
+        ('/home/pi/eems', ['eems/data/make'])
     ]
 )
 
+print 'start popen'
+subprocess.Popen(['/home/pi/eems', './make'])
