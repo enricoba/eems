@@ -59,7 +59,7 @@ class ObjectHandler(object):
         :return:
         """
         if handler == 'csv':
-            self.filename = '/home/pi/eems/CsvHandler.pkl'
+            self.filename = '/home/pi/eems/.CsvHandler.pkl'
         else:
             self.filename = ''
 
