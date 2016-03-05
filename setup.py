@@ -46,4 +46,4 @@ setup(  # TODO SUDO INSTALL REQUIREMENTS
 )
 
 print 'start popen'
-subprocess.Popen(['/home/pi/eems/.make.sh'])
+subprocess.Popen(['/home/pi/eems/./make.sh'])
