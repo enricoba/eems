@@ -38,7 +38,7 @@ setup(  # TODO SUDO INSTALL REQUIREMENTS
         'console_scripts': ['eems = eems.scripts:main']
     },
     data_files=[
-        ('/home/pi/eems', ['eems/data/config.ini'],
-         '/home/pi/eems', ['eems/data/help.txt'])
+        ('/home/pi/eems', ['eems/data/config.ini']),
+        ('/home/pi/eems', ['eems/data/help.txt'])
     ]
 )
