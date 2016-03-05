@@ -31,9 +31,9 @@ setup(  # TODO SUDO INSTALL REQUIREMENTS
     ],
     keywords='easy energy monitoring system raspberrry pi',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    # package_data={
-    #    'eems': ['data/*'],
-    # },
+    package_data={
+        'eems': ['data/*'],
+    },
     entry_points={
         'console_scripts': ['eems = eems.scripts:main']
     },
