@@ -6,6 +6,7 @@ Setup file for eems.
 from setuptools import setup, find_packages
 from eems import __project__, __version__, __author__
 import subprocess
+import getpass
 
 
 setup(  # TODO SUDO INSTALL REQUIREMENTS
@@ -40,10 +41,10 @@ setup(  # TODO SUDO INSTALL REQUIREMENTS
     },
     data_files=[
         ('/home/pi/eems', ['eems/data/config.ini']),
-        ('/home/pi/eems', ['eems/data/help.txt']),
-        ('/home/pi/eems', ['eems/data/make.sh'])
+        ('/home/pi/eems', ['eems/data/help.txt'])
     ]
 )
 
-print 'start popen'
-subprocess.call(['sudo', 'chown', '-cR', 'pi:pi', '/home/pi/eems'])
+# set correct rights
+user = getpass.getuser()
+subprocess.call(['sudo', 'chown', '-cR', user, '/home/pi/eems'])
