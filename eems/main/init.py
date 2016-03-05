@@ -77,6 +77,7 @@ def init(log=None, console=None, csv=None):
 
         log_file = '{0}{1}_{2}_{3}.txt'.format(path, str_date, str_time,
                                                filename_script)
+        print log_file
         logging.basicConfig(level=logging.DEBUG,
                             format=log_format,
                             datefmt=log_date_format,
@@ -120,6 +121,7 @@ def init(log=None, console=None, csv=None):
 
         csv_file = '{0}{1}_{2}_{3}.csv'.format(path, str_date, str_time,
                                                filename_script)
+        print csv_file
         sensors = detect_ds18b20_sensors()
         if sensors is False:
             logger.error('No DS18B20 sensors detected')
