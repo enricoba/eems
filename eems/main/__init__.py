@@ -3,4 +3,4 @@
 Main package providing modules for eems.
 """
 
-__all__ = ['init', 'scripts']
+__all__ = ['logger', 'scripts']
