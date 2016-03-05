@@ -21,12 +21,12 @@ def init(log=None, console=None, csv=None):
     :return:
     """
     # validate install location
-    user = os.getlogin()
+    """user = os.getlogin()
     if os.path.exists('/home/{}/eems/config.ini'.format(user)) is True:
         pass
     else:
         print 'eems has been installed on another user'
-        sys.exit()
+        sys.exit()"""
 
     config_handler = ConfigHandler()
     c_log, c_console, c_csv = config_handler.read_all_config()
