@@ -7,11 +7,11 @@ import time
 import logging
 import os
 import sys
-from support.checks import Check
-from support.detects import detect_ds18b20_sensors
-from support.handlers import CsvHandler, ObjectHandler, ConfigHandler
-from sensors.ds18b20 import DS18B20
-# from __init__ import __flag__
+from eems.support.checks import Check
+from eems.support.detects import detect_ds18b20_sensors
+from eems.support.handlers import CsvHandler, ObjectHandler, ConfigHandler
+from eems.sensors.ds18b20 import DS18B20
+from eems import __flag__
 
 
 __all__ = ['DS18B20']
@@ -140,6 +140,6 @@ def init(log=None, console=None, csv=None):
         config_handler.set_config('exports', 'csv', False)
         config_handler.write_config()
     print 'ich bin in eems.py'
-    print 'flag object '# , __flag__
+    print 'flag object ', __flag__
     print __name__
-    # __flag__.on()
+    __flag__.on()

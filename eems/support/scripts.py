@@ -7,8 +7,8 @@ import argparse
 import os
 import sys
 
-from eems.sensors import ds18b20
-from eems.support import checks
+from eems.main import checks
+from eems.main import ds18b20
 
 
 class ArgumentParserError(Exception):
