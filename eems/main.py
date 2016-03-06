@@ -13,7 +13,9 @@ from eems.support.handlers import CsvHandler, ObjectHandler, ConfigHandler
 from eems.sensors.ds18b20 import DS18B20
 from eems import __flag__
 
-
+print 'start von main.py'
+print __flag__
+print __flag__.get()
 __all__ = ['DS18B20']
 
 
