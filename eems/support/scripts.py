@@ -7,8 +7,8 @@ import argparse
 import os
 import sys
 
-from eems.main import checks
-from eems.main import ds18b20
+from eems.bla import checks
+from eems.bla import ds18b20
 
 
 class ArgumentParserError(Exception):
