@@ -92,6 +92,7 @@ class DS18B20(object):
         """
         print 'ich bin in ds1b20.py'
         print 'flag logger ', __flag__
+        print __name__
         if __flag__.get() is True:
             print 'is TRUE'
             pass
