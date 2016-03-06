@@ -7,9 +7,13 @@ import time
 import logging
 import os
 import sys
-from eems.support.checks import Check
-from eems.support.detects import detect_ds18b20_sensors
-from eems.support.handlers import CsvHandler, ObjectHandler, ConfigHandler
+from support.checks import Check
+from support.detects import detect_ds18b20_sensors
+from support.handlers import CsvHandler, ObjectHandler, ConfigHandler
+from sensors.ds18b20 import DS18B20
+
+
+__all__ = ['DS18B20']
 
 
 def init(log=None, console=None, csv=None):
