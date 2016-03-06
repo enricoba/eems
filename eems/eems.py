@@ -11,6 +11,7 @@ from support.checks import Check
 from support.detects import detect_ds18b20_sensors
 from support.handlers import CsvHandler, ObjectHandler, ConfigHandler
 from sensors.ds18b20 import DS18B20
+from __init__ import __flag__
 
 
 __all__ = ['DS18B20']
@@ -139,4 +140,4 @@ def init(log=None, console=None, csv=None):
         config_handler.set_config('exports', 'csv', False)
         config_handler.write_config()
 
-    # __init__.on()
+    __flag__.on()

@@ -11,6 +11,7 @@ import logging
 from eems.support.detects import detect_ds18b20_sensors
 from threading import Thread, Lock, Event
 from eems.support.handlers import ObjectHandler, ConfigHandler
+from eems import __flag__
 
 
 """
@@ -89,11 +90,12 @@ class DS18B20(object):
             Returns an object providing the public functions *read* and
             *monitor*.
         """
-        """if __init__.get() is True:
+        if __flag__.get() is True:
+            print 'is TRUE'
             pass
         else:
             logger.error('please call *init* first')
-            sys.exit()"""
+            sys.exit()
 
         self.str_date = time.strftime('%Y-%m-%d')
         self.str_time = time.strftime('%H-%M-%S')
