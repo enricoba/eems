@@ -90,6 +90,8 @@ class DS18B20(object):
             Returns an object providing the public functions *read* and
             *monitor*.
         """
+        print 'ich bin in ds1b20.py'
+        print 'flag logger ', __flag__
         if __flag__.get() is True:
             print 'is TRUE'
             pass

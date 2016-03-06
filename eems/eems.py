@@ -139,5 +139,6 @@ def init(log=None, console=None, csv=None):
     elif csv is False:
         config_handler.set_config('exports', 'csv', False)
         config_handler.write_config()
-
+    print 'ich bin in eems.py'
+    print 'flag object ', __flag__
     __flag__.on()
