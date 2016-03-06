@@ -7,10 +7,10 @@ import time
 import logging
 import os
 import sys
-from support.checks import Check
-from support.detects import detect_ds18b20_sensors
-from support.handlers import CsvHandler, ObjectHandler, ConfigHandler
-from sensors.ds18b20 import DS18B20
+from eems.support.checks import Check
+from eems.support.detects import detect_ds18b20_sensors
+from eems.support.handlers import CsvHandler, ObjectHandler, ConfigHandler
+from eems.sensors.ds18b20 import DS18B20
 from eems import __flag__
 
 print 'start von main.py'

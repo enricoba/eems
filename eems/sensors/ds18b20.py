@@ -8,9 +8,9 @@ import os
 import sys
 import time
 import logging
-from ..support.detects import detect_ds18b20_sensors
+from eems.support.detects import detect_ds18b20_sensors
 from threading import Thread, Lock, Event
-from ..support.handlers import ObjectHandler, ConfigHandler
+from eems.support.handlers import ObjectHandler, ConfigHandler
 from eems import __flag__
 
 
