@@ -103,7 +103,7 @@ class DS18B20(object):
         self.stop = False
 
         pid = os.getpid()
-        logger.debug('Process PID: {0}'.format(pid))
+        logger.debug('Process PID: {}'.format(pid))
 
         # get csv status
         self.csv = __flag__.get('csv')
@@ -138,10 +138,10 @@ class DS18B20(object):
                 value = file_content[1].strip()[29:]
                 t = round(float(value) / 1000, 2)
                 self.sensor_dict.set_temp(sensor, t)
-                logger.info('Sensor: {0} - read successful - '
-                            '{1}°C'.format(sensor, t))
+                logger.info('Sensor: {} - read successful - '
+                            '{}°C'.format(sensor, t))
             else:
-                logger.warning('Sensor: {0} - read failed '
+                logger.warning('Sensor: {} - read failed '
                                '(Wrong CRC?)'.format(sensor))
                 self.sensor_dict.set_temp(sensor, 'n/a')
 
@@ -234,7 +234,7 @@ class DS18B20(object):
                                   args=(duration, interval))
                 watchdog.setDaemon(True)
                 logger.debug('Watchdog_one has started with a duration'
-                             ' of {0}s'.format(duration))
+                             ' of {}s'.format(duration))
                 watchdog.start()
             else:
                 logger.error('Duration must be longer than the interval')
@@ -242,7 +242,7 @@ class DS18B20(object):
             worker.start()
             self.flag = True
             logger.debug('Thread monitor has started with an '
-                         'interval of {1}s'.format(worker, interval))
+                         'interval of {}s'.format(interval))
             try:
                 while self.stop is False:
                     time.sleep(0.25)

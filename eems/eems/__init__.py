@@ -78,8 +78,8 @@ def init(log=None, console=None, csv=None):
         __config__.set_config('general', 'log', True)
         __config__.write_config()
 
-        log_file = '{0}{1}_{2}_{3}.txt'.format(__home__, str_date, str_time,
-                                               filename_script)
+        log_file = '{}{}_{}_{}.txt'.format(__home__, str_date, str_time,
+                                           filename_script)
         logging.basicConfig(level=logging.DEBUG,
                             format=log_format,
                             datefmt=log_date_format,
@@ -123,8 +123,7 @@ def init(log=None, console=None, csv=None):
         __config__.write_config()
         __flag__.on('csv')
 
-        csv_file = '{1}_{2}_{3}.csv'.format(str_date, str_time,
-                                            filename_script)
+        csv_file = '{}_{}_{}.csv'.format(str_date, str_time, filename_script)
         sensors = ds18b20_sensors()
         if sensors is False:
             logger.error('No DS18B20 sensors detected')
