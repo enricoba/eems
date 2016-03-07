@@ -19,7 +19,7 @@ detect ds18b20 sensors
 """
 
 
-def detect_ds18b20_sensors(init=True):
+def ds18b20_sensors(init=True):
     """Private function *detect_ds18b20_sensors* detects all connected DS18B20
     sensors.
 

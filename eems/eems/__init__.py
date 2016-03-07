@@ -8,14 +8,11 @@ import logging
 import os
 import sys
 from eems.support.checks import Check
-from eems.support.detects import detect_ds18b20_sensors
-from eems.support.handlers import CsvHandler, ObjectHandler, ConfigHandler
+from eems.support.detects import ds18b20_sensors
 from eems.sensors.ds18b20 import DS18B20
-from eems import __flag__
+from eems import __flag__, __config__, __csv__, __home__
 
-print 'start von main.py'
-print __flag__
-print __flag__.get()
+
 __all__ = ['DS18B20']
 
 
@@ -27,8 +24,7 @@ def init(log=None, console=None, csv=None):
     :param csv:
     :return:
     """
-    config_handler = ConfigHandler()
-    c_log, c_console, c_csv = config_handler.read_all_config()
+    c_log, c_console, c_csv = __config__.read_all_config()
     if log is None:
         log = c_log
     if console is None:
@@ -55,17 +51,17 @@ def init(log=None, console=None, csv=None):
 
     # save parameter to config file
     if log is True:
-        config_handler.set_config('general', 'log', True)
-        config_handler.write_config()
+        __config__.set_config('general', 'log', True)
+        __config__.write_config()
     elif log is False:
-        config_handler.set_config('general', 'log', False)
-        config_handler.write_config()
+        __config__.set_config('general', 'log', False)
+        __config__.write_config()
     if console is True:
-        config_handler.set_config('general', 'console', True)
-        config_handler.write_config()
+        __config__.set_config('general', 'console', True)
+        __config__.write_config()
     elif console is False:
-        config_handler.set_config('general', 'console', False)
-        config_handler.write_config()
+        __config__.set_config('general', 'console', False)
+        __config__.write_config()
 
     # logger
     str_date = time.strftime('%Y-%m-%d')
@@ -76,13 +72,13 @@ def init(log=None, console=None, csv=None):
         filename_script = os.path.basename(sys.argv[0])[:-3]
     else:
         filename_script = 'eems'
-    path = '/home/pi/eems/'
 
     if log is True:
         # save parameter to config file
-        config_handler.set_config('general', 'log', True)
+        __config__.set_config('general', 'log', True)
+        __config__.write_config()
 
-        log_file = '{0}{1}_{2}_{3}.txt'.format(path, str_date, str_time,
+        log_file = '{0}{1}_{2}_{3}.txt'.format(__home__, str_date, str_time,
                                                filename_script)
         logging.basicConfig(level=logging.DEBUG,
                             format=log_format,
@@ -99,7 +95,8 @@ def init(log=None, console=None, csv=None):
         logger.info('Logfile has been created')
     else:
         # save parameter to config file
-        config_handler.set_config('general', 'log', False)
+        __config__.set_config('general', 'log', False)
+        __config__.write_config()
 
         logging.basicConfig(level=logging.INFO,
                             format=log_format,
@@ -122,12 +119,13 @@ def init(log=None, console=None, csv=None):
     # CSV
     if csv is True:
         # save parameter to config file
-        config_handler.set_config('exports', 'csv', True)
-        config_handler.write_config()
+        __config__.set_config('exports', 'csv', True)
+        __config__.write_config()
+        __flag__.on('csv')
 
-        csv_file = '{0}{1}_{2}_{3}.csv'.format(path, str_date, str_time,
-                                               filename_script)
-        sensors = detect_ds18b20_sensors()
+        csv_file = '{1}_{2}_{3}.csv'.format(str_date, str_time,
+                                            filename_script)
+        sensors = ds18b20_sensors()
         if sensors is False:
             logger.error('No DS18B20 sensors detected')
             sys.exit()
@@ -135,13 +133,9 @@ def init(log=None, console=None, csv=None):
             pass
 
         # generate csv handler and save to pkl file
-        csv_handler = CsvHandler(csv_file, sensors)
-        object_handler = ObjectHandler('csv')
-        object_handler.save_object(csv_handler)
+        __csv__.add(csv_file, sensors)
     elif csv is False:
-        config_handler.set_config('exports', 'csv', False)
-        config_handler.write_config()
-    print 'ich bin in eems.py'
-    print 'flag object ', __flag__
-    print __name__
-    __flag__.on()
+        __config__.set_config('exports', 'csv', False)
+        __config__.write_config()
+
+    __flag__.on('init')

@@ -8,7 +8,6 @@ import csv
 import os
 import time
 import logging
-import cPickle as Pickle
 import ConfigParser
 from threading import Lock
 
@@ -21,20 +20,25 @@ logger = logging.getLogger(__name__)
 
 
 class StatusHandler(object):
-    def __init__(self, bol_status):
-        self.status = bol_status
+    def __init__(self, *args):
+        self.dic = dict()
         self.lock = Lock()
+        for key in args:
+            self.dic[key] = False
 
-    def get(self):
-        return self.status
+    def get(self, key):
+        return self.dic[key]
 
-    def on(self):
+    def on(self, key):
         with self.lock:
-            self.status = True
+            self.dic[key] = True
 
-    def off(self):
+    def off(self, key):
         with self.lock:
-            self.status = False
+            self.dic[key] = False
+
+    def get_all(self):
+        return self.dic
 
 
 class ConfigHandler(object):
@@ -69,59 +73,16 @@ class ConfigHandler(object):
             self.parser.write(config)
 
 
-class ObjectHandler(object):
-    def __init__(self, handler):
-        """
-
-        :param handler:
-        :return:
-        """
-        if handler == 'csv':
-            self.filename = '/home/pi/eems/.CsvHandler.pkl'
-        else:
-            self.filename = ''
-
-    def save_object(self, obj):
-        """
-
-        :param obj:
-        :return:
-        """
-        with open(self.filename, 'wb') as _output:
-            Pickle.dump(obj, _output, -1)
-
-    def load_object(self):
-        """
-
-        :return:
-        """
-        with open(self.filename, 'rb') as _input:
-            return Pickle.load(_input)
-
-
 class CsvHandler(object):
-    def __init__(self, csv_file, header):
+    def __init__(self, path):
         """Public class *CsvHandler* provides functions to manipulate csv files
         passed via the parameter *csv_file*. Therefore, the standard library
         module *csv* is used.
 
-        :param csv_file:
-            Expects a string containing a csv file name. If no string is
-            provided, default file name *default.csv* is assumed.
-        :param header:
-            Expects a list containing all header elements for the csv file.
         :return:
             Returns an object providing the public function *write*.
         """
-        # validating the passed parameter *csv_file*
-        if isinstance(csv_file, basestring) is True:
-            self.csv_file = csv_file
-        else:
-            self.csv_file = 'default.csv'
-            logger.warning('Passed parameter *csv_file* is no string, '
-                           'filename has been changed to *default.csv*')
-        # adding the csv file
-        self.__add(header)
+        self.csv_file = path
 
     def __count_col(self):
         """Private function *__count_col* reads the csv file handled by the
@@ -152,15 +113,19 @@ class CsvHandler(object):
         except IOError as e:
             logger.error('{}'.format(e))
 
-    def __add(self, header):
+    def add(self, csv_file, header):
         """Private function *__add* creates the csv file using the file name of
         the string *csv_file* passed to the parent class.
 
+        :param csv_file:
+            Expects a string containing a csv file name. If no string is
+            provided, default file name *default.csv* is assumed.
         :param header:
             Expects a list containing all header elements for the csv file.
         :return:
             Returns *None*.
         """
+        self.csv_file += csv_file
         # validate if csv file already exists
         if os.path.exists(self.csv_file) is False:
             # validate if passed parameter *header* is a list

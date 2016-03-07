@@ -8,10 +8,9 @@ import os
 import sys
 import time
 import logging
-from eems.support.detects import detect_ds18b20_sensors
 from threading import Thread, Lock, Event
-from eems.support.handlers import ObjectHandler, ConfigHandler
-from eems import __flag__
+from eems import __flag__, __config__, __csv__
+from eems.support.detects import ds18b20_sensors
 
 
 """
@@ -90,11 +89,7 @@ class DS18B20(object):
             Returns an object providing the public functions *read* and
             *monitor*.
         """
-        print 'ich bin in ds1b20.py'
-        print 'flag logger ', __flag__
-        print __name__
         if __flag__.get() is True:
-            print 'is TRUE'
             pass
         else:
             logger.error('please call *init* first')
@@ -110,18 +105,13 @@ class DS18B20(object):
         pid = os.getpid()
         logger.debug('Process PID: {0}'.format(pid))
 
-        config_handler = ConfigHandler()
-        if config_handler.read_config('exports', 'csv', dtype='bool') is True:
-            self.csv = True
-            object_handler = ObjectHandler('csv')
-            self.CsvHandler = object_handler.load_object()
-        else:
-            self.csv = False
+        # get csv status
+        self.csv = __flag__.get('csv')
 
         if self.csv is True:
-            sensors = detect_ds18b20_sensors(init=False)
+            sensors = ds18b20_sensors(init=False)
         else:
-            sensors = detect_ds18b20_sensors()
+            sensors = ds18b20_sensors()
         if sensors is False:
             sys.exit()
         else:
@@ -191,7 +181,7 @@ class DS18B20(object):
             self.sensor_dict.reset_dic()
             self.__read_sensors()
             result = self.sensor_dict.get_dic()
-            self.CsvHandler.write(result.values())
+            __csv__.write(result.values())
             return result
 
     def monitor(self, interval=None, duration=None):
@@ -208,27 +198,26 @@ class DS18B20(object):
         :return:
             Returns *None*.
         """
-        config_handler = ConfigHandler()
 
         # validate user input
         if interval is None:
-            interval = config_handler.read_config('monitor', 'interval', 'int')
+            interval = __config__.read_config('monitor', 'interval', 'int')
             pass
         else:
             if isinstance(interval, int) is True:
-                config_handler.set_config('monitor', 'interval', interval)
-                config_handler.write_config()
+                __config__.set_config('monitor', 'interval', interval)
+                __config__.write_config()
                 pass
             else:
                 logger.error('Parameter *interval* must be an integer')
                 sys.exit()
         if duration is None:
-            duration = config_handler.read_config('monitor', 'duration', 'int')
+            duration = __config__.read_config('monitor', 'duration', 'int')
             pass
         else:
             if isinstance(duration, int) is True:
-                config_handler.set_config('monitor', 'duration', duration)
-                config_handler.write_config()
+                __config__.set_config('monitor', 'duration', duration)
+                __config__.write_config()
                 pass
             else:
                 logger.error('Parameter *duration* must be an integer')
@@ -302,7 +291,7 @@ class DS18B20(object):
                 self.sensor_dict.reset_dic()
                 self.__read_sensors()
                 result = self.sensor_dict.get_dic()
-                self.CsvHandler.write(result.values())
+                __csv__.write(result.values())
             timestamp += interval
 
     def __stop(self, trigger):

@@ -4,11 +4,11 @@ Setup file for eems.
 """
 
 from setuptools import setup, find_packages
-from eems import __project__, __version__, __author__
 from eems.support.shell import set_permissions
+from eems import __project__, __version__, __author__
 
 
-setup(  # TODO SUDO INSTALL REQUIREMENTS
+setup(
     name=__project__,
     version=__version__,
     description='eems - easy energy monitoring system',
@@ -18,9 +18,9 @@ setup(  # TODO SUDO INSTALL REQUIREMENTS
     author=__author__,
     author_email='henrik.baran@online.de, a.hoehn@mailbox.org',
     license='MIT',
-    # install_requires=[
-    #    'numpy'
-    # ],
+    install_requires=[
+        'numpy'
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: End Users/Desktop',
