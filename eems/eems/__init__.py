@@ -92,7 +92,7 @@ def init(log=None, console=None, csv=None):
             console.setFormatter(formatter)
             logging.getLogger('').addHandler(console)
         logger = logging.getLogger(__name__)
-        logger.info('Logfile has been created')
+        logger.error('Logfile has been created')
     else:
         # save parameter to config file
         __config__.set_config('general', 'log', False)
