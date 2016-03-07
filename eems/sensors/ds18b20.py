@@ -89,7 +89,7 @@ class DS18B20(object):
             Returns an object providing the public functions *read* and
             *monitor*.
         """
-        if __flag__.get() is True:
+        if __flag__.get('init') is True:
             pass
         else:
             logger.error('please call *init* first')
