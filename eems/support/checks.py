@@ -11,6 +11,7 @@ defining logger
 """
 
 logger = logging.getLogger(__name__)
+print 'load check'
 
 
 class Check(object):
@@ -22,6 +23,7 @@ class Check(object):
             Returns an object providing the public functions *w1_config* and
             *w1_modules*.
         """
+        print 'init von check'
         self.dir_modules = '/etc/modules'
         self.dir_config = '/boot/config.txt'
         self.flag = {'w1-therm': False,
