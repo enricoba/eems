@@ -131,9 +131,9 @@ class CsvHandler(object):
         """
         self.csv_file += csv_file
         # validate if csv file already exists
-        if os.path.exists(self.csv_file) is False:
+        if os.path.exists(self.csv_file) is False:  # Nicht notwendig da von uns intern genutzt
             # validate if passed parameter *header* is a list
-            if isinstance(header, list) is True:
+            if isinstance(header, list) is True:  # Nicht notwendig da von uns weitergegben
                 # adding the columns id, date and time
                 header = ['id', 'timestamp', 'date', 'time'] + header
                 try:
@@ -146,6 +146,18 @@ class CsvHandler(object):
                 logger.error('Function "add" expects a list')
         else:
             logger.error('File {} already exists'.format(self.csv_file))
+
+        # Alternative ohne Kontrollstrukturen
+        """
+        self.csv_file += csv_file
+        header = ['id', 'timestamp', 'date', 'time'] + header
+        try:
+            with open(self.csv_file, 'wb') as _csv:
+                csv_writer = csv.writer(_csv, delimiter=';')
+                csv_writer.writerow(header)
+        except IOError as e:
+            logger.error('{}'.format(e))
+        """
 
     def write(self, data):
         """Public function *write* adds a new row/entry to the handled csv
@@ -185,3 +197,28 @@ class CsvHandler(object):
                 logger.error('Function "write" expects a list')
         else:
             logger.error('File {} does not exist'.format(self.csv_file))
+
+        # Alternative ohne kontrolle
+        """
+        columns = self.__count_col() - 4
+        entries = len(data)
+        # validates if the amount of columns is similar to the passed
+        # keys of the dictionary
+        if entries == columns:
+            row = self.__count_rows()
+            tmp_time = time.localtime()
+            str_date = time.strftime('%Y-%m-%d', tmp_time)
+            str_time = time.strftime('%H:%M:%S', tmp_time)
+            timestamp = time.mktime(tmp_time)
+
+            data = [row, timestamp, str_date, str_time] + data
+            try:
+                with open(self.csv_file, 'ab') as _csv:
+                    csv_writer = csv.writer(_csv, delimiter=';')
+                    csv_writer.writerow(data)
+            except IOError as e:
+                logger.error('{}'.format(e))
+        else:
+            logger.error('Passed elements do not have the same '
+                         'length as columns in csv')
+        """
