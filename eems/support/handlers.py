@@ -21,10 +21,14 @@ logger = logging.getLogger(__name__)
 
 class StatusHandler(object):
     def __init__(self, *args):
-        self.dic = dict()
+        # self.dic = dict()
+        # self.lock = Lock()
+        # for key in args:
+        #     self.dic[key] = False
+
+        # alternative zu oben
         self.lock = Lock()
-        for key in args:
-            self.dic[key] = False
+        self.dic = {key: False for key in args}
 
     def get(self, key):
         return self.dic[key]
