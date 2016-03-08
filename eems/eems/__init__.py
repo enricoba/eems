@@ -2,11 +2,12 @@
 """
 Init module
 """
-
+# Standard modules/functions from python
 import time
 import logging
 import os
 import sys
+# Internal modules/functions from eems
 from eems.support.checks import Check
 from eems.support.detects import ds18b20_sensors
 from eems.sensors.ds18b20 import DS18B20
@@ -75,8 +76,8 @@ def init(log=None, console=None, csv=None):
 
     if log is True:
         # save parameter to config file
-        __config__.set_config('general', 'log', True)
-        __config__.write_config()
+        # __config__.set_config('general', 'log', True)  # wird doppelt gemacht siehe Zeile 54
+        # __config__.write_config()
 
         log_file = '{}{}_{}_{}.txt'.format(__home__, str_date, str_time,
                                            filename_script)
@@ -95,8 +96,8 @@ def init(log=None, console=None, csv=None):
         logger.info('Logfile has been created')
     else:
         # save parameter to config file
-        __config__.set_config('general', 'log', False)
-        __config__.write_config()
+        # __config__.set_config('general', 'log', False)  # wird doppelt gemacht siehe Zeile 57
+        # __config__.write_config()
 
         logging.basicConfig(level=logging.INFO,
                             format=log_format,
@@ -131,7 +132,7 @@ def init(log=None, console=None, csv=None):
         else:
             pass
 
-        # generate csv handler and save to pkl file
+        # generate csv handler
         __csv__.add(csv_file, sensors)
     elif csv is False:
         __config__.set_config('exports', 'csv', False)
