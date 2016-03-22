@@ -21,12 +21,12 @@ logger = logging.getLogger(__name__)
 
 class StatusHandler(object):
     def __init__(self, *args):
-        # self.dic = dict()
-        # self.lock = Lock()
-        # for key in args:
-        #     self.dic[key] = False
+        """Public Class *StatusHandler* ...
 
-        # alternative zu oben
+        :param args:
+        :return:
+            Returns an object.
+        """
         self.lock = Lock()
         self.dic = {key: False for key in args}
 
