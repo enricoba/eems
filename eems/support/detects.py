@@ -19,12 +19,10 @@ detect ds18b20 sensors
 """
 
 
-def ds18b20_sensors(init=True):
+def ds18b20_sensors():
     """Private function *detect_ds18b20_sensors* detects all connected DS18B20
     sensors.
 
-    :param init:
-        <tbd>
     :return:
         If sensors are detected successfully, a list containing all
         connected sensors is returned. Otherwise *None* is returned.
@@ -34,11 +32,8 @@ def ds18b20_sensors(init=True):
         list_sensors = [fn for fn in os.listdir(dir_sensors)
                         if fn.startswith('28')]
         if len(list_sensors) != 0:
-            if init is True:
-                logger.info('DS18B20 sensors detected: {0}'.format(
-                    len(list_sensors)))
-            else:
-                pass
+            logger.info('DS18B20 sensors detected: {0}'.format(
+                len(list_sensors)))
             return sorted(list_sensors)
         else:
             logger.error('No DS18B20 sensors detected')

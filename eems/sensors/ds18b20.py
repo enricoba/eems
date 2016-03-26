@@ -95,8 +95,8 @@ class DS18B20(object):
             logger.error('please call *init* first')
             sys.exit()
 
-        self.str_date = time.strftime('%Y-%m-%d')
-        self.str_time = time.strftime('%H-%M-%S')
+        # self.str_date = time.strftime('%Y-%m-%d')
+        # self.str_time = time.strftime('%H-%M-%S')
         self.event = Event()
         # self.read_flag = Event()
         self.flag = False
