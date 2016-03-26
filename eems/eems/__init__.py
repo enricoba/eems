@@ -75,10 +75,6 @@ def init(log=None, console=None, csv=None):
         filename_script = 'eems'
 
     if log is True:
-        # save parameter to config file
-        # __config__.set_config('general', 'log', True)  # wird doppelt gemacht siehe Zeile 54
-        # __config__.write_config()
-
         log_file = '{}{}_{}_{}.txt'.format(__home__, str_date, str_time,
                                            filename_script)
         logging.basicConfig(level=logging.DEBUG,
@@ -95,10 +91,6 @@ def init(log=None, console=None, csv=None):
         logger = logging.getLogger(__name__)
         logger.info('Logfile has been created')
     else:
-        # save parameter to config file
-        # __config__.set_config('general', 'log', False)  # wird doppelt gemacht siehe Zeile 57
-        # __config__.write_config()
-
         logging.basicConfig(level=logging.INFO,
                             format=log_format,
                             datefmt=log_date_format)
