@@ -184,6 +184,18 @@ class DS18B20(object):
             __csv__.write(result.values())
             return result
 
+    def read_ds18b20(self, sensor_dict):
+        threads = []
+        for sensor in sensor_dict.keys():
+            threads.append(Thread(target=self.__read_slave,
+                                  args=(sensor,)))
+        for t in threads:
+            t.setDaemon(True)
+            t.start()
+        for t in threads:
+            t.join()
+        return sensor_dict
+
     def monitor(self, interval=None, duration=None):
         """Public function *monitor* starts a thread to read connected
         DS18B20 sensors within an interval over a duration.

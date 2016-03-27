@@ -11,7 +11,7 @@ from threading import Lock, Thread, Event
 # Internal modules/functions from eems
 from eems.support.checks import Check
 from eems.support.detects import ds18b20_sensors
-from support.handlers import ConfigHandler, CsvHandler
+from eems.support.handlers import ConfigHandler, CsvHandler
 
 
 class _SensorDictionary(object):
@@ -309,13 +309,36 @@ class Eems(object):
         timestamp += interval
         self.event.clear()
         while not self.event.wait(max(0, timestamp - time.time())):
-            if self.csv is False:
-                self.sensors_dict.reset_dic()
-                # read all connected sensor types
-            elif self.csv is True:
-                self.sensors_dict.reset_dic()
-                # read all connected sensor types
+            self.sensors_dict.reset_dic()
+            # read all connected sensor types
+            for sensor_type in self.sensors_dict.dic.keys():
+                tmp_sensor_dict = self.sensors_dict.dic[sensor_type]
+                if sensor_type.upper() == 'DS18B20':
+                    # abrufen der sensoren gleichzeitig
+                    # schreiben ins dict nacheinander, dict kurz sperren
+                    tmp_sensor_values = read_ds18b20(tmp_sensor_dict)
+                    # main_sensor_dict sperren
+                    self.sensors_dict['DS18B20'] = tmp_sensor_values
+                    # main_sensor_dict freigeben
+
+                # elif sensor_type.upper() == 'DHT11':
+                #     read_dht11(tmp_sensor_dict)
+
+
+                # über sensor_type entsprechende sensor-funktion aufrufen
+                # sensoren aus main_sensor_dict auswählen und an funktion weitergeben
+                # funktion mit oben ausgewählten sensoren aufrufen
+                # bekommt gefülltes dict zurück
+                # gefülltest dict in main_sensor_dict einbauen/einfügen/ersetzen
+                # => Read-Funktion so umbauen das dict mitgegeben werden muss
+
+
+
+            if self.csv is True:
                 # write csv
+                # auf oben gefülltes dict zugreifen
+                # sensoren + werte extrahieren und in csv eintragen
+
             timestamp += interval
 
     def __stop(self, trigger):
