@@ -7,15 +7,17 @@ import time
 import logging
 import os
 import sys
+import collections
 from threading import Lock, Thread, Event
 # Internal modules/functions from eems
 from eems.support.checks import Check
 from eems.support.detects import ds18b20_sensors
 from eems.support.handlers import ConfigHandler, CsvHandler
+from eems.sensors.ds18b20 import read_ds18b20
 
 
 class _SensorDictionary(object):
-    def __init__(self):
+    def __init__(self, sensor_type):
         """Private class *_SensorDictionary* provides functions to manage the
         sensors dictionary.
 
@@ -23,27 +25,28 @@ class _SensorDictionary(object):
             Returns a in-memory object tree providing the functions
             *set_temp*, *get_dic* and *reset_dic*.
         """
-        self.dic = dict()
+        dic = dict()
+        for typ in sensor_type:
+            dic[typ] = None
+        self.dic = collections.OrderedDict(sorted(dic.items()))
         self.lock = Lock()
 
     def add_sensor(self, sensor_type, sensors):
-        self.dic[sensor_type] = {sensor: None for sensor in sensors}
+        self.dic.__setitem__(sensor_type, {sensor: None for sensor in sensors})
 
-    def set_temp(self, sensor_type, sensor, temp):
-        """Public function *set_temp* sets the value for an individual key.
+    def set_sensor_dict(self, sensor_type, dic):
+        """Public function *set_sensor_dict* sets the sensor dictionary of a
+        sensor type.
 
         :param sensor_type:
             Expects a string of the sensor type name.
-        :param sensor:
-            Expects a string of the sensor name to match with the sensor key.
-        :param temp:
-            Expects an integer or a float containing the sensor value
-            to store.
+        :param dic:
+            Expects a dictionary containing sensor names and values.
         :return:
             Returns *None*.
         """
         with self.lock:
-            self.dic[sensor_type][sensor] = temp
+            self.dic.__setitem__(sensor_type, dic)
 
     def get_dic(self):
         """Public function *get_dic* returns the sensors dictionary.
@@ -53,19 +56,9 @@ class _SensorDictionary(object):
         """
         return self.dic
 
-    def reset_dic(self):
-        """Public function *reset_dic* sets all dictionary values to None.
-
-        :return:
-            Returns *None*.
-        """
-        for sensor_type in self.dic:
-            for sensor in self.dic[sensor_type]:
-                self.dic[sensor_type][sensor] = None
-
 
 class Eems(object):
-    def __init__(self, sensors, log=None, console=None, csv=None):
+    def __init__(self, sensor_typ, log=None, console=None, csv=None):
         """
 
         :param log:
@@ -74,9 +67,12 @@ class Eems(object):
         :return:
         """
         # Check sensors
-        if isinstance(sensors, list) is True:
-            for sensor in sensors:
-                if isinstance(sensor, str) is True:
+        if isinstance(sensor_typ, list) is True:
+            if len(sensor_typ) == 0:
+                logging.error('Sensor list must contain at least one sensor')
+                sys.exit()
+            for x in sensor_typ:
+                if isinstance(x, str) is True:
                     pass
                 else:
                     logging.error('Sensor list must contain strings')
@@ -84,6 +80,9 @@ class Eems(object):
         else:
             logging.error('Please provides sensors as list')
             sys.exit()
+
+        # sort sensor types
+        sensor_typ = sorted(sensor_typ)
 
         # flags, handlers etc.
         __home__ = '/home/pi/eems'
@@ -173,15 +172,13 @@ class Eems(object):
 
         # check sensors list + detect connected sensors
         c = Check()
-        self.sensors_dict = _SensorDictionary()
-        for sensor in sensors:
+        tmp_dict = dict()
+        for sensor in sensor_typ:
             if sensor.upper() == 'DS18B20':
                 if c.w1_config() is True and c.w1_modules() is True:
-                    tmp_sensors = ds18b20_sensors()
-                    if tmp_sensors is False:
+                    tmp_dict['DS18B20'] = ds18b20_sensors()
+                    if tmp_dict['DS18B20'] is False:
                         sys.exit()
-                    else:
-                        self.sensors_dict.add_sensor('DS18B20', tmp_sensors)
                 else:
                     logger.error('Check for DS18B20 failed')
                     sys.exit()
@@ -189,6 +186,11 @@ class Eems(object):
             #    print 'check dht11'
             else:
                 logging.warning('Sensor: {} not available'.format(sensor))
+
+        # create overall dictionary
+        self.sensors_dict = _SensorDictionary(sensor_typ)
+        for sensor in sensor_typ:
+            self.sensors_dict.add_sensor(sensor, tmp_dict[sensor])
 
         # CSV
         if csv is True:
@@ -309,35 +311,18 @@ class Eems(object):
         timestamp += interval
         self.event.clear()
         while not self.event.wait(max(0, timestamp - time.time())):
-            self.sensors_dict.reset_dic()
             # read all connected sensor types
             for sensor_type in self.sensors_dict.dic.keys():
                 tmp_sensor_dict = self.sensors_dict.dic[sensor_type]
                 if sensor_type.upper() == 'DS18B20':
-                    # abrufen der sensoren gleichzeitig
-                    # schreiben ins dict nacheinander, dict kurz sperren
-                    tmp_sensor_values = read_ds18b20(tmp_sensor_dict)
-                    # main_sensor_dict sperren
-                    self.sensors_dict.dic['DS18B20'] = tmp_sensor_values
-                    # main_sensor_dict freigeben
+                    results = read_ds18b20(tmp_sensor_dict)
+                    self.sensors_dict.set_sensor_dict('DS18B20', results)
 
                 # elif sensor_type.upper() == 'DHT11':
                 #     read_dht11(tmp_sensor_dict)
-
-
-                # über sensor_type entsprechende sensor-funktion aufrufen
-                # sensoren aus main_sensor_dict auswählen und an funktion weitergeben
-                # funktion mit oben ausgewählten sensoren aufrufen
-                # bekommt gefülltes dict zurück
-                # gefülltest dict in main_sensor_dict einbauen/einfügen/ersetzen
-                # => Read-Funktion so umbauen das dict mitgegeben werden muss
-
-
-
+            # requests are done, sensors are read, results are there
             if self.csv is True:
-                # write csv
-                # auf oben gefülltes dict zugreifen
-                # sensoren + werte extrahieren und in csv eintragen
+                self.__csv__.write(self.sensors_dict)
 
             timestamp += interval
 
@@ -364,4 +349,3 @@ class Eems(object):
             self.stop = True
         else:
             logging.warning('No monitor function to stop ...')
-

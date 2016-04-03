@@ -3,21 +3,10 @@
 Main module for DS18B2 sensors.
 """
 
+
 import collections
-import os
-import sys
-import time
 import logging
-from threading import Thread, Lock, Event
-from eems import __flag__, __config__, __csv__
-from eems.support.detects import ds18b20_sensors
-
-
-"""
-defining logger
-"""
-
-logger = logging.getLogger(__name__)
+from threading import Thread, Lock
 
 
 """
@@ -26,19 +15,16 @@ Private classes / functions
 
 
 class _SensorDictionary(object):
-    def __init__(self, sensors):
+    def __init__(self, dic):
         """Private class *_SensorDictionary* provides functions to manage the
         sensors dictionary.
 
-        :param sensors:
-            Expects a list containing sensors as strings.
+        :param dic:
+            Expects a sensor dictionary.
         :return:
             Returns a in-memory object tree providing the functions
             *set_temp*, *get_dic* and *reset_dic*.
         """
-        dic = dict()
-        for sensor in sensors:
-            dic[sensor] = None
         self.dic = collections.OrderedDict(sorted(dic.items()))
         self.lock = Lock()
 
@@ -74,48 +60,9 @@ class _SensorDictionary(object):
             self.dic.__setitem__(sensor, None)
 
 
-"""
-Public classes / functions
-"""
-
-
-class DS18B20(object):
-    def __init__(self):
-        """Public Class *DS18B20* detects connected DS18B20 one-wire sensors
-        and provides functions to read the sensors. This class uses the
-        standard library module *logger* for handling outputs.
-
-        :return:
-            Returns an object providing the public functions *read* and
-            *monitor*.
-        """
-        if __flag__.get('init') is True:
-            pass
-        else:
-            logger.error('please call *init* first')
-            sys.exit()
-
-        # self.str_date = time.strftime('%Y-%m-%d')
-        # self.str_time = time.strftime('%H-%M-%S')
-        self.event = Event()
-        # self.read_flag = Event()
-        self.flag = False
-        self.stop = False
-
-        pid = os.getpid()
-        logger.debug('Process PID: {}'.format(pid))
-
-        # get csv status
-        self.csv = __flag__.get('csv')
-
-        if self.csv is True:
-            sensors = ds18b20_sensors(init=False)
-        else:
-            sensors = ds18b20_sensors()
-        if sensors is False:
-            sys.exit()
-        else:
-            self.sensor_dict = _SensorDictionary(sensors)
+class _DS18B20(object):
+    def __init__(self, sensor_dict):
+        self.sensor_dict = _SensorDictionary(sensor_dict)
 
     def __read_slave(self, sensor):
         """Private function *__read_slave* reads the file *w1_slave* of a
@@ -127,7 +74,6 @@ class DS18B20(object):
             Returns *None*.
         """
         dir_file = '/sys/bus/w1/devices/' + sensor
-        # for x in range(4):
         try:
             with open(dir_file + '/w1_slave', 'r') as slave:
                 file_content = slave.readlines()
@@ -145,7 +91,7 @@ class DS18B20(object):
                                '(Wrong CRC?)'.format(sensor))
                 self.sensor_dict.set_temp(sensor, 'n/a')
 
-    def __read_sensors(self):
+    def read_ds18b20(self):
         """Private function *__read_sensors* reads all connected DS18B20 sensors
         by initializing parallel threads. Function waits until all sensors
         are read.
@@ -153,40 +99,10 @@ class DS18B20(object):
         :return:
             Returns *None*.
         """
-        # self.read_flag.clear()
         threads = []
-        dic = self.sensor_dict.get_dic()
-        for sensor in dic.keys():
-            threads.append(Thread(target=self.__read_slave,
-                                  args=(sensor, )))
-        for t in threads:
-            t.setDaemon(True)
-            t.start()
-        for t in threads:
-            t.join()
-        # self.read_flag.set()
-
-    def read(self):
-        """Public function *read* reads all connected DS18B20 sensors once.
-
-        :return:
-            Returns a dictionary containing sensor names as keys and
-            sensor values as values.
-        """
-        if self.csv is False:
-            self.sensor_dict.reset_dic()
-            self.__read_sensors()
-            return self.sensor_dict.get_dic()
-        elif self.csv is True:
-            self.sensor_dict.reset_dic()
-            self.__read_sensors()
-            result = self.sensor_dict.get_dic()
-            __csv__.write(result.values())
-            return result
-
-    def read_ds18b20(self, sensor_dict):
-        threads = []
-        for sensor in sensor_dict.keys():
+        # reset dict
+        self.sensor_dict.reset_dic()
+        for sensor in self.sensor_dict.dic.keys():
             threads.append(Thread(target=self.__read_slave,
                                   args=(sensor,)))
         for t in threads:
@@ -194,138 +110,21 @@ class DS18B20(object):
             t.start()
         for t in threads:
             t.join()
-        return sensor_dict
+        return self.sensor_dict
 
-    def monitor(self, interval=None, duration=None):
-        """Public function *monitor* starts a thread to read connected
-        DS18B20 sensors within an interval over a duration.
 
-        :param interval:
-            Expects an integer containing the interval time in seconds. The
-            default interval is set to 60 seconds.
-        :param duration:
-            Expects an integer containing the duration time in seconds. If
-            *duration=None*, the duration is infinite and the thread needs to
-            be stopped manually by pressing Ctrl+C.
-        :return:
-            Returns *None*.
-        """
+"""
+defining logger
+"""
 
-        # validate user input
-        if interval is None:
-            interval = __config__.read_config('monitor', 'interval', 'int')
-            pass
-        else:
-            if isinstance(interval, int) is True:
-                __config__.set_config('monitor', 'interval', interval)
-                __config__.write_config()
-                pass
-            else:
-                logger.error('Parameter *interval* must be an integer')
-                sys.exit()
-        if duration is None:
-            duration = __config__.read_config('monitor', 'duration', 'int')
-            pass
-        else:
-            if isinstance(duration, int) is True:
-                __config__.set_config('monitor', 'duration', duration)
-                __config__.write_config()
-                pass
-            else:
-                logger.error('Parameter *duration* must be an integer')
-                sys.exit()
+logger = logging.getLogger(__name__)
 
-        if self.flag is False:
-            if interval < 2:
-                logger.error('Interval must be >= 2s')
-                sys.exit()
-            worker = Thread(target=self.__start_read, args=(interval,))
-            logger.debug('Thread monitor was added')
-            if duration > interval:
-                watchdog = Thread(target=self.__watchdog,
-                                  args=(duration, interval))
-                watchdog.setDaemon(True)
-                logger.debug('Watchdog_one has started with a duration'
-                             ' of {}s'.format(duration))
-                watchdog.start()
-            else:
-                logger.error('Duration must be longer than the interval')
-                sys.exit()
-            worker.start()
-            self.flag = True
-            logger.debug('Thread monitor has started with an '
-                         'interval of {}s'.format(interval))
-            try:
-                while self.stop is False:
-                    time.sleep(0.25)
-            except KeyboardInterrupt:
-                # self.read_flag.wait()
-                self.__stop(trigger='keyboard')
-        else:
-            logger.warning('Already one read thread is running, '
-                           'start of a second thread was stopped')
 
-    def __watchdog(self, duration, interval):
-        """Private function *__watchdog* handles stopping of the function
-        *monitor* if a used defined duration was passed.
+"""
+Public classes / functions
+"""
 
-        :param duration:
-            Expects an integer containing the duration in seconds.
-        :param interval:
-            Expects an integer containing the interval in seconds.
-        :return:
-            Returns *None*.
-        """
-        timestamp = int(time.time() / interval) * interval
-        timestamp += interval
-        t = timestamp - time.time()
-        time.sleep(duration + t)
-        # self.read_flag.wait()
-        self.__stop(trigger='watchdog')
 
-    def __start_read(self, interval):
-        """Private function *__start_read* manages the loop in which the
-        function *__read_sensors* is called.
-
-        :param interval:
-            Expects an integer containing the interval in seconds.
-        :return:
-            Returns *None*.
-        """
-        timestamp = int(time.time() / interval) * interval
-        timestamp += interval
-        self.event.clear()
-        while not self.event.wait(max(0, timestamp - time.time())):
-            if self.csv is False:
-                self.sensor_dict.reset_dic()
-                self.__read_sensors()
-            elif self.csv is True:
-                self.sensor_dict.reset_dic()
-                self.__read_sensors()
-                result = self.sensor_dict.get_dic()
-                __csv__.write(result.values())
-            timestamp += interval
-
-    def __stop(self, trigger):
-        """Private function *__stop* stops the thread started by calling
-        the function *monitor*
-
-        :param trigger:
-            Expects a string. Either *watchdog* or *keyboard* to trigger
-            varying info messages.
-        :return:
-            Returns *None*.
-        """
-        message = ''
-        if self.event.is_set() is False:
-            self.event.set()
-            if trigger == 'watchdog':
-                message = 'Monitor has been stopped due to expiring duration'
-            elif trigger == 'keyboard':
-                message = 'Monitor has been stopped manually by ' \
-                          'pressing Ctrl-C'
-            logger.debug(message)
-            self.flag = False
-            self.stop = True
-        else:
-            logger.warning('No monitor function to stop ...')
+def read_ds18b20(sensor_dict):
+    ds18b20 = _DS18B20(sensor_dict)
+    return ds18b20.read_ds18b20()
