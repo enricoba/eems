@@ -99,6 +99,7 @@ class Eems(object):
 
         # sort sensor types
         sensor_typ = sorted(sensor_typ)
+        # sensor_typ = set(sensor_typ) # Verhindert doppelte Sensoreingabe
 
         # flags, handlers etc.
         __home__ = '/home/pi/eems'
