@@ -318,7 +318,7 @@ class Eems(object):
                     # schreiben ins dict nacheinander, dict kurz sperren
                     tmp_sensor_values = read_ds18b20(tmp_sensor_dict)
                     # main_sensor_dict sperren
-                    self.sensors_dict['DS18B20'] = tmp_sensor_values
+                    self.sensors_dict.dic['DS18B20'] = tmp_sensor_values
                     # main_sensor_dict freigeben
 
                 # elif sensor_type.upper() == 'DHT11':
