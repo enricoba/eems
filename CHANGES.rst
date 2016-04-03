@@ -4,6 +4,16 @@ Changelog
 
 All major versions including are listed below.
 
+0.1.1.1b1
+~~~~~~~~~
+
+- New application architecture
+- New functions to call individual sensors
+- Config file added to save parameters
+- Created API for sensors (individual description in documentation)
+- Documentation updated
+- Small bug fixes
+
 0.1.0.5b1
 ~~~~~~~~~
 
