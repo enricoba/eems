@@ -62,6 +62,13 @@ class _SensorDictionary(object):
 
 class _DS18B20(object):
     def __init__(self, sensor_dict):
+        """Private class *_DS18B20* provides read functions for ds18b20 sensors.
+
+        :param sensor_dict:
+            Expects a dictionary containing sensor names.
+        :return:
+            Returns *None*.
+        """
         self.sensor_dict = _SensorDictionary(sensor_dict)
 
     def __read_slave(self, sensor):
@@ -97,7 +104,7 @@ class _DS18B20(object):
         are read.
 
         :return:
-            Returns *None*.
+            Returns a dictionary containing sensor names and temperature values.
         """
         threads = []
         # reset dict
@@ -126,5 +133,13 @@ Public classes / functions
 
 
 def read_ds18b20(sensor_dict):
+    """Public function *read_ds18b20* creates an object (_DS18B20) and executes
+    a single read session of all connected sensors.
+
+    :param sensor_dict:
+        Expects a dictionary containing sensor names.
+    :return:
+        Returns a dictionary containing sensor names and temperature values.
+    """
     ds18b20 = _DS18B20(sensor_dict)
     return ds18b20.read_ds18b20()
