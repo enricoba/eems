@@ -32,6 +32,16 @@ class _SensorDictionary(object):
         self.lock = Lock()
 
     def add_sensor(self, sensor_type, sensors):
+        """Public function *add_sensor* adds a sensor dictionary with *None*
+        values for a special sensor type.
+
+        :param sensor_type:
+            Expects a string containing sensor type name.
+        :param sensors:
+            Expects a list containing senor names.
+        :return:
+            Returns *None*.
+        """
         self.dic.__setitem__(sensor_type, {sensor: None for sensor in sensors})
 
     def set_sensor_dict(self, sensor_type, dic):
@@ -59,12 +69,18 @@ class _SensorDictionary(object):
 
 class Eems(object):
     def __init__(self, sensor_typ, log=None, console=None, csv=None):
-        """
+        """Public function *Eems* is the application's main function.
+        It provides the public functions *monitor* and *read* to determine
+        connected sensor values.
 
         :param log:
+            Expects a bool, containing *True* or *False*.
         :param console:
+            Expects a bool, containing *True* or *False*.
         :param csv:
+            Expects a bool, containing *True* or *False*.
         :return:
+            Returns *None*.
         """
         # Check sensors
         if isinstance(sensor_typ, list) is True:
@@ -281,6 +297,39 @@ class Eems(object):
             logging.warning('Already one read thread is running, '
                             'start of a second thread was stopped')
 
+    def read(self):
+        """Public function *read* reads all chosen sensors.
+
+        :return:
+            Returns a *dictionary* containing sensor types on first level
+            and sensor names with values at second level.
+        """
+        return self.__read()
+
+    def __read(self, private=False):
+        """Private function *__read* executes the sensor reading procedure.
+
+        :param private:
+            Expects a bool, containing *True* or *False*.
+        :return:
+            Returns a *dictionary* containing sensor types on first level
+            and sensor names with values at second level.
+        """
+        # read all connected sensor types
+        for sensor_type in self.sensors_dict.dic.keys():
+            tmp_sensor_dict = self.sensors_dict.dic[sensor_type]
+            if sensor_type.upper() == 'DS18B20':
+                results = read_ds18b20(tmp_sensor_dict)
+                self.sensors_dict.set_sensor_dict('DS18B20', results)
+
+            # elif sensor_type.upper() == 'DHT11':
+            #     read_dht11(tmp_sensor_dict)
+        # requests are done, sensors are read, results are there
+        if self.csv is True:
+            self.__csv__.write(self.sensors_dict)
+        if private is False:
+            return self.sensors_dict.get_dic()
+
     def __watchdog(self, duration, interval):
         """Private function *__watchdog* handles stopping of the function
         *monitor* if a used defined duration was passed.
@@ -311,19 +360,7 @@ class Eems(object):
         timestamp += interval
         self.event.clear()
         while not self.event.wait(max(0, timestamp - time.time())):
-            # read all connected sensor types
-            for sensor_type in self.sensors_dict.dic.keys():
-                tmp_sensor_dict = self.sensors_dict.dic[sensor_type]
-                if sensor_type.upper() == 'DS18B20':
-                    results = read_ds18b20(tmp_sensor_dict)
-                    self.sensors_dict.set_sensor_dict('DS18B20', results)
-
-                # elif sensor_type.upper() == 'DHT11':
-                #     read_dht11(tmp_sensor_dict)
-            # requests are done, sensors are read, results are there
-            if self.csv is True:
-                self.__csv__.write(self.sensors_dict)
-
+            self.__read(private=True)
             timestamp += interval
 
     def __stop(self, trigger):
