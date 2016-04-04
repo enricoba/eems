@@ -59,6 +59,9 @@ class _SensorDictionary(object):
         for sensor in self.dic.keys():
             self.dic.__setitem__(sensor, None)
 
+    def get_sensor(self, sensor):
+        return self.dic.__getitem__(sensor)
+
 
 class _DS18B20(object):
     def __init__(self, sensor_dict):

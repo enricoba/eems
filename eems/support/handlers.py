@@ -166,7 +166,7 @@ class CsvHandler(object):
             # catch values
             tmp_list = list()
             for sensor_type in data.dic.keys():
-                for sensor in sensor_type:
+                for sensor in data.dic[sensor_type].keys():
                     tmp_list.append(data.dic[sensor_type][sensor])
             print tmp_list
             data = [row, timestamp, str_date, str_time] + tmp_list
