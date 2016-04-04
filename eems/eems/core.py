@@ -322,7 +322,7 @@ class Eems(object):
         # read all connected sensor types
         for sensor_type in self.sensors_dict.dic.keys():
             tmp_sensor_dict = self.sensors_dict.dic[sensor_type]
-            if sensor_type.upper() == 'DS18B20':
+            if sensor_type == 'DS18B20':
                 results = read_ds18b20(tmp_sensor_dict)
                 self.sensors_dict.set_sensor_dict('DS18B20', results)
 

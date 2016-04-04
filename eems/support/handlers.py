@@ -148,7 +148,12 @@ class CsvHandler(object):
         """
         print data
         columns = self.__count_col() - 4
-        entries = len(data)
+        tmp_list = list()
+        for sensor_type in data.dic.keys():
+            for sensor in data.dic[sensor_type]:
+                tmp_list.append(sensor)
+        print tmp_list
+        entries = len(tmp_list)
         # validates if the amount of columns is similar to the passed
         # keys of the dictionary
         if entries == columns:
@@ -158,7 +163,14 @@ class CsvHandler(object):
             str_time = time.strftime('%H:%M:%S', tmp_time)
             timestamp = time.mktime(tmp_time)
 
-            data = [row, timestamp, str_date, str_time] + data
+            # catch values
+            tmp_list = list()
+            for sensor_type in data.dic.keys():
+                for sensor in data.dic[sensor_type]:
+                    tmp_list.append(data.dic[sensor_type][sensor])
+            print tmp_list
+            data = [row, timestamp, str_date, str_time] + tmp_list
+            print data
             try:
                 with open(self.csv_file, 'ab') as _csv:
                     csv_writer = csv.writer(_csv, delimiter=';')
