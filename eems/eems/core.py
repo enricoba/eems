@@ -98,7 +98,10 @@ class Eems(object):
             sys.exit()
 
         # sort sensor types
-        sensor_typ = set(sensor_typ)
+        tmp_list = list()
+        for typ in sensor_typ:
+            tmp_list.append(typ.upper())
+        sensor_typ = set(tmp_list)
 
         # flags, handlers etc.
         __home__ = '/home/pi/eems'
@@ -190,7 +193,7 @@ class Eems(object):
         c = Check()
         tmp_dict = dict()
         for sensor in sensor_typ:
-            if sensor.upper() == 'DS18B20':
+            if sensor == 'DS18B20':
                 if c.w1_config() is True and c.w1_modules() is True:
                     tmp_dict['DS18B20'] = ds18b20_sensors()
                     if tmp_dict['DS18B20'] is False:
@@ -206,8 +209,8 @@ class Eems(object):
         # create overall dictionary
         self.sensors_dict = _SensorDictionary(sensor_typ)
         for sensor in sensor_typ:
-            self.sensors_dict.add_sensor(sensor.upper(),
-                                         tmp_dict[sensor.upper()])
+            self.sensors_dict.add_sensor(sensor,
+                                         tmp_dict[sensor])
 
         # CSV
         if csv is True:
@@ -220,7 +223,7 @@ class Eems(object):
                                              filename_script)
             csv_sensor_list = list()
             for sensor_type in self.sensors_dict.dic.keys():
-                for sensor in sensor_type.keys():
+                for sensor in sensor_type:
                     csv_sensor_list.append('{}_{}'.format(sensor_type, sensor))
 
             # generate csv handler
