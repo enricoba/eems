@@ -226,7 +226,7 @@ class Eems(object):
                                              filename_script)
             csv_sensor_list = list()
             for sensor_type in self.sensors_dict.dic.keys():
-                for sensor in sensor_type:
+                for sensor in self.sensors_dict.dic[sensor_type].keys():
                     csv_sensor_list.append('{}_{}'.format(sensor_type, sensor))
 
             # generate csv handler
