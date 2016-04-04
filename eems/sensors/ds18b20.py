@@ -117,7 +117,7 @@ class _DS18B20(object):
             t.start()
         for t in threads:
             t.join()
-        return self.sensor_dict
+        return self.sensor_dict.get_dic()
 
 
 """
