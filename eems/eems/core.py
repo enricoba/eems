@@ -207,6 +207,8 @@ class Eems(object):
         # create overall dictionary
         self.sensors_dict = _SensorDictionary(sensor_typ)
         for sensor in sensor_typ:
+            print sensor
+            print tmp_dict[sensor]
             self.sensors_dict.add_sensor(sensor, tmp_dict[sensor])
 
         # CSV
