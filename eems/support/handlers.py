@@ -146,6 +146,7 @@ class CsvHandler(object):
         :return:
             Returns *None*.
         """
+        print data
         columns = self.__count_col() - 4
         entries = len(data)
         # validates if the amount of columns is similar to the passed
