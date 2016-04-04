@@ -98,8 +98,7 @@ class Eems(object):
             sys.exit()
 
         # sort sensor types
-        sensor_typ = sorted(sensor_typ)
-        # sensor_typ = set(sensor_typ) # Verhindert doppelte Sensoreingabe
+        sensor_typ = set(sensor_typ)
 
         # flags, handlers etc.
         __home__ = '/home/pi/eems'
@@ -207,9 +206,8 @@ class Eems(object):
         # create overall dictionary
         self.sensors_dict = _SensorDictionary(sensor_typ)
         for sensor in sensor_typ:
-            print sensor
-            print tmp_dict[sensor]
-            self.sensors_dict.add_sensor(sensor, tmp_dict[sensor])
+            self.sensors_dict.add_sensor(sensor.upper(),
+                                         tmp_dict[sensor.upper()])
 
         # CSV
         if csv is True:
