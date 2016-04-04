@@ -146,13 +146,11 @@ class CsvHandler(object):
         :return:
             Returns *None*.
         """
-        print data.dic
         columns = self.__count_col() - 4
         tmp_list = list()
         for sensor_type in data.dic.keys():
             for sensor in data.dic[sensor_type].keys():
                 tmp_list.append(sensor)
-        print tmp_list
         entries = len(tmp_list)
         # validates if the amount of columns is similar to the passed
         # keys of the dictionary
@@ -168,9 +166,7 @@ class CsvHandler(object):
             for sensor_type in data.dic.keys():
                 for sensor in data.dic[sensor_type].keys():
                     tmp_list.append(data.dic[sensor_type][sensor])
-            print tmp_list
             data = [row, timestamp, str_date, str_time] + tmp_list
-            print data
             try:
                 with open(self.csv_file, 'ab') as _csv:
                     csv_writer = csv.writer(_csv, delimiter=';')
