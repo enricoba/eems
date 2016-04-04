@@ -146,7 +146,7 @@ class CsvHandler(object):
         :return:
             Returns *None*.
         """
-        print data
+        print data.dic
         columns = self.__count_col() - 4
         tmp_list = list()
         for sensor_type in data.dic.keys():
