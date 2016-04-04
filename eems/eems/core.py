@@ -66,6 +66,9 @@ class _SensorDictionary(object):
         """
         return self.dic
 
+    def get_sensor(self, sensor_type):
+        return self.dic.__getitem__(sensor_type)
+
 
 class Eems(object):
     def __init__(self, sensor_typ, log=None, console=None, csv=None):
@@ -330,6 +333,8 @@ class Eems(object):
             #     read_dht11(tmp_sensor_dict)
         # requests are done, sensors are read, results are there
         if self.csv is True:
+            print self.sensors_dict
+            print self.sensors_dict.get_sensor('DS18B20')
             self.__csv__.write(self.sensors_dict)
         if private is False:
             return self.sensors_dict.get_dic()
