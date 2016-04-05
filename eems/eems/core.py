@@ -17,38 +17,41 @@ from eems.sensors.ds18b20 import read_ds18b20
 
 
 class _SensorDictionary(object):
-    def __init__(self, sensor_type):
+    def __init__(self, sensor_model):
         """Private class *_SensorDictionary* provides functions to manage the
         sensors dictionary.
+
+        :param sensor_model:
+            Expects a string of the sensor type name.
 
         :return:
             Returns a in-memory object tree providing the functions
             *set_temp*, *get_dic* and *reset_dic*.
         """
         dic = dict()
-        for typ in sensor_type:
-            dic[typ] = None
+        for model in sensor_model:
+            dic[model] = None
         self.dic = collections.OrderedDict(sorted(dic.items()))
         self.lock = Lock()
 
-    def add_sensor(self, sensor_type, sensors):
+    def add_sensor(self, sensor_model, sensors):
         """Public function *add_sensor* adds a sensor dictionary with *None*
         values for a special sensor type.
 
-        :param sensor_type:
+        :param sensor_model:
             Expects a string containing sensor type name.
         :param sensors:
             Expects a list containing senor names.
         :return:
             Returns *None*.
         """
-        self.dic.__setitem__(sensor_type, {sensor: None for sensor in sensors})
+        self.dic.__setitem__(sensor_model, {sensor: None for sensor in sensors})
 
-    def set_sensor_dict(self, sensor_type, dic):
+    def set_sensor_dict(self, sensor_model, dic):
         """Public function *set_sensor_dict* sets the sensor dictionary of a
         sensor type.
 
-        :param sensor_type:
+        :param sensor_model:
             Expects a string of the sensor type name.
         :param dic:
             Expects a dictionary containing sensor names and values.
@@ -56,7 +59,7 @@ class _SensorDictionary(object):
             Returns *None*.
         """
         with self.lock:
-            self.dic.__setitem__(sensor_type, dic)
+            self.dic.__setitem__(sensor_model, dic)
 
     def get_dic(self):
         """Public function *get_dic* returns the sensors dictionary.
@@ -98,9 +101,7 @@ class Eems(object):
             sys.exit()
 
         # sort sensor types
-        tmp_list = list()
-        for typ in sensor_typ:
-            tmp_list.append(typ.upper())
+        tmp_list = [typ.upper() for typ in sensor_typ]
         sensor_typ = set(tmp_list)
 
         # flags, handlers etc.
@@ -320,13 +321,13 @@ class Eems(object):
             and sensor names with values at second level.
         """
         # read all connected sensor types
-        for sensor_type in self.sensors_dict.dic.keys():
-            tmp_sensor_dict = self.sensors_dict.dic[sensor_type]
-            if sensor_type == 'DS18B20':
+        for sensor_model in self.sensors_dict.dic.keys():
+            tmp_sensor_dict = self.sensors_dict.dic[sensor_model]
+            if sensor_model == 'DS18B20':
                 results = read_ds18b20(tmp_sensor_dict)
                 self.sensors_dict.set_sensor_dict('DS18B20', results)
 
-            # elif sensor_type.upper() == 'DHT11':
+            # elif sensor_model == 'DHT11':
             #     read_dht11(tmp_sensor_dict)
         # requests are done, sensors are read, results are there
         if self.csv is True:
