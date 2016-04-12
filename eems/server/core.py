@@ -16,4 +16,4 @@ def homepage(name=None):
     return render_template("index.html", name=name)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0')

@@ -7,14 +7,22 @@
 
     <title>EEMS - Easy Energy Monitoring System</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <!--<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap-social.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='font-mfizz/font-mfizz.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='font-mfizz/font-mfizz.css') }}">-->
+
+    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap-social.css">
+    <link rel="stylesheet" href="../static/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../static/font-mfizz/font-mfizz.css">
+
+
 </head>
 
 <body>
-    <div class="container"> <!-- Header -->
+    <!-- Header -->
+    <header class="container">
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -29,53 +37,56 @@
                 </div>
                 <div class="collapse navbar-collapse" id="eemsBar">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="#">Home</a></li>
-                        <li><a href="#">Config</a></li>
-                        <li><a href="#">Monitor</a></li>
-                        <li><a href="#">About</a></li>
+                        <li><a href="#"><i class="fa fa-cogs"></i>&nbsp; Config</a></li>
+                        <li><a href="#"><i class="fa fa-area-chart"></i>&nbsp; Monitor</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right nav-pills">
                         <li><a href="https://github.com/enricoba/eems">
-                            <i class="fa fa-github fa-fw"></i>
-                                &nbsp; GitHub</a></li>
+                            <i class="fa fa-github"></i>&nbsp; GitHub</a></li>
                         <li><a href="https://pypi.python.org/pypi/eems">
-                            <i class="icon-python"></i>
-                                &nbsp; PyPi</a></li>
+                            <i class="icon-python"></i>&nbsp; PyPi</a></li>
                         <li><a href="https://www.pythonhosted.org/eems/">
-                            <i class="fa fa-book fa-fw"></i>
-                                &nbsp; Docu</a></li>
+                            <i class="fa fa-book"></i>&nbsp; Docu</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
-    </div>
+    </header>
 
-    <div class="container" style="padding-top:70px"> <!-- Welcome-Screen, Body, Main-Block -->
-        <h1> Welcome to EEMS </h1>
-        <h4> Easy Energy Monitoring System </h4>
-        {% if name %}
-          <h1>Hello {{ name }}!</h1>
-        {% else %}
-          <h1>Hello World!</h1>
-        {% endif %}
-        <p> Your possible options: </p>
-        <ul>
-            <li> <a href="#">Config</a>: Configure your monitoring system</li>
-            <li> <a href="#">Monitor</a>: Overview of the measured values </li>
-            <li> <a href="#">About</a>: All about the project EEMS </li>
-        </ul>
-    </div>
+    <!-- Content -->
+    <main class="container" style="padding-top: 70px">
+        <h1 class="text-center">Welcome to EEMS</h1>
+        <h4 class="text-center">Easy Energy Monitoring System</h4>
+        <div class="row" style="padding-top: 50px">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-2" style="padding-bottom: 5px">
+                <a class="btn btn-block btn-lg btn-social btn-soundcloud">
+                    <span class="fa fa-play-circle"></span> <p class="text-center" style="margin: 0">New</p>
+                </a>
+            </div>
+            <div class="col-sm-2">
+                <a class="btn btn-block btn-lg btn-social btn-twitter">
+                    <span class="fa fa-folder-open"></span> <p class="text-center" style="margin: 0">Load</p>
+                </a>
+            </div>
+            <div class="col-sm-4"></div>
+        </div>
 
-    <div class="container"> <!-- footer -->
-        <footer>
-            <p> <i class="fa fa-copyright" aria-hidden="true"> </i> <a href="mailto:henrik.baran@online.de">Henrik Baran </a> and
-                <a href="mailto:a.hoehn@mailbox.org"> Aurofree Hoehn</a></p>
-            <p>Version: eems</p>
-        </footer>
-    </div>
+    </main>
+
+    <!-- footer -->
+    <footer class="navbar-fixed-bottom">
+        <div class="container">
+        <p class="text-center"><i class="fa fa-copyright"></i> 2016 <a href="#">Henrik Baran</a>,
+            <a href="#"> Aurofree Hoehn</a>, Licence: <a href="../static/files/LICENSE.rst">MIT</a>, Version: 0.2.1</p>
+        </div>
+    </footer>
 
     <!-- Javascript links -->
-    <script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    <!--<script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>-->
+
+    <script src="../static/jquery/jquery.min.js"></script>
+    <script src="../static/bootstrap/js/bootstrap.min.js"></script>
 </body>
 </html>
