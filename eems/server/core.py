@@ -5,9 +5,11 @@ Server core module
 
 
 from flask import Flask, render_template
+# from eems import __version__
 
 
 app = Flask(__name__)
+
 
 
 @app.route("/eems/")
