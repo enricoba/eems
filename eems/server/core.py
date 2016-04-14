@@ -12,6 +12,10 @@ from eems import __version__
 # context = SSL.Context(SSL.TLSv1_1_METHOD)
 # context.set_options(SSL.OP_NO_SSLv2)
 
+# variables
+flag = False
+
+
 app = Flask(__name__)
 
 

@@ -1,1 +1,52 @@
-<p>{{ name }}</p>
+<div class="panel-group" id="accordion">
+    <!--panel_1-->
+    <div class="panel panel-default">
+        <!--heading-->
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Hardeware Setup</a>
+            </h4>
+        </div>
+        <!--text/body-->
+        <div class="panel-collapse collapse in" id="collapse1">
+            <div class="panel-body">
+                <div class="row" style="padding-bottom: 5px; padding-left: 5px">
+                    <button type="button" onclick="set_btn(this)" style="width: 100px" class="btn btn-default">DS18B20</button>
+                </div>
+                <div class="row" style="padding-bottom: 5px; padding-left: 5px">
+                    <button type="button" onclick="set_btn(this)" style="width: 100px" class="btn btn-default">DHT11</button>
+                </div>
+                <div class="row" style="padding-right: 5px">
+                    <button type="button" style="float:right; width: 100px" class="btn btn-info">Start</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--panel_2-->
+    <div class="panel panel-default">
+        <!--heading-->
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Group2</a>
+            </h4>
+        </div>
+        <!--text/body-->
+        <div class="panel-collapse collapse" id="collapse2">
+            <div class="panel-body">
+                Unser text in panel 2
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function set_btn(btn) {
+        var status = btn.className;
+        if (status === "btn btn-default") {
+            btn.className = "btn btn-primary";
+        } else {
+            btn.className = "btn btn-default";
+        }
+    }
+</script>
