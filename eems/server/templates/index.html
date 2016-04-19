@@ -54,7 +54,6 @@
     </header>
 
     <!-- Content -->
-
     <main class="container" style="padding-top: 70px">
         {% if name == 'config' %}
             {% include 'config.html' %}
@@ -67,10 +66,11 @@
         {% endif %}
     </main>
 
+
     <!-- footer -->
     <footer class="navbar-fixed-bottom">
         <div class="container">
-        <p class="text-center"><i class="fa fa-copyright"></i> 2016 <a href="mailto:&#104;&#101;&#110;&#114;&#105;&#107;&#046;&#098;&#097;&#114;&#097;&#110;&#064;&#111;&#110;&#108;&#105;&#110;&#101;&#046;&#100;&#101;">Henrik Baran</a>,
+            <p class="text-center"><i class="fa fa-copyright"></i> 2016 <a href="mailto:&#104;&#101;&#110;&#114;&#105;&#107;&#046;&#098;&#097;&#114;&#097;&#110;&#064;&#111;&#110;&#108;&#105;&#110;&#101;&#046;&#100;&#101;">Henrik Baran</a>,
             <a href="mailto:&#097;&#046;&#104;&#111;&#101;&#104;&#110;&#064;&#109;&#097;&#105;&#108;&#098;&#111;&#120;&#046;&#111;&#114;&#103;"> Aurofree Hoehn</a>, Licence: <a href="{{ url_for('licence') }}">MIT</a>, Version: {{ version }}</p>
         </div>
     </footer>

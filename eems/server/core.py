@@ -34,12 +34,25 @@ def config():
         else:
             success = 'display: none'
             print 'no success'
+
+        if c_1 is True:
+            c_1_success = 'display: true'
+        else:
+            c_1_success = 'display: none'
+        if c_2 is True:
+            c_2_success = 'display: true'
+        else:
+            c_2_success = 'display: none'
+
         print 'POST  method'
     else:
         success = 'display: none'
+        c_1_success = 'display: none'
+        c_2_success = 'display: none'
         print 'GET / else method'
     return render_template("index.html", name='config', version=__version__,
-                           success=success)
+                           success=success, c_1_success=c_1_success,
+                           c_2_success=c_2_success)
 
 
 @app.route("/eems/monitor/")
