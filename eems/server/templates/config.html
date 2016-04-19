@@ -4,20 +4,33 @@
         <!--heading-->
         <div class="panel-heading">
             <h4 class="panel-title">
+                <a href="#" data-toggle="popover" data-trigger="focus" title="Help" data-content="help text" data-placement="auto"><span class="fa fa-info"></span></a>
+                <i class="fa fa-spinner fa-pulse fa-1x fa-fw margin-bottom"></i>
                 <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Hardeware Setup</a>
+                <span class="fa fa-exclamation" style="float:right; color: red"></span>
+                <span class="fa fa-check" style="float:right; color: green"></span>
+                <span class="fa fa-flash" style="float:right; color: orange"></span>
             </h4>
         </div>
         <!--text/body-->
         <div class="panel-collapse collapse in" id="collapse1">
             <div class="panel-body">
-                <div class="row" style="padding-bottom: 5px; padding-left: 5px">
-                    <button type="button" onclick="set_btn(this)" style="width: 100px" class="btn btn-default">DS18B20</button>
-                </div>
-                <div class="row" style="padding-bottom: 5px; padding-left: 5px">
-                    <button type="button" onclick="set_btn(this)" style="width: 100px" class="btn btn-default">DHT11</button>
-                </div>
-                <div class="row" style="padding-right: 5px">
-                    <button type="button" style="float:right; width: 100px" class="btn btn-info">Start</button>
+                <form method="post" action="{{ url_for('config') }}">
+                    <div class="row" style="padding-bottom: 5px; padding-left: 5px">
+                        <label><input type="checkbox" name="c_1" style="display:none"></label>
+                        <button type="button" onclick="set_btn(this, c_1)" style="width: 100px" class="btn btn-default">DS18B20</button>
+                    </div>
+                    <div class="row" style="padding-bottom: 5px; padding-left: 5px">
+                        <label><input type="checkbox" name="c_2" style="display:none"></label>
+                        <button type="button" onclick="set_btn(this, c_2)" style="width: 100px" class="btn btn-default">DHT11</button>
+                    </div>
+                    <div class="row" style="padding-right: 15px; padding-bottom: 15px">
+                        <button type="submit" style="float:right; width: 100px" class="btn btn-info">Start</button>
+                    </div>
+                </form>
+                <div class="alert alert-success fade in" style="{{ success }}">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong>Success!</strong> All sensors have been detected.
                 </div>
             </div>
         </div>
@@ -41,12 +54,14 @@
 
 
 <script>
-    function set_btn(btn) {
+    function set_btn(btn, cb) {
         var status = btn.className;
         if (status === "btn btn-default") {
             btn.className = "btn btn-primary";
+            cb.checked = true;
         } else {
             btn.className = "btn btn-default";
+            cb.checked = false;
         }
     }
 </script>
