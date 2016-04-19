@@ -15,43 +15,45 @@
         <!--text/body-->
         <div class="panel-collapse collapse in" id="collapse1">
             <div class="panel-body">
-                <form method="post" action="{{ url_for('config') }}">
-                    <div class="container">
-                        <!-- DS18B20 button -->
-                        <div class="row" style="padding-bottom: 5px">
-                            <button type="button" onclick="set_btn(this, c_1)" style="width: 100px" class="btn btn-default">DS18B20</button>
-                            <label><input type="checkbox" name="c_1" style="display:none"></label>
-                        </div>
+                <div class="container-fluid">
+                    <div class="form-group">
+                        <form role="form" method="post" action="{{ url_for('config') }}">
+                            <!-- DS18B20 button -->
+                            <div class="row" style="padding-bottom: 5px">
+                                <button type="button" onclick="set_btn(this, c_1)" style="width: 100px" class="btn btn-default">DS18B20</button>
+                                <label><input class="form-control" type="checkbox" name="c_1" style="display:none"></label>
+                            </div>
 
-                        <!-- box with DS18B20 sensors -->
-                        <div class="row" style="{{ c_1_success }}">
-                            <ul class="list-group">
-                                <li class="list-group-item"><span class="badge">20°C</span>sensor 1: <input type="text" class="form-control input-sm" style="width: 200px; display: inline"></li>
-                                <li class="list-group-item"><span class="badge">48°C</span>sensor 2: </li>
-                                <li class="list-group-item"><span class="badge">80°C</span>sensor 3: </li>
-                            </ul>
-                        </div>
+                            <!-- box with DS18B20 sensors -->
+                            <div class="row" style="{{ c_1_success }}">
+                                <ul class="list-group">
+                                    <li class="list-group-item"><span class="badge">20°C</span>sensor 1: </li>
+                                    <li class="list-group-item"><span class="badge">48°C</span>sensor 2: </li>
+                                    <li class="list-group-item"><span class="badge">80°C</span>sensor 3: </li>
+                                </ul>
+                            </div>
 
-                        <!-- DHT11 button -->
-                        <div class="row" style="padding-bottom: 5px">
-                            <button type="button" onclick="set_btn(this, c_2)" style="width: 100px" class="btn btn-default">DHT11</button>
-                            <label><input type="checkbox" name="c_2" style="display:none"></label>
-                        </div>
+                            <!-- DHT11 button -->
+                            <div class="row" style="padding-bottom: 5px">
+                                <button type="button" onclick="set_btn(this, c_2)" style="width: 100px" class="btn btn-default">DHT11</button>
+                                <label><input class="form-control" type="checkbox" name="c_2" style="display:none"></label>
+                            </div>
 
-                        <!-- box with DHT11 sensors -->
-                        <div class="row" style="{{ c_2_success }}">
-                            <ul class="list-group">
-                                <li class="list-group-item"><span class="badge">20°C</span>sensor 1</li>
-                                <li class="list-group-item"><span class="badge">48°C</span>sensor 2</li>
-                                <li class="list-group-item"><span class="badge">80°C</span>sensor 3</li>
-                            </ul>
-                        </div>
+                            <!-- box with DHT11 sensors -->
+                            <div class="row" style="{{ c_2_success }}">
+                                <ul class="list-group">
+                                    <li class="list-group-item"><span class="badge">20°C</span>sensor 1</li>
+                                    <li class="list-group-item"><span class="badge">48°C</span>sensor 2</li>
+                                    <li class="list-group-item"><span class="badge">80°C</span>sensor 3</li>
+                                </ul>
+                            </div>
 
-                        <div class="row" style="padding-bottom: 15px">
-                            <button type="submit" style="float:right; width: 100px" class="btn btn-info">Start</button>
-                        </div>
+                            <div class="row" style="padding-bottom: 15px">
+                                <button type="submit" style="float:right; width: 100px" class="btn btn-info">Start</button>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
 
                 <!-- altert -->
                 <div class="alert alert-success fade in" style="{{ success }}">
