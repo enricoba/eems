@@ -34,7 +34,7 @@
                             <div class="row" style="display: {{ ds18b20_vars['list'] }}">
                                 <ul class="list-group">
                                     {% for key, value in ds18b20_vars['sensors'].iteritems() %}
-                                        <li class="list-group-item"><span class="badge" style="background-color: green">{{ value }}°C</span>{{ key }}</li>
+                                        <li class="list-group-item"><span class="badge" style="background-color: green">{{ value }} °C</span>{{ key }}</li>
                                     {% endfor %}
                                 </ul>
                             </div>
