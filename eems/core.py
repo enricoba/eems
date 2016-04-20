@@ -47,6 +47,7 @@ def config():
         c_2_success = 'display: none'
         print 'GET / else method'
     ds18_b20_sensors = detects.ds18b20_sensors()
+    print ds18_b20_sensors
     return render_template("index.html", name='config', version=__version__,
                            success=success, c_1_success=c_1_success,
                            c_2_success=c_2_success,
