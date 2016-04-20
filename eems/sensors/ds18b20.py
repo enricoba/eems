@@ -89,7 +89,7 @@ class _DS18B20(object):
         else:
             if file_content[0].strip()[-3:] == 'YES':
                 value = file_content[1].strip()[29:]
-                t = round(float(value) / 1000, 2)
+                t = round(float(value) / 1000, 1)
                 self.sensor_dict.set_temp(sensor, t)
                 logger.info('Sensor: {} - read successful - '
                             '{}°C'.format(sensor, t))
