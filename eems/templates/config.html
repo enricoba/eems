@@ -45,6 +45,23 @@
                                 <label><input class="form-control" type="checkbox" name="dht11_cb" style="display: none"></label>
                             </div>
 
+                            <div class="row">
+                            <!-- DHT11 alert -->
+                            <div class="alert {{ dht11_vars['status'] }} fade in" style="display: {{ dht11_vars['display'] }}; margin-bottom: 5px">
+                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                <strong>{{ dht11_vars['msg_1'] }}</strong>{{ dht11_vars['msg_2'] }}
+                            </div>
+                            </div>
+
+                            <!-- box with DHT11 sensors -->
+                            <div class="row" style="display: {{ dht11_vars['list'] }}">
+                                <ul class="list-group">
+                                    {% for key, value in dht11_vars['sensors'].iteritems() %}
+                                        <li class="list-group-item"><span class="badge" style="background-color: green">{{ value }} °C</span>{{ key }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+
 
                             <div class="row" style="padding-bottom: 15px">
                                 <button type="submit" style="float:right; width: 100px" class="btn btn-info">Start</button>
