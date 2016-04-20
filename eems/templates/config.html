@@ -13,62 +13,45 @@
         <!--text/body-->
         <div class="panel-collapse collapse in" id="collapse1">
             <div class="panel-body">
-                <div class="container-fluid">
                     <div class="form-group">
                         <form role="form" method="post" action="{{ url_for('config') }}">
                             <!-- DS18B20 button -->
-                            <div class="row" style="padding-bottom: 5px">
                                 <button type="button" onclick="set_btn(this, ds18b20_cb)" style="width: 100px" class="btn btn-default">DS18B20</button>
                                 <label><input class="form-control" type="checkbox" name="ds18b20_cb" style="display: none"></label>
-                            </div>
 
-                            <div class="row">
                             <!-- DS18B20 alert -->
-                            <div class="alert {{ ds18b20_vars['status'] }} fade in" style="display: {{ ds18b20_vars['display'] }}; margin-bottom: 5px">
+                            <div class="alert {{ ds18b20_vars['status'] }} fade in" style="display: {{ ds18b20_vars['display'] }}; margin: 5px 0px 5px 0px">
                                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                                 <strong>{{ ds18b20_vars['msg_1'] }}</strong>{{ ds18b20_vars['msg_2'] }}
                             </div>
-                            </div>
 
                             <!-- box with DS18B20 sensors -->
-                            <div class="row" style="display: {{ ds18b20_vars['list'] }}">
-                                <ul class="list-group">
+                                <ul class="list-group" style="display: {{ ds18b20_vars['list'] }}; margin-top: 5px">
                                     {% for key, value in ds18b20_vars['sensors'].iteritems() %}
                                         <li class="list-group-item"><span class="badge" style="background-color: green">{{ value }} °C</span>{{ key }}</li>
                                     {% endfor %}
                                 </ul>
-                            </div>
 
                             <!-- DHT11 button -->
-                            <div class="row" style="padding-bottom: 5px">
                                 <button type="button" onclick="set_btn(this, dht11_cb)" style="width: 100px" class="btn btn-default">DHT11</button>
                                 <label><input class="form-control" type="checkbox" name="dht11_cb" style="display: none"></label>
-                            </div>
 
-                            <div class="row">
                             <!-- DHT11 alert -->
-                            <div class="alert {{ dht11_vars['status'] }} fade in" style="display: {{ dht11_vars['display'] }}; margin-bottom: 5px">
+                            <div class="alert {{ dht11_vars['status'] }} fade in" style="display: {{ dht11_vars['display'] }}; margin: 5px 0px 5px 0px">
                                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                                 <strong>{{ dht11_vars['msg_1'] }}</strong>{{ dht11_vars['msg_2'] }}
                             </div>
-                            </div>
 
                             <!-- box with DHT11 sensors -->
-                            <div class="row" style="display: {{ dht11_vars['list'] }}">
-                                <ul class="list-group">
+                                <ul class="list-group" style="display: {{ dht11_vars['list'] }}; margin-top: 5px">
                                     {% for key, value in dht11_vars['sensors'].iteritems() %}
                                         <li class="list-group-item"><span class="badge" style="background-color: green">{{ value }} °C</span>{{ key }}</li>
                                     {% endfor %}
                                 </ul>
-                            </div>
 
-
-                            <div class="row" style="padding-bottom: 15px">
-                                <button type="submit" style="float:right; width: 100px" class="btn btn-info">Start</button>
-                            </div>
+                                <button type="submit" name="hardware" style="float:right; width: 100px" class="btn btn-info">Start</button>
                         </form>
                     </div>
-                </div>
             </div>
         </div>
     </div>
@@ -84,7 +67,70 @@
         <!--text/body-->
         <div class="panel-collapse collapse" id="collapse2">
             <div class="panel-body">
-                Unser text in panel 2
+                <div class="form-group">
+                    <form role="form" method="post" action="{{ url_for('config') }}" onsubmit="return validateForm(this)">
+                        <!-- DS18B20 sensors -->
+                        <div class="panel-group" style="display: {{ ds18b20_vars['list'] }}; margin-bottom: 5px">
+                            <div class="panel panel-default">
+                                <!-- header -->
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" href="#collapse3">DS18B20</a>
+                                    </h4>
+                                </div>
+                                <!-- body -->
+                                <div id="collapse3" class="panel-collapse collapse">
+                                    <ul class="list-group">
+                                        {% for key, value in ds18b20_vars['sensors'].iteritems() %}
+                                            <li class="list-group-item"><span class="badge" style="background-color: green">{{ value }} °C</span>{{ key }}
+                                            <input type="text" placeholder="use defined senor name" class="form-control input-sm" style="margin-top: 5px"></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- DHT11 sensors -->
+                        <div class="panel-group" style="display: {{ dht11_vars['list'] }}">
+                            <div class="panel panel-default">
+                                <!-- header -->
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" href="#collapse4">DHT11</a>
+                                    </h4>
+                                </div>
+                                <!-- body -->
+                                <div id="collapse4" class="panel-collapse collapse">
+                                    <ul class="list-group">
+                                        {% for key, value in dht11_vars['sensors'].iteritems() %}
+                                            <li class="list-group-item"><span class="badge" style="background-color: green">{{ value }} °C</span>{{ key }}
+                                            <input type="text" placeholder="use defined senor name" class="form-control input-sm" style="margin-top: 5px"></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top: 10px">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="duration">Duration (s):</label>
+                                    <input type="number" name="duration" min="10" placeholder="duration in seconds" class="form-control" id="duration">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="interval">Interval (s):</label>
+                                    <input type="number" name="interval" min="2" placeholder="interval in seconds" class="form-control" id="interval">
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- button -->
+                        <button type="submit" name="software" style="float:right; width: 100px" class="btn btn-info">Start</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -100,6 +146,25 @@
         } else {
             btn.className = "btn btn-default";
             cb.checked = false;
+        }
+    }
+
+    function validateForm(form) {
+        var x = form["duration"].value;
+        var y = form["interval"].value;
+        alert(x);
+        alert(y);
+        if (x == null || x == "") {
+            alert("Duration must be set.");
+            return false;
+        } if (y == null || y == "") {
+            alert("Interval must be set.");
+            return false;
+        } else {
+            if (y > x) {
+                alert("Interval must be smaller than duration.");
+                return false;
+            }
         }
     }
 </script>
