@@ -5,7 +5,7 @@
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a href="#" data-toggle="popover" data-trigger="focus" title="Help" data-content="help text" data-placement="auto"><span class="fa fa-info"></span></a>
-                <i class="fa fa-spinner fa-pulse fa-1x fa-fw margin-bottom"></i>
+                <!--<i class="fa fa-spinner fa-pulse fa-1x fa-fw margin-bottom"></i>-->
                 <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Hardeware Setup</a>
                 <span class="fa {{ sensors_vars['icon'] }}" style="float: right; color: {{ sensors_vars['color'] }}; display: {{ sensors_vars['display'] }}"></span>
             </h4>
@@ -60,7 +60,8 @@
         <!--heading-->
         <div class="panel-heading">
             <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Group2</a>
+                <a href="#" data-toggle="popover" data-trigger="focus" title="Help" data-content="help text" data-placement="auto"><span class="fa fa-info"></span></a>
+                <a data-toggle="{{ sensors_vars['final'] }}" data-parent="#accordion" href="#collapse2">Configuration</a>
             </h4>
         </div>
         <!--text/body-->

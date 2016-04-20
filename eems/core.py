@@ -24,7 +24,8 @@ def config():
         'icon': 'fa-check',
         'color': 'green',
         'status': {'ds18b20': '',
-                   'dht11': ''}
+                   'dht11': ''},
+        'final': 'deactivate'
     }
     ds18b20_vars = {
         'display': 'none',
@@ -91,6 +92,7 @@ def config():
         else:
             sensors_vars['icon'] = 'fa-check'
             sensors_vars['color'] = 'green'
+            sensors_vars['final'] = 'collapse'
     return render_template("index.html", name='config', version=__version__,
                            ds18b20_vars=ds18b20_vars, dht11_vars=dht11_vars,
                            sensors_vars=sensors_vars)
