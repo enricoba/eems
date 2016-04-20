@@ -35,8 +35,8 @@
                             <!-- box with DS18B20 sensors -->
                             <div class="row" style="{{ ds18b20_vars['list'] }}">
                                 <ul class="list-group">
-                                    {% for sensor in ds18b20_vars['sensors'] %}
-                                        <li class="list-group-item"><span class="badge" style="background-color: green">20°C</span>{{ sensor }}</li>
+                                    {% for key, value in ds18b20_vars['sensors'].iteritems() %}
+                                        <li class="list-group-item"><span class="badge" style="background-color: green">{{ value }}°C</span>{{ key }}</li>
                                     {% endfor %}
                                 </ul>
                             </div>

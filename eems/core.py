@@ -19,35 +19,41 @@ def index():
 
 @app.route("/eems/config/", methods=['GET', 'POST'])
 def config():
-    ds18b20_vars = {
+    ds18b20_vars = dict({
         'display': 'display: none',
         'list': 'display: none',
         'status': '',
         'msg_1': '',
         'msg_2': '',
-        'sensors': []
-    }
-    dht11_vars = {
+        'sensors': dict()
+    })
+    dht11_vars = dict({
         'display': 'display: none',
         'list': 'display: none',
         'status': '',
         'msg_1': '',
         'msg_2': '',
-        'sensors': []
-    }
+        'sensors': dict()
+    })
     if request.method == 'POST':
         ds18b20_cb = 'ds18b20_cb' in request.form
         if ds18b20_cb is True:
             ds18b20_vars['display'] = 'display: true'
             # execute check
-            c = checks.Check()
-            # check = True
-            if c.w1_config() is True and c.w1_modules() is True:
-            # if check is True:
+            # c = checks.Check()
+            check = True
+            #if c.w1_config() is True and c.w1_modules() is True:
+            if check is True:
                 # check sensors
-                # ds18b20_vars['sensors'] = ['1', '2', '3', '4']
-                ds18b20_vars['sensors'] = detects.ds18b20_sensors()
+                ds18b20_vars['sensors'] = {
+                    '1': 19,
+                    '2': 21,
+                    '3': 50,
+                    '4': 110
+                }
+                # ds18b20_vars['sensors'] = detects.ds18b20_sensors()
                 if len(ds18b20_vars['sensors']):
+
                     ds18b20_vars['list'] = 'display: true'
                     ds18b20_vars['status'] = 'alert-success'
                     ds18b20_vars['msg_1'] = 'Success!'
