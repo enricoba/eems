@@ -27,8 +27,8 @@
                             <!-- box with DS18B20 sensors -->
                             <div class="row" style="{{ c_1_success }}">
                                 <ul class="list-group">
-                                    {% for id in ids %}
-                                        <li class="list-group-item"><span class="badge" style="background-color: green">20°C</span>{{ id }}</li>
+                                    {% for ds18_b20_sensor in ds18_b20_sensors %}
+                                        <li class="list-group-item"><span class="badge" style="background-color: green">20°C</span>{{ ds18_b20_sensor }}</li>
                                     {% endfor %}
                                 </ul>
                             </div>
