@@ -5,8 +5,8 @@ Server core module
 
 
 from flask import Flask, render_template, request
-from support import detects
-from __init__ import __version__
+from eems.support import detects, checks
+from eems import __version__
 
 
 app = Flask(__name__)
@@ -19,39 +19,53 @@ def index():
 
 @app.route("/eems/config/", methods=['GET', 'POST'])
 def config():
+    ds18b20_vars = {
+        'display': 'display: none',
+        'list': 'display: none',
+        'status': '',
+        'msg_1': '',
+        'msg_2': '',
+        'sensors': []
+    }
+    dht11_vars = {
+        'display': 'display: none',
+        'list': 'display: none',
+        'status': '',
+        'msg_1': '',
+        'msg_2': '',
+        'sensors': []
+    }
     if request.method == 'POST':
-        c_1 = 'c_1' in request.form
-        c_2 = 'c_2' in request.form
-        print 'c_1: ', c_1
-        print 'c_2: ', c_2
-        if c_1 is True and c_2 is True:
-            success = 'display: true'
-            print 'success'
-        else:
-            success = 'display: none'
-            print 'no success'
+        ds18b20_cb = 'ds18b20_cb' in request.form
+        if ds18b20_cb is True:
+            ds18b20_vars['display'] = 'display: true'
+            # execute check
+            c = checks.Check()
+            # check = True
+            if c.w1_config() is True and c.w1_modules() is True:
+            # if check is True:
+                # check sensors
+                # ds18b20_vars['sensors'] = ['1', '2', '3', '4']
+                ds18b20_vars['sensors'] = detects.ds18b20_sensors()
+                if len(ds18b20_vars['sensors']):
+                    ds18b20_vars['list'] = 'display: true'
+                    ds18b20_vars['status'] = 'alert-success'
+                    ds18b20_vars['msg_1'] = 'Success!'
+                    ds18b20_vars['msg_2'] = ' - {} sensors have ' \
+                                            'been detected.'.format(
+                            len(ds18b20_vars['sensors']))
+                else:
+                    ds18b20_vars['status'] = 'alert-warning'
+                    ds18b20_vars['msg_1'] = 'Warning!'
+                    ds18b20_vars['msg_2'] = ' - No sensors have been detected.'
+            else:
+                ds18b20_vars['status'] = 'alert-danger'
+                ds18b20_vars['msg_1'] = 'Error!'
+                ds18b20_vars['msg_2'] = ' - DS18B20 hardware ' \
+                                        'requirements failed.'
 
-        if c_1 is True:
-            c_1_success = 'display: true'
-        else:
-            c_1_success = 'display: none'
-        if c_2 is True:
-            c_2_success = 'display: true'
-        else:
-            c_2_success = 'display: none'
-
-        print 'POST  method'
-    else:
-        success = 'display: none'
-        c_1_success = 'display: none'
-        c_2_success = 'display: none'
-        print 'GET / else method'
-    ds18_b20_sensors = detects.ds18b20_sensors()
-    print ds18_b20_sensors
     return render_template("index.html", name='config', version=__version__,
-                           success=success, c_1_success=c_1_success,
-                           c_2_success=c_2_success,
-                           ds18_b20_sensors=ds18_b20_sensors)
+                           ds18b20_vars=ds18b20_vars, dht11_vars=dht11_vars)
 
 
 @app.route("/eems/monitor/")
