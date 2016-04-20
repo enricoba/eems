@@ -21,22 +21,22 @@
                             <!-- DS18B20 button -->
                             <div class="row" style="padding-bottom: 5px">
                                 <button type="button" onclick="set_btn(this, c_1)" style="width: 100px" class="btn btn-default">DS18B20</button>
-                                <label><input class="form-control" type="checkbox" name="c_1" style="display:none"></label>
+                                <label><input class="form-control" type="checkbox" name="c_1" style="display: none"></label>
                             </div>
 
                             <!-- box with DS18B20 sensors -->
                             <div class="row" style="{{ c_1_success }}">
                                 <ul class="list-group">
-                                    <li class="list-group-item"><span class="badge">20°C</span>sensor 1: </li>
-                                    <li class="list-group-item"><span class="badge">48°C</span>sensor 2: </li>
-                                    <li class="list-group-item"><span class="badge">80°C</span>sensor 3: </li>
+                                    {% for id in ids %}
+                                        <li class="list-group-item"><span class="badge" style="background-color: green">20°C</span>{{ id }}</li>
+                                    {% endfor %}
                                 </ul>
                             </div>
 
                             <!-- DHT11 button -->
                             <div class="row" style="padding-bottom: 5px">
                                 <button type="button" onclick="set_btn(this, c_2)" style="width: 100px" class="btn btn-default">DHT11</button>
-                                <label><input class="form-control" type="checkbox" name="c_2" style="display:none"></label>
+                                <label><input class="form-control" type="checkbox" name="c_2" style="display: none"></label>
                             </div>
 
                             <!-- box with DHT11 sensors -->
@@ -55,7 +55,7 @@
                     </div>
                 </div>
 
-                <!-- altert -->
+                <!-- alert -->
                 <div class="alert alert-success fade in" style="{{ success }}">
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                     <strong>Success!</strong> All sensors have been detected.

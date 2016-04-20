@@ -5,6 +5,7 @@ Server core module
 
 
 from flask import Flask, render_template, request
+from eems.support import detects
 from eems import __version__
 
 
@@ -45,9 +46,11 @@ def config():
         c_1_success = 'display: none'
         c_2_success = 'display: none'
         print 'GET / else method'
+    ds18_b20_sensors = detects.ds18b20_sensors()
     return render_template("index.html", name='config', version=__version__,
                            success=success, c_1_success=c_1_success,
-                           c_2_success=c_2_success)
+                           c_2_success=c_2_success,
+                           ds18_b20_sensors=ds18_b20_sensors)
 
 
 @app.route("/eems/monitor/")
