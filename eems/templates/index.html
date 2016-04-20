@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="position: relative; min-height: 100%">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap-social.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='font-mfizz/font-mfizz.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='sweetalert/sweetalert.css') }}">
 
     <!--<link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="../static/bootstrap/css/bootstrap-social.css">
@@ -18,7 +19,7 @@
     <link rel="stylesheet" href="../static/font-mfizz/font-mfizz.css">-->
 </head>
 
-<body>
+<body style="margin-bottom: 50px">
     <!-- Header -->
     <header class="container">
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -66,7 +67,7 @@
 
 
     <!-- footer -->
-    <footer class="navbar-fixed-bottom">
+    <footer class="navbar-fixed-bottom" style="position: absolute; bottom: 0; height: 50px; padding-top: 5px">
         <div class="container">
             <p class="text-center"><i class="fa fa-copyright"></i> 2016 <a href="mailto:&#104;&#101;&#110;&#114;&#105;&#107;&#046;&#098;&#097;&#114;&#097;&#110;&#064;&#111;&#110;&#108;&#105;&#110;&#101;&#046;&#100;&#101;">Henrik Baran</a>,
             <a href="mailto:&#097;&#046;&#104;&#111;&#101;&#104;&#110;&#064;&#109;&#097;&#105;&#108;&#098;&#111;&#120;&#046;&#111;&#114;&#103;"> Aurofree Hoehn</a>, Licence: <a href="{{ url_for('licence') }}">MIT</a>, Version: {{ version }}</p>
@@ -76,11 +77,12 @@
     <!-- Javascript links -->
     <script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='sweetalert/sweetalert.min.js') }}"></script>
 
     <!--<script src="../static/jquery/jquery.min.js"></script>
     <script src="../static/bootstrap/js/bootstrap.min.js"></script>-->
 
-    <!-- JQeury activation -->
+    <!-- JQuery activation -->
     <script>
         $(document).ready(function(){
             $('[data-toggle="popover"]').popover();

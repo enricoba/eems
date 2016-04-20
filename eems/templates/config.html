@@ -152,19 +152,27 @@
     function validateForm(form) {
         var x = form["duration"].value;
         var y = form["interval"].value;
-        alert(x);
-        alert(y);
         if (x == null || x == "") {
-            alert("Duration must be set.");
+            sweetAlert({
+                title: "Oops!",
+                text: "Duration must be set.",
+                type: "error"
+            });
             return false;
         } if (y == null || y == "") {
-            alert("Interval must be set.");
+            sweetAlert({
+                title: "Oops!",
+                text: "Interval must be set.",
+                type: "error"
+            });
             return false;
-        } else {
-            if (y > x) {
-                alert("Interval must be smaller than duration.");
+        } if (parseInt(y) > parseInt(x)) {
+                sweetAlert({
+                title: "Oops!",
+                text: "Duration must be greater interval.",
+                type: "error"
+            });
                 return false;
-            }
         }
     }
 </script>
