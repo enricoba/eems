@@ -6,6 +6,7 @@ Server core module
 
 from flask import Flask, render_template, request
 from support import detects, checks
+from sensors import ds18b20
 from __init__ import __version__
 
 
@@ -49,19 +50,18 @@ def config():
             ds18b20_vars['display'] = 'true'
             sensors_vars['display'] = 'true'
             # execute check
-            # c = checks.Check()
-            check = True
-            #if c.w1_config() is True and c.w1_modules() is True:
-            if check is True:
+            c = checks.Check()
+            # check = True
+            if c.w1_config() is True and c.w1_modules() is True:
+            # if check is True:
                 # check sensors
-                ds18b20_vars['sensors'] = {
-                    '1': 19,
-                    '2': 21,
-                    '3': 50,
-                    '4': 110
-                }
-                # ds18b20_vars['sensors'] = detects.ds18b20_sensors()
+                sensors = detects.ds18b20_sensors()
                 if len(ds18b20_vars['sensors']):
+                    # read temperatures
+                    tmp_dict = dict()
+                    for sensor in sensors:
+                        tmp_dict[sensor] = None
+                    ds18b20_vars['sensors'] = ds18b20.read_ds18b20(tmp_dict)
 
                     ds18b20_vars['list'] = 'true'
                     ds18b20_vars['status'] = 'alert-success'
@@ -82,13 +82,12 @@ def config():
                                         'requirements failed.'
                 sensors_vars['status']['ds18b20'] = 'error'
 
-        if 'war' in sensors_vars['status'].values() \
-                and 'error' not in sensors_vars['status'].values():
-            sensors_vars['icon'] = 'fa-flash'
-            sensors_vars['color'] = 'orange'
-        elif 'error' in sensors_vars['status'].values():
+        if 'error' in sensors_vars['status'].values():
             sensors_vars['icon'] = 'fa-exclamation'
             sensors_vars['color'] = 'red'
+        elif 'war' in sensors_vars['status'].values():
+            sensors_vars['icon'] = 'fa-flash'
+            sensors_vars['color'] = 'orange'
         else:
             sensors_vars['icon'] = 'fa-check'
             sensors_vars['color'] = 'green'
