@@ -5,8 +5,8 @@ Server core module
 
 
 from flask import Flask, render_template, request
-from eems.support import detects
-from eems import __version__
+from support import detects
+from __init__ import __version__
 
 
 app = Flask(__name__)
