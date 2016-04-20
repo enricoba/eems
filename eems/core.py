@@ -19,26 +19,34 @@ def index():
 
 @app.route("/eems/config/", methods=['GET', 'POST'])
 def config():
-    ds18b20_vars = dict({
-        'display': 'display: none',
-        'list': 'display: none',
+    sensors_vars = {
+        'display': 'none',
+        'icon': 'fa-check',
+        'color': 'green',
+        'status': {'ds18b20': '',
+                   'dht11': ''}
+    }
+    ds18b20_vars = {
+        'display': 'none',
+        'list': 'none',
         'status': '',
         'msg_1': '',
         'msg_2': '',
         'sensors': dict()
-    })
-    dht11_vars = dict({
-        'display': 'display: none',
-        'list': 'display: none',
+    }
+    dht11_vars = {
+        'display': 'none',
+        'list': 'none',
         'status': '',
         'msg_1': '',
         'msg_2': '',
         'sensors': dict()
-    })
+    }
     if request.method == 'POST':
         ds18b20_cb = 'ds18b20_cb' in request.form
         if ds18b20_cb is True:
-            ds18b20_vars['display'] = 'display: true'
+            ds18b20_vars['display'] = 'true'
+            sensors_vars['display'] = 'true'
             # execute check
             # c = checks.Check()
             check = True
@@ -54,24 +62,38 @@ def config():
                 # ds18b20_vars['sensors'] = detects.ds18b20_sensors()
                 if len(ds18b20_vars['sensors']):
 
-                    ds18b20_vars['list'] = 'display: true'
+                    ds18b20_vars['list'] = 'true'
                     ds18b20_vars['status'] = 'alert-success'
                     ds18b20_vars['msg_1'] = 'Success!'
                     ds18b20_vars['msg_2'] = ' - {} sensors have ' \
                                             'been detected.'.format(
                             len(ds18b20_vars['sensors']))
+                    sensors_vars['status']['ds18b20'] = 'ok'
                 else:
                     ds18b20_vars['status'] = 'alert-warning'
                     ds18b20_vars['msg_1'] = 'Warning!'
                     ds18b20_vars['msg_2'] = ' - No sensors have been detected.'
+                    sensors_vars['status']['ds18b20'] = 'war'
             else:
                 ds18b20_vars['status'] = 'alert-danger'
                 ds18b20_vars['msg_1'] = 'Error!'
                 ds18b20_vars['msg_2'] = ' - DS18B20 hardware ' \
                                         'requirements failed.'
+                sensors_vars['status']['ds18b20'] = 'error'
 
+        if 'war' in sensors_vars['status'].values() \
+                and 'error' not in sensors_vars['status'].values():
+            sensors_vars['icon'] = 'fa-flash'
+            sensors_vars['color'] = 'orange'
+        elif 'error' in sensors_vars['status'].values():
+            sensors_vars['icon'] = 'fa-exclamation'
+            sensors_vars['color'] = 'red'
+        else:
+            sensors_vars['icon'] = 'fa-check'
+            sensors_vars['color'] = 'green'
     return render_template("index.html", name='config', version=__version__,
-                           ds18b20_vars=ds18b20_vars, dht11_vars=dht11_vars)
+                           ds18b20_vars=ds18b20_vars, dht11_vars=dht11_vars,
+                           sensors_vars=sensors_vars)
 
 
 @app.route("/eems/monitor/")
@@ -85,4 +107,4 @@ def licence():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run()
