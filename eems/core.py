@@ -56,7 +56,7 @@ def config():
             # if check is True:
                 # check sensors
                 sensors = detects.ds18b20_sensors()
-                if len(ds18b20_vars['sensors']):
+                if len(sensors):
                     # read temperatures
                     tmp_dict = dict()
                     for sensor in sensors:
