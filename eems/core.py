@@ -49,7 +49,7 @@ def config():
     global dht11_vars
 
     if request.method == 'POST':
-        if 'hardware' in request.form:
+        if 'hardware-next' in request.form:
             # DS18B20 sensor
             ds18b20_cb = 'ds18b20_cb' in request.form
             if ds18b20_cb is True:
