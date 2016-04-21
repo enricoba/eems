@@ -104,7 +104,7 @@
                                     <ul class="list-group">
                                         {% for key, value in dht11_vars['sensors'].iteritems() %}
                                             <li class="list-group-item"><span class="badge" style="background-color: green">{{ value }} °C</span>{{ key }}
-                                            <input type="text" placeholder="use defined senor name" class="form-control input-sm" style="margin-top: 5px"></li>
+                                            <input type="text" placeholder="use defined senor name" name="{{ key }}" class="form-control input-sm" style="margin-top: 5px"></li>
                                         {% endfor %}
                                     </ul>
                                 </div>

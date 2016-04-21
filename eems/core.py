@@ -5,12 +5,36 @@ Server core module
 
 
 from flask import Flask, render_template, request
-from support import detects, checks
-from sensors import ds18b20
+# from support import detects, checks
+# from sensors import ds18b20
 from __init__ import __version__
 
 
 app = Flask(__name__)
+sensors_vars = {
+    'display': 'none',
+    'icon': 'fa-check',
+    'color': 'green',
+    'status': {'ds18b20': '',
+               'dht11': ''},
+    'final': 'deactivate'
+}
+ds18b20_vars = {
+    'display': 'none',
+    'list': 'none',
+    'status': '',
+    'msg_1': '',
+    'msg_2': '',
+    'sensors': dict()
+}
+dht11_vars = {
+    'display': 'none',
+    'list': 'none',
+    'status': '',
+    'msg_1': '',
+    'msg_2': '',
+    'sensors': dict()
+}
 
 
 @app.route("/eems/")
@@ -20,30 +44,10 @@ def index():
 
 @app.route("/eems/config/", methods=['GET', 'POST'])
 def config():
-    sensors_vars = {
-        'display': 'none',
-        'icon': 'fa-check',
-        'color': 'green',
-        'status': {'ds18b20': '',
-                   'dht11': ''},
-        'final': 'deactivate'
-    }
-    ds18b20_vars = {
-        'display': 'none',
-        'list': 'none',
-        'status': '',
-        'msg_1': '',
-        'msg_2': '',
-        'sensors': dict()
-    }
-    dht11_vars = {
-        'display': 'none',
-        'list': 'none',
-        'status': '',
-        'msg_1': '',
-        'msg_2': '',
-        'sensors': dict()
-    }
+    global sensors_vars
+    global ds18b20_vars
+    global dht11_vars
+
     if request.method == 'POST':
         if 'hardware' in request.form:
             # DS18B20 sensor
@@ -146,6 +150,8 @@ def config():
                                    sensors_vars=sensors_vars)
         elif 'software' in request.form:
             print 'software button'
+            for key in dht11_vars['sensors'].keys():
+                print key, request.form[key]
             return render_template("index.html", name='monitor',
                                    version=__version__)
     else:
@@ -163,6 +169,7 @@ def monitor():
 def licence():
     return render_template("index.html", name='licence', version=__version__)
 
+# host='0.0.0.0'
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run()
