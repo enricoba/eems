@@ -1,11 +1,10 @@
 <div class="panel-group" id="accordion">
-    <!--panel_1-->
+    <!--Hardware-->
     <div class="panel panel-default">
         <!--heading-->
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a href="#" data-toggle="popover" data-trigger="focus" title="Help" data-content="help text" data-placement="auto"><span class="fa fa-info"></span></a>
-                <!--<i class="fa fa-spinner fa-pulse fa-1x fa-fw margin-bottom"></i>-->
                 <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Hardeware Setup</a>
                 <span class="fa {{ sensors_vars['icon'] }}" style="float: right; color: {{ sensors_vars['color'] }}; display: {{ sensors_vars['display'] }}"></span>
             </h4>
@@ -13,54 +12,55 @@
         <!--text/body-->
         <div class="panel-collapse collapse in" id="collapse1">
             <div class="panel-body">
-                    <div class="form-group">
-                        <form role="form" method="post" action="{{ url_for('config') }}">
-                            <!-- DS18B20 button -->
-                                <button type="button" onclick="set_btn(this, ds18b20_cb)" style="width: 100px" class="btn btn-default">DS18B20</button>
-                                <label><input class="form-control" type="checkbox" name="ds18b20_cb" style="display: none"></label>
+                <div class="form-group">
+                    <form role="form" method="post" action="{{ url_for('config') }}">
+                        <!-- DS18B20 button -->
+                        <button type="button" onclick="set_btn(this, ds18b20_cb)" style="width: 100px" class="btn btn-default">DS18B20</button>
+                        <label><input class="form-control" type="checkbox" name="ds18b20_cb" style="display: none"></label>
 
-                            <!-- DS18B20 alert -->
-                            <div class="alert {{ ds18b20_vars['status'] }} fade in" style="display: {{ ds18b20_vars['display'] }}; margin: 5px 0px 5px 0px">
-                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                <strong>{{ ds18b20_vars['msg_1'] }}</strong>{{ ds18b20_vars['msg_2'] }}
-                            </div>
+                        <!-- DS18B20 alert -->
+                        <div class="alert {{ ds18b20_vars['status'] }} fade in" style="display: {{ ds18b20_vars['display'] }}; margin: 5px 0px 5px 0px">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <strong>{{ ds18b20_vars['msg_1'] }}</strong>{{ ds18b20_vars['msg_2'] }}
+                        </div>
 
-                            <!-- box with DS18B20 sensors -->
-                                <ul class="list-group" style="display: {{ ds18b20_vars['list'] }}; margin-top: 5px">
-                                    {% for key, value in ds18b20_vars['sensors'].iteritems() %}
-                                        <li class="list-group-item"><span class="badge" style="background-color: green">{{ value }} °C</span>{{ key }}</li>
-                                    {% endfor %}
-                                </ul>
+                        <!-- box with DS18B20 sensors -->
+                        <ul class="list-group" style="display: {{ ds18b20_vars['list'] }}; margin-top: 5px">
+                            {% for key, value in ds18b20_vars['sensors'].iteritems() %}
+                                <li class="list-group-item"><span class="badge" style="background-color: green">{{ value }} °C</span>{{ key }}</li>
+                            {% endfor %}
+                        </ul>
 
-                            <!-- DHT11 button -->
-                                <button type="button" onclick="set_btn(this, dht11_cb)" style="width: 100px" class="btn btn-default">DHT11</button>
-                                <label><input class="form-control" type="checkbox" name="dht11_cb" style="display: none"></label>
+                        <!-- DHT11 button -->
+                        <button type="button" onclick="set_btn(this, dht11_cb)" style="width: 100px" class="btn btn-default">DHT11</button>
+                        <label><input class="form-control" type="checkbox" name="dht11_cb" style="display: none"></label>
 
-                            <!-- DHT11 alert -->
-                            <div class="alert {{ dht11_vars['status'] }} fade in" style="display: {{ dht11_vars['display'] }}; margin: 5px 0px 5px 0px">
-                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                <strong>{{ dht11_vars['msg_1'] }}</strong>{{ dht11_vars['msg_2'] }}
-                            </div>
+                        <!-- DHT11 alert -->
+                        <div class="alert {{ dht11_vars['status'] }} fade in" style="display: {{ dht11_vars['display'] }}; margin: 5px 0px 5px 0px">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <strong>{{ dht11_vars['msg_1'] }}</strong>{{ dht11_vars['msg_2'] }}
+                        </div>
 
-                            <!-- box with DHT11 sensors -->
-                                <ul class="list-group" style="display: {{ dht11_vars['list'] }}; margin-top: 5px">
-                                    {% for key, value in dht11_vars['sensors'].iteritems() %}
-                                        <li class="list-group-item"><span class="badge" style="background-color: green">{{ value }} °C</span>{{ key }}</li>
-                                    {% endfor %}
-                                </ul>
+                        <!-- box with DHT11 sensors -->
+                        <ul class="list-group" style="display: {{ dht11_vars['list'] }}; margin-top: 5px">
+                            {% for key, value in dht11_vars['sensors'].iteritems() %}
+                                <li class="list-group-item"><span class="badge" style="background-color: green">{{ value }} °C</span>{{ key }}</li>
+                            {% endfor %}
+                        </ul>
 
-                                <button type="submit" name="hardware" style="float:right; width: 100px" class="btn btn-info">Start</button>
-                        </form>
-                    </div>
+                        <button type="submit" name="hardware" style="float:right; width: 100px" class="btn btn-info">Start</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-    <!--panel_2-->
+    <!--Software-->
     <div class="panel panel-default">
         <!--heading-->
         <div class="panel-heading">
             <h4 class="panel-title">
-                <a href="#" data-toggle="popover" data-trigger="focus" title="Help" data-content="help text" data-placement="auto"><span class="fa fa-info"></span></a>
+                <a href="#" data-toggle="popover" data-trigger="focus" title="Help" data-content="help text" data-placement="auto">
+                    <span class="fa fa-info"></span></a>
                 <a data-toggle="{{ sensors_vars['final'] }}" data-parent="#accordion" href="#collapse2">Configuration</a>
             </h4>
         </div>
@@ -111,13 +111,16 @@
                             </div>
                         </div>
 
+                        <!-- Timing -->
                         <div class="row" style="margin-top: 10px">
+                            <!-- Duration -->
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="duration">Duration (s):</label>
                                     <input type="number" name="duration" min="10" placeholder="duration in seconds" class="form-control" id="duration">
                                 </div>
                             </div>
+                            <!-- Interval -->
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="interval">Interval (s):</label>
@@ -125,7 +128,6 @@
                                 </div>
                             </div>
                         </div>
-
 
                         <!-- button -->
                         <button type="submit" name="software" style="float:right; width: 100px" class="btn btn-info">Start</button>

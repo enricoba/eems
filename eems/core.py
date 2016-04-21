@@ -85,7 +85,7 @@ def config():
                     else:
                         ds18b20_vars['status'] = 'alert-warning'
                         ds18b20_vars['msg_1'] = 'Warning!'
-                        ds18b20_vars['msg_2'] = ' - No sensors have been detected.'
+                        ds18b20_vars['msg_2'] = ' - No DS18B20 sensors have been detected.'
                         sensors_vars['status']['ds18b20'] = 'war'
                 else:
                     ds18b20_vars['status'] = 'alert-danger'
@@ -121,7 +121,7 @@ def config():
                     else:
                         dht11_vars['status'] = 'alert-warning'
                         dht11_vars['msg_1'] = 'Warning!'
-                        dht11_vars['msg_2'] = ' - No sensors have been detected.'
+                        dht11_vars['msg_2'] = ' - No DHT11 sensors have been detected.'
                         sensors_vars['status']['dht11'] = 'war'
                 else:
                     dht11_vars['status'] = 'alert-danger'
