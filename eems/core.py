@@ -3,11 +3,14 @@
 Server core module
 """
 
-
+# import external modules
 from flask import Flask, render_template, request
-# from support import detects, checks
-# from sensors import ds18b20
+
+# import eems modules
 from __init__ import __version__
+from support import sqlite
+from support import detects, checks
+from sensors import ds18b20
 
 
 app = Flask(__name__)
