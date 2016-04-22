@@ -42,7 +42,11 @@ dht11_vars = {
 
 @app.route("/eems/")
 def index():
-    return render_template("index.html", name='index', version=__version__)
+    if request.method == 'POST':
+        print 'hello'
+        # open/new database
+    else:
+        return render_template("index.html", name='index', version=__version__)
 
 
 @app.route("/eems/config/", methods=['GET', 'POST'])
