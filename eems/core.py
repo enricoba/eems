@@ -4,7 +4,7 @@ Server core module
 """
 
 # import external modules
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 
 # import eems modules
 from __init__ import __version__
@@ -40,16 +40,21 @@ dht11_vars = {
 }
 
 
-@app.route("/eems/")
+@app.route("/", methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        print 'hello'
-        # open/new database
+        print request.is_xhr
+        if 'test' in request.form['name']:
+            print 'OK!'
+            # funktioniert noch nicht ???!!!
+            return redirect(url_for('monitor'))
+        else:
+            print 'FALSE'
     else:
         return render_template("index.html", name='index', version=__version__)
 
 
-@app.route("/eems/config/", methods=['GET', 'POST'])
+@app.route("/config/", methods=['GET', 'POST'])
 def config():
     global sensors_vars
     global ds18b20_vars
@@ -167,12 +172,13 @@ def config():
                                sensors_vars=sensors_vars)
 
 
-@app.route("/eems/monitor/")
+@app.route("/monitor/")
 def monitor():
+    print 'monitor called'
     return render_template("index.html", name='monitor', version=__version__)
 
 
-@app.route("/eems/licence/")
+@app.route("/licence/")
 def licence():
     return render_template("index.html", name='licence', version=__version__)
 
