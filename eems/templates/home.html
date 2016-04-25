@@ -2,7 +2,7 @@
 <h4 class="text-center">Easy Energy Monitoring System</h4>
 <div class="form-group" style="margin-top: 50px">
     <form role="form" method="post" action="{{ url_for('index') }}" onsubmit="return session_start(this)">
-        <select class="form-control" name="session-load" style="text-align: center" id="drp1" onchange="dropdown_check()">
+        <select title="dropdown" class="form-control" name="session-load" style="text-align: center" id="drp1" onchange="dropdown_check()">
             {% for profile in profiles %}
             <option>{{ profile }}</option>
             {% endfor %}
