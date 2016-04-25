@@ -8,9 +8,14 @@ import sqlite3
 
 
 class DBHandler(object):
-    def __init__(self, db):
-        self.db = db
+    def __init__(self):
+        self.db = None
+        self.conn = None
+        self.c = None
         # connect to db and create cursor
+
+    def start(self, db):
+        self.db = db
         self.conn = self.connect()
         self.c = self.conn.cursor()
 

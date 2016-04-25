@@ -4,7 +4,9 @@ Server core module
 """
 
 # import external modules
-from flask import Flask, render_template, request, redirect, url_for
+import os
+from flask import Flask, render_template, request, redirect, url_for, json
+
 
 # import eems modules
 from __init__ import __version__
@@ -13,6 +15,15 @@ from support import detects, checks
 from sensors import ds18b20
 
 
+# get saved profiles
+tmp = os.listdir("D:\F_Projects\F-I_GitHub\eems\eems\data")
+profiles = ['new']
+for i in tmp:
+    if i != 'default.db':
+        profiles.append(i[:-3])
+
+
+session = sqlite.DBHandler()
 app = Flask(__name__)
 sensors_vars = {
     'display': 'none',
@@ -42,20 +53,35 @@ dht11_vars = {
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
+    # get session object
+    global session
+    global profiles
+
     if request.method == 'POST':
-        print request.is_xhr
-        if 'test' in request.form['name']:
-            print 'OK!'
-            # funktioniert noch nicht ???!!!
-            return redirect(url_for('monitor'))
+        if 'session' in request.form:
+            print request.form['session']
+            session.start(request.form['session'])
+            session.add_sensor_table('test')
+            session.add_sensors('test',
+                                ('028-2198371', 20, 'user defined name'))
+            print session.get_sensors('test')
+            session.close()
         else:
-            print 'FALSE'
+            print 'nix da'
+
+        # print request.form['session-new']
+        # funktioniert noch nicht ???!!!
+        return redirect(url_for('config'))
     else:
-        return render_template("index.html", name='index', version=__version__)
+        return render_template("index.html", name='index', version=__version__,
+                               profiles=profiles, len=len(profiles))
 
 
 @app.route("/config/", methods=['GET', 'POST'])
 def config():
+    # get session object
+    global session
+
     global sensors_vars
     global ds18b20_vars
     global dht11_vars

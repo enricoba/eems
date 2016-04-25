@@ -1,41 +1,62 @@
 <h1 class="text-center">Welcome to EEMS</h1>
 <h4 class="text-center">Easy Energy Monitoring System</h4>
-<div class="row" style="padding-top: 50px">
-    <div class="col-sm-3"></div>
-    <!-- New -->
-    <div class="col-sm-3" style="padding-bottom: 5px">
-
-
-
-        <a onclick="newProject()" class="btn btn-block btn-lg btn-social btn-soundcloud">
-            <span class="fa fa-play-circle"></span> <p class="text-center" style="margin: 0">New</p>
-        </a>
-    </div>
-
-    <!-- Load -->
-    <div class="col-sm-3">
-        <a class="btn btn-block btn-lg btn-social btn-twitter">
-            <span class="fa fa-folder-open"></span> <p class="text-center" style="margin: 0">Load</p>
-        </a>
-    </div>
+<div class="form-group" style="margin-top: 50px">
+    <form role="form" method="post" action="{{ url_for('index') }}" onsubmit="return session_start(this)">
+        <select class="form-control" style="text-align: center" id="drp1" onchange="dropdown_check()">
+            {% for profile in profiles %}
+            <option>{{ profile }}</option>
+            {% endfor %}
+        </select>
+        <input id="inp1" type="text" name="session" class="form-control" placeholder="project name" style="text-align: center; margin-top: 10px">
+        <!-- more buttons -->
+        <ul class="pager">
+            <li><button type="submit" style="width: 100px" class="btn btn-success">Start</button></li>
+            <!--<li><button type="submit" name="session-load" style="width: 100px" class="btn btn-primary">Load</button></li>-->
+        </ul>
+    </form>
 </div>
+
+<button onclick="test()">test</button>
+
 <script>
-    function newProject() {
-        swal({
-            title: "Ready for a new project?",
-            text: "Please enter a project name.",
-            type: "input",
-            inputType: "text",
-            showCancelButton: true,
-        }, function(typedText) {
-            $.ajax({
-                url: "{{ url_for('index') }}",
-                data: { name: typedText },
-                type: "POST"
+    function dropdown_check() {
+        var value = document.getElementById("drp1").value;
+        if (value == "new") {
+            document.getElementById("inp1").style.visibility = "visible";
+        } else {
+            document.getElementById("inp1").style.visibility = "hidden";
+        }
+    }
+
+    function session_start(form) {
+        var input_value = form["inp1"].value;
+        var len = parseInt("{{ len }}");
+        if (document.getElementById("inp1").style.visibility == "hidden") {
+            return true;
+        } else if (input_value == null || input_value == "") {
+            sweetAlert({
+                title: "Oops!",
+                text: "Please define a project name.",
+                type: "error"
             });
-        });
+            return false;
+        } else {
+            var profiles = {{ profiles|safe }};
+            for (i = 0; i < len; i++) {
+                if (input_value == profiles[i]) {
+                  sweetAlert({
+                    title: "We are sorry!",
+                    text: "This project already exists, please pick another name.",
+                    type: "error"
+                });
+                return false;
+                }
+            }
+        }
+    }
+
+    function test() {
+        var test = "{{ profiles }}";
+        alert(test);
     }
 </script>
-
-
-<!---->
