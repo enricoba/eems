@@ -2,21 +2,19 @@
 <h4 class="text-center">Easy Energy Monitoring System</h4>
 <div class="form-group" style="margin-top: 50px">
     <form role="form" method="post" action="{{ url_for('index') }}" onsubmit="return session_start(this)">
-        <select class="form-control" style="text-align: center" id="drp1" onchange="dropdown_check()">
+        <select class="form-control" name="session-load" style="text-align: center" id="drp1" onchange="dropdown_check()">
             {% for profile in profiles %}
             <option>{{ profile }}</option>
             {% endfor %}
         </select>
-        <input id="inp1" type="text" name="session" class="form-control" placeholder="project name" style="text-align: center; margin-top: 10px">
+        <input id="inp1" type="text" name="session-input" class="form-control" placeholder="project name" style="text-align: center; margin-top: 10px">
         <!-- more buttons -->
         <ul class="pager">
-            <li><button type="submit" style="width: 100px" class="btn btn-success">Start</button></li>
+            <li><button name="session-start" type="submit" style="width: 100px" class="btn btn-success">Start</button></li>
             <!--<li><button type="submit" name="session-load" style="width: 100px" class="btn btn-primary">Load</button></li>-->
         </ul>
     </form>
 </div>
-
-<button onclick="test()">test</button>
 
 <script>
     function dropdown_check() {

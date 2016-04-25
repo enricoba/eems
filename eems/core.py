@@ -5,7 +5,7 @@ Server core module
 
 # import external modules
 import os
-from flask import Flask, render_template, request, redirect, url_for, json
+from flask import Flask, render_template, request, redirect, url_for
 
 
 # import eems modules
@@ -23,8 +23,10 @@ for i in tmp:
         profiles.append(i[:-3])
 
 
-session = sqlite.DBHandler()
+session = None
 app = Flask(__name__)
+
+
 sensors_vars = {
     'display': 'none',
     'icon': 'fa-check',
@@ -58,21 +60,25 @@ def index():
     global profiles
 
     if request.method == 'POST':
-        if 'session' in request.form:
-            print request.form['session']
-            session.start(request.form['session'])
+        session_input = request.form['session-input']
+        if len(session_input):
+            profiles.append(str(session_input))
+            session = sqlite.DBHandler()
+            session.start(session_input)
             session.add_sensor_table('test')
             session.add_sensors('test',
                                 ('028-2198371', 20, 'user defined name'))
             print session.get_sensors('test')
-            session.close()
+            return redirect(url_for('config'))
         else:
-            print 'nix da'
-
-        # print request.form['session-new']
-        # funktioniert noch nicht ???!!!
-        return redirect(url_for('config'))
+            # todo profile laden
+            print 'projekt laden'
+            session_load = request.form['session-load']
+            session = sqlite.DBHandler()
+            session.start(session_load)
+            return redirect(url_for('monitor'))
     else:
+        print profiles
         return render_template("index.html", name='index', version=__version__,
                                profiles=profiles, len=len(profiles))
 
