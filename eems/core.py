@@ -35,7 +35,7 @@ app = Flask(__name__)
     'status': {'ds18b20': '',
                'dht11': ''},
     'final': 'deactivate'
-}"""
+}
 
 ds18b20_vars = {
     'display': 'none',
@@ -53,7 +53,7 @@ dht11_vars = {
     'msg_1': '',
     'msg_2': '',
     'sensors': dict()
-}
+}"""
 
 
 @app.route("/", methods=['GET', 'POST'])
@@ -90,14 +90,15 @@ def index():
 @app.route("/config/", methods=['GET', 'POST'])
 def config():
     # get session object
-    global ds18b20_vars
-    global dht11_vars
+    # global ds18b20_vars
+    # global dht11_vars
     global profile
     session = sqlite.DBHandler()
     session.start(profile)
 
     if request.method == 'POST':
         session_config = session.get_session_config()
+        ds18b20_vars, dht11_vars = session.get_session_config_hws()
         print 'POST: ', session_config
         if 'hardware-next' in request.form:
             # DS18B20 sensor
@@ -132,19 +133,19 @@ def config():
                         ds18b20_vars['msg_2'] = ' - {} DS18B20 sensors have ' \
                                                 'been detected.'.format(
                                 len(ds18b20_vars['sensors']))
-                        session_config['status']['ds18b20'] = 'ok'
+                        ds18b20_vars['status'] = 'ok'
                     else:
                         ds18b20_vars['status'] = 'alert-warning'
                         ds18b20_vars['msg_1'] = 'Warning!'
                         ds18b20_vars['msg_2'] = ' - No DS18B20 sensors have ' \
                                                 'been detected.'
-                        session_config['status']['ds18b20'] = 'war'
+                        ds18b20_vars['status'] = 'war'
                 else:
                     ds18b20_vars['status'] = 'alert-danger'
                     ds18b20_vars['msg_1'] = 'Error!'
                     ds18b20_vars['msg_2'] = ' - DS18B20 hardware ' \
                                             'requirements failed.'
-                    session_config['status']['ds18b20'] = 'error'
+                    ds18b20_vars['status'] = 'error'
 
             # DHT11 sensor
             dht11_cb = 'dht11_cb' in request.form
@@ -169,28 +170,31 @@ def config():
                         dht11_vars['msg_2'] = ' - {} DHT11 sensors have ' \
                                               'been detected.'.format(
                                 len(dht11_vars['sensors']))
-                        session_config['status']['dht11'] = 'ok'
+                        dht11_vars['status'] = 'ok'
                     else:
                         dht11_vars['status'] = 'alert-warning'
                         dht11_vars['msg_1'] = 'Warning!'
                         dht11_vars['msg_2'] = ' - No DHT11 sensors have ' \
                                               'been detected.'
-                        session_config['status']['dht11'] = 'war'
+                        dht11_vars['status'] = 'war'
                 else:
                     dht11_vars['status'] = 'alert-danger'
                     dht11_vars['msg_1'] = 'Error!'
                     dht11_vars['msg_2'] = ' - DHT11 hardware ' \
                                           'requirements failed.'
-                    session_config['status']['dht11'] = 'error'
+                    dht11_vars['status'] = 'error'
 
             # manage overall status
-            if 'error' in session_config['status'].values():
+            if 'error' in dht11_vars['status'] \
+                    or 'error' in ds18b20_vars['status']:
                 session_config['icon'] = 'fa-exclamation'
                 session_config['color'] = 'red'
-            elif 'war' in session_config['status'].values():
+            elif 'war' in dht11_vars['status'] \
+                    or 'war' in ds18b20_vars['status']:
                 session_config['icon'] = 'fa-flash'
                 session_config['color'] = 'orange'
-            elif 'ok' in session_config['status'].values():
+            elif 'ok' in dht11_vars['status'] \
+                    or 'ok' in ds18b20_vars['status']:
                 session_config['icon'] = 'fa-check'
                 session_config['color'] = 'green'
                 session_config['final'] = 'collapse'
@@ -198,6 +202,7 @@ def config():
             # update database
             print 'vor schreiben: ', session_config
             session.write_session_config(session_config)
+            session.write_session_config_hws(ds18b20_vars, dht11_vars)
             session.close()
 
             # render template
@@ -217,6 +222,7 @@ def config():
                                    version=__version__)
     else:
         session_config = session.get_session_config()
+        ds18b20_vars, dht11_vars = session.get_session_config_hws()
         session.close()
         print 'GET: ', session_config
         return render_template("index.html", name='config', version=__version__,

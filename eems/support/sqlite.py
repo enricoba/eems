@@ -27,7 +27,7 @@ class DBHandler(object):
         self.conn.close()
 
     def get_session_config(self):
-        self.c.execute('SELECT * FROM SESSION_CONFIG')
+        self.c.execute("SELECT * FROM SESSION_CONFIG")
         values = self.c.fetchall()
         tmp_dic = {
             'display': values[0][0],
@@ -43,7 +43,44 @@ class DBHandler(object):
                            "".format(key.upper(), str(dic[key])))
         self.conn.commit()
 
-    def get_sensors(self, table):
+    def get_session_config_hws(self):
+        self.c.execute("SELECT * FROM SESSION_CONFIG_HWS")
+        values = self.c.fetchall()
+        ds18b20_vars = {
+            'status': values[0][1],
+            'display': values[0][2],
+            'list': values[0][3],
+            'msg_1': values[0][4],
+            'msg_2': values[0][5],
+            'sensors': values[0][6]
+        }
+        dht11_vars = {
+            'status': values[1][1],
+            'display': values[1][2],
+            'list': values[1][3],
+            'msg_1': values[1][4],
+            'msg_2': values[1][5],
+            'sensors': values[1][6]
+        }
+        return ds18b20_vars, dht11_vars
+
+    def write_session_config_hws(self, ds18b20_vars, dht11_vars):
+        for key in ds18b20_vars:
+            self.c.execute("UPDATE SESSION_CONFIG_HWS SET {} = '{}'"
+                           "WHERE TYP_ID = 1".format(key.upper(),
+                                                     str(ds18b20_vars[key])))
+        for key in dht11_vars:
+            self.c.execute("UPDATE SESSION_CONFIG_HWS SET {} = '{}'"
+                           "WHERE TYP_ID = 2".format(key.upper(),
+                                                     str(dht11_vars[key])))
+        self.conn.commit()
+
+
+
+
+
+
+    def get_all(self, table):
         self.c.execute('SELECT * FROM {}'.format(table))
         return self.c.fetchall()
 
