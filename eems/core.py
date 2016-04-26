@@ -23,18 +23,20 @@ for i in tmp:
         profiles.append(i[:-3])
 
 
-session = None
+profile = None
 app = Flask(__name__)
 
 
-sensors_vars = {
+"""sensors_vars = {
+    # head ( symbol oben)
     'display': 'none',
     'icon': 'fa-check',
     'color': 'green',
     'status': {'ds18b20': '',
                'dht11': ''},
     'final': 'deactivate'
-}
+}"""
+
 ds18b20_vars = {
     'display': 'none',
     'list': 'none',
@@ -43,6 +45,7 @@ ds18b20_vars = {
     'msg_2': '',
     'sensors': dict()
 }
+
 dht11_vars = {
     'display': 'none',
     'list': 'none',
@@ -56,26 +59,27 @@ dht11_vars = {
 @app.route("/", methods=['GET', 'POST'])
 def index():
     # get session object
-    global session
     global profiles
+    global profile
 
     if request.method == 'POST':
-        session_input = request.form['session-input']
-        if len(session_input):
-            profiles.append(str(session_input))
+        profile = request.form['session-input']
+        if len(profile):
+            profiles.append(str(profile))
+
             session = sqlite.DBHandler()
-            session.start(session_input)
-            session.add_sensor_table('test')
-            session.add_sensors('test',
-                                ('028-2198371', 20, 'user defined name'))
-            print session.get_sensors('test')
+            session.start(profile)
+            # add default tables and contents
+            session.close()
+
+            # redirect
             return redirect(url_for('config'))
         else:
             # todo profile laden
-            print 'projekt laden'
-            session_load = request.form['session-load']
-            session = sqlite.DBHandler()
-            session.start(session_load)
+            print 'load project'
+            profile = request.form['session-load']
+            # session = sqlite.DBHandler()
+            # session.start(profile)
             return redirect(url_for('monitor'))
     else:
         print profiles
@@ -86,19 +90,21 @@ def index():
 @app.route("/config/", methods=['GET', 'POST'])
 def config():
     # get session object
-    global session
-
-    global sensors_vars
     global ds18b20_vars
     global dht11_vars
+    global profile
+    session = sqlite.DBHandler()
+    session.start(profile)
 
     if request.method == 'POST':
+        session_config = session.get_session_config()
+        print 'POST: ', session_config
         if 'hardware-next' in request.form:
             # DS18B20 sensor
             ds18b20_cb = 'ds18b20_cb' in request.form
             if ds18b20_cb is True:
                 ds18b20_vars['display'] = 'true'
-                sensors_vars['display'] = 'true'
+                session_config['display'] = 'true'
                 # execute check
                 # c = checks.Check()
                 check = True
@@ -126,25 +132,25 @@ def config():
                         ds18b20_vars['msg_2'] = ' - {} DS18B20 sensors have ' \
                                                 'been detected.'.format(
                                 len(ds18b20_vars['sensors']))
-                        sensors_vars['status']['ds18b20'] = 'ok'
+                        session_config['status']['ds18b20'] = 'ok'
                     else:
                         ds18b20_vars['status'] = 'alert-warning'
                         ds18b20_vars['msg_1'] = 'Warning!'
                         ds18b20_vars['msg_2'] = ' - No DS18B20 sensors have ' \
                                                 'been detected.'
-                        sensors_vars['status']['ds18b20'] = 'war'
+                        session_config['status']['ds18b20'] = 'war'
                 else:
                     ds18b20_vars['status'] = 'alert-danger'
                     ds18b20_vars['msg_1'] = 'Error!'
                     ds18b20_vars['msg_2'] = ' - DS18B20 hardware ' \
                                             'requirements failed.'
-                    sensors_vars['status']['ds18b20'] = 'error'
+                    session_config['status']['ds18b20'] = 'error'
 
             # DHT11 sensor
             dht11_cb = 'dht11_cb' in request.form
             if dht11_cb is True:
                 dht11_vars['display'] = 'true'
-                sensors_vars['display'] = 'true'
+                session_config['display'] = 'true'
                 # execute check
                 check = True
                 if check is True:
@@ -163,48 +169,59 @@ def config():
                         dht11_vars['msg_2'] = ' - {} DHT11 sensors have ' \
                                               'been detected.'.format(
                                 len(dht11_vars['sensors']))
-                        sensors_vars['status']['dht11'] = 'ok'
+                        session_config['status']['dht11'] = 'ok'
                     else:
                         dht11_vars['status'] = 'alert-warning'
                         dht11_vars['msg_1'] = 'Warning!'
                         dht11_vars['msg_2'] = ' - No DHT11 sensors have ' \
                                               'been detected.'
-                        sensors_vars['status']['dht11'] = 'war'
+                        session_config['status']['dht11'] = 'war'
                 else:
                     dht11_vars['status'] = 'alert-danger'
                     dht11_vars['msg_1'] = 'Error!'
                     dht11_vars['msg_2'] = ' - DHT11 hardware ' \
                                           'requirements failed.'
-                    sensors_vars['status']['dht11'] = 'error'
+                    session_config['status']['dht11'] = 'error'
 
             # manage overall status
-            if 'error' in sensors_vars['status'].values():
-                sensors_vars['icon'] = 'fa-exclamation'
-                sensors_vars['color'] = 'red'
-            elif 'war' in sensors_vars['status'].values():
-                sensors_vars['icon'] = 'fa-flash'
-                sensors_vars['color'] = 'orange'
-            elif 'ok' in sensors_vars['status'].values():
-                sensors_vars['icon'] = 'fa-check'
-                sensors_vars['color'] = 'green'
-                sensors_vars['final'] = 'collapse'
+            if 'error' in session_config['status'].values():
+                session_config['icon'] = 'fa-exclamation'
+                session_config['color'] = 'red'
+            elif 'war' in session_config['status'].values():
+                session_config['icon'] = 'fa-flash'
+                session_config['color'] = 'orange'
+            elif 'ok' in session_config['status'].values():
+                session_config['icon'] = 'fa-check'
+                session_config['color'] = 'green'
+                session_config['final'] = 'collapse'
+
+            # update database
+            print 'vor schreiben: ', session_config
+            session.write_session_config(session_config)
+            session.close()
 
             # render template
             return render_template("index.html", name='config',
                                    version=__version__,
                                    ds18b20_vars=ds18b20_vars,
                                    dht11_vars=dht11_vars,
-                                   sensors_vars=sensors_vars)
+                                   session_config=session_config)
         elif 'software' in request.form:
             print 'software button'
             for key in dht11_vars['sensors'].keys():
                 print key, request.form[key]
+
+            # close session
+            session.close()
             return render_template("index.html", name='monitor',
                                    version=__version__)
     else:
+        session_config = session.get_session_config()
+        session.close()
+        print 'GET: ', session_config
         return render_template("index.html", name='config', version=__version__,
                                ds18b20_vars=ds18b20_vars, dht11_vars=dht11_vars,
-                               sensors_vars=sensors_vars)
+                               session_config=session_config)
 
 
 @app.route("/monitor/")

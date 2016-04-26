@@ -6,7 +6,7 @@
             <h4 class="panel-title">
                 <a href="#" data-toggle="popover" data-trigger="focus" title="Help" data-content="help text" data-placement="auto"><span class="fa fa-info"></span></a>
                 <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Hardeware Setup</a>
-                <span class="fa {{ sensors_vars['icon'] }}" style="float: right; color: {{ sensors_vars['color'] }}; display: {{ sensors_vars['display'] }}"></span>
+                <span class="fa {{ session_config['icon'] }}" style="float: right; color: {{ session_config['color'] }}; display: {{ session_config['display'] }}"></span>
             </h4>
         </div>
         <!--text/body-->
@@ -65,7 +65,7 @@
             <h4 class="panel-title">
                 <a href="#" data-toggle="popover" data-trigger="focus" title="Help" data-content="help text" data-placement="auto">
                     <span class="fa fa-info"></span></a>
-                <a data-toggle="{{ sensors_vars['final'] }}" data-parent="#accordion" href="#collapse2">Configuration</a>
+                <a data-toggle="{{ session_config['final'] }}" data-parent="#accordion" href="#collapse2">Configuration</a>
             </h4>
         </div>
         <!--text/body-->

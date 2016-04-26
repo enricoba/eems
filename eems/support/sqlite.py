@@ -26,9 +26,29 @@ class DBHandler(object):
     def close(self):
         self.conn.close()
 
+    def get_session_config(self):
+        self.c.execute('SELECT * FROM SESSION_CONFIG')
+        values = self.c.fetchall()
+        tmp_dic = {
+            'display': values[0][0],
+            'icon': values[0][1],
+            'color': values[0][2],
+            'final': values[0][3]
+        }
+        return tmp_dic
+
+    def write_session_config(self, dic):
+        for key in dic:
+            self.c.execute("UPDATE SESSION_CONFIG SET {} = '{}'"
+                           "".format(key.upper(), str(dic[key])))
+        self.conn.commit()
+
     def get_sensors(self, table):
         self.c.execute('SELECT * FROM {}'.format(table))
         return self.c.fetchall()
+
+
+
 
     def add_sensor_table(self, sensor):
         self.c.execute('''CREATE TABLE "{}" (`name`	        TEXT,
@@ -39,6 +59,9 @@ class DBHandler(object):
     def add_sensors(self, table, sensors):
         self.c.execute("INSERT INTO {} VALUES {}".format(table, sensors))
         self.conn.commit()
+
+
+
 
 
 
