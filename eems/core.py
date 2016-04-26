@@ -102,7 +102,7 @@ def config():
                 # execute check
                 # c = checks.Check()
                 check = True
-                #if c.w1_config() is True and c.w1_modules() is True:
+                # if c.w1_config() is True and c.w1_modules() is True:
                 if check is True:
                     # check sensors
                     sensors = {
@@ -117,7 +117,8 @@ def config():
                         tmp_dict = dict()
                         for sensor in sensors:
                             tmp_dict[sensor] = None
-                        # ds18b20_vars['sensors'] = ds18b20.read_ds18b20(tmp_dict)
+                        # ds18b20_vars['sensors'] = ds18b20.read_
+                        # ds18b20(tmp_dict)
                         ds18b20_vars['sensors'] = sensors
                         ds18b20_vars['list'] = 'true'
                         ds18b20_vars['status'] = 'alert-success'
@@ -129,7 +130,8 @@ def config():
                     else:
                         ds18b20_vars['status'] = 'alert-warning'
                         ds18b20_vars['msg_1'] = 'Warning!'
-                        ds18b20_vars['msg_2'] = ' - No DS18B20 sensors have been detected.'
+                        ds18b20_vars['msg_2'] = ' - No DS18B20 sensors have ' \
+                                                'been detected.'
                         sensors_vars['status']['ds18b20'] = 'war'
                 else:
                     ds18b20_vars['status'] = 'alert-danger'
@@ -165,7 +167,8 @@ def config():
                     else:
                         dht11_vars['status'] = 'alert-warning'
                         dht11_vars['msg_1'] = 'Warning!'
-                        dht11_vars['msg_2'] = ' - No DHT11 sensors have been detected.'
+                        dht11_vars['msg_2'] = ' - No DHT11 sensors have ' \
+                                              'been detected.'
                         sensors_vars['status']['dht11'] = 'war'
                 else:
                     dht11_vars['status'] = 'alert-danger'
