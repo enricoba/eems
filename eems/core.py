@@ -6,6 +6,7 @@ Server core module
 # import external modules
 import os
 from flask import Flask, render_template, request, redirect, url_for
+from shutil import copyfile
 
 
 # import eems modules
@@ -27,35 +28,6 @@ profile = None
 app = Flask(__name__)
 
 
-"""sensors_vars = {
-    # head ( symbol oben)
-    'display': 'none',
-    'icon': 'fa-check',
-    'color': 'green',
-    'status': {'ds18b20': '',
-               'dht11': ''},
-    'final': 'deactivate'
-}
-
-ds18b20_vars = {
-    'display': 'none',
-    'list': 'none',
-    'status': '',
-    'msg_1': '',
-    'msg_2': '',
-    'sensors': dict()
-}
-
-dht11_vars = {
-    'display': 'none',
-    'list': 'none',
-    'status': '',
-    'msg_1': '',
-    'msg_2': '',
-    'sensors': dict()
-}"""
-
-
 @app.route("/", methods=['GET', 'POST'])
 def index():
     # get session object
@@ -63,14 +35,18 @@ def index():
     global profile
 
     if request.method == 'POST':
-        profile = request.form['session-input']
-        if len(profile):
-            profiles.append(str(profile))
+        profile_tmp = request.form['session-input']
+        if len(profile_tmp):
+            profiles.append(str(profile_tmp))
+            profile = profile_tmp
+            print profile
 
-            session = sqlite.DBHandler()
-            session.start(profile)
             # add default tables and contents
-            session.close()
+            """subprocess.call(['cp', '/home/pi/eems/default.db',
+                             '/home/pi/eems/{}.db'.format(profile)])"""
+
+            copyfile('D:/F_Projects/F-I_GitHub/eems/eems/data/default.db',
+                     'D:/F_Projects/F-I_GitHub/eems/eems/data/{}.db'.format(profile))
 
             # redirect
             return redirect(url_for('config'))
@@ -78,9 +54,7 @@ def index():
             # todo profile laden
             print 'load project'
             profile = request.form['session-load']
-            # session = sqlite.DBHandler()
-            # session.start(profile)
-            return redirect(url_for('monitor'))
+            return redirect(url_for('config'))
     else:
         print profiles
         return render_template("index.html", name='index', version=__version__,
@@ -112,21 +86,19 @@ def config():
                 # if c.w1_config() is True and c.w1_modules() is True:
                 if check is True:
                     # check sensors
-                    sensors = {
-                        '1': 19,
-                        '2': 21,
-                        '3': 50,
-                        '4': 110
-                    }
+                    sensors = ['1', '2', 'adsad']
                     # sensors = detects.ds18b20_sensors()
                     if len(sensors):
+                        # add sensor_ids_table
+                        session.add_sensor_ids_table('ds18b20')
+                        session.add_sensor_ids('ds18b20', sensors)
                         # read temperatures
                         tmp_dict = dict()
                         for sensor in sensors:
-                            tmp_dict[sensor] = None
+                            tmp_dict[sensor] = 20
                         # ds18b20_vars['sensors'] = ds18b20.read_
                         # ds18b20(tmp_dict)
-                        ds18b20_vars['sensors'] = sensors
+                        ds18b20_vars['sensors'] = tmp_dict
                         ds18b20_vars['list'] = 'true'
                         ds18b20_vars['status'] = 'alert-success'
                         ds18b20_vars['msg_1'] = 'Success!'
@@ -225,6 +197,8 @@ def config():
         ds18b20_vars, dht11_vars = session.get_session_config_hws()
         session.close()
         print 'GET: ', session_config
+        print 'GET: ', ds18b20_vars
+        print 'GET: ', dht11_vars
         return render_template("index.html", name='config', version=__version__,
                                ds18b20_vars=ds18b20_vars, dht11_vars=dht11_vars,
                                session_config=session_config)

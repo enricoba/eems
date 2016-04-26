@@ -46,55 +46,63 @@ class DBHandler(object):
     def get_session_config_hws(self):
         self.c.execute("SELECT * FROM SESSION_CONFIG_HWS")
         values = self.c.fetchall()
+        if values[0][6] is None:
+            sensors = dict()
+        else:
+            sensors = values[0][6]
+
         ds18b20_vars = {
             'status': values[0][1],
             'display': values[0][2],
             'list': values[0][3],
             'msg_1': values[0][4],
             'msg_2': values[0][5],
-            'sensors': values[0][6]
+            'sensors': sensors
         }
+
+        if values[1][6] is None:
+            sensors = dict()
+        else:
+            sensors = values[1][6]
+
         dht11_vars = {
             'status': values[1][1],
             'display': values[1][2],
             'list': values[1][3],
             'msg_1': values[1][4],
             'msg_2': values[1][5],
-            'sensors': values[1][6]
+            'sensors': sensors
         }
         return ds18b20_vars, dht11_vars
 
     def write_session_config_hws(self, ds18b20_vars, dht11_vars):
         for key in ds18b20_vars:
+            if ds18b20_vars[key] is None:
+                value = ''
+            else:
+                value = str(ds18b20_vars[key])
             self.c.execute("UPDATE SESSION_CONFIG_HWS SET {} = '{}'"
-                           "WHERE TYP_ID = 1".format(key.upper(),
-                                                     str(ds18b20_vars[key])))
+                           "WHERE TYP_ID = 1".format(key.upper(), value))
         for key in dht11_vars:
+            if dht11_vars[key] is None:
+                value = ''
+            else:
+                value = str(dht11_vars[key])
             self.c.execute("UPDATE SESSION_CONFIG_HWS SET {} = '{}'"
-                           "WHERE TYP_ID = 2".format(key.upper(),
-                                                     str(dht11_vars[key])))
+                           "WHERE TYP_ID = 2".format(key.upper(), value))
         self.conn.commit()
 
+    def add_sensor_ids_table(self, sensor):
+        self.c.execute("""CREATE TABLE SENSOR_IDS_{}(
+                            NAME TEXT PRIMARY KEY,
+                            USER_NAME TEXT,
+                            VALUE REAL
+                          );""".format(sensor.upper()))
 
-
-
-
-
-    def get_all(self, table):
-        self.c.execute('SELECT * FROM {}'.format(table))
-        return self.c.fetchall()
-
-
-
-
-    def add_sensor_table(self, sensor):
-        self.c.execute('''CREATE TABLE "{}" (`name`	        TEXT,
-                                             `value`	    REAL,
-                                             `user_name`	TEXT
-                                             )'''.format(sensor))
-
-    def add_sensors(self, table, sensors):
-        self.c.execute("INSERT INTO {} VALUES {}".format(table, sensors))
+    def add_sensor_ids(self, sensor_type, sensors):
+        for sensor in sensors:
+            self.c.execute("INSERT INTO SENSOR_IDS_{} (NAME) VALUES ({})"
+                           "".format(sensor_type.upper(), sensor))
         self.conn.commit()
 
 
