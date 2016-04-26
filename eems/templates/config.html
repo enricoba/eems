@@ -26,7 +26,7 @@
 
                         <!-- box with DS18B20 sensors -->
                         <ul class="list-group" style="display: {{ ds18b20_vars['list'] }}; margin-top: 5px">
-                            {% for key, value in ds18b20_vars['sensors'].iteritems() %}
+                            {% for key, value in ds18b20_table.iteritems() %}
                                 <li class="list-group-item"><span class="badge" style="background-color: green">{{ value }} °C</span>{{ key }}</li>
                             {% endfor %}
                         </ul>
@@ -43,7 +43,7 @@
 
                         <!-- box with DHT11 sensors -->
                         <ul class="list-group" style="display: {{ dht11_vars['list'] }}; margin-top: 5px">
-                            {% for key, value in dht11_vars['sensors'].iteritems() %}
+                            {% for key, value in dht11_table.iteritems() %}
                                 <li class="list-group-item"><span class="badge" style="background-color: green">{{ value }} °C</span>{{ key }}</li>
                             {% endfor %}
                         </ul>
@@ -85,7 +85,7 @@
                                 <!-- body -->
                                 <div id="collapse3" class="panel-collapse collapse">
                                     <ul class="list-group">
-                                        {% for key, value in ds18b20_vars['sensors'].iteritems() %}
+                                        {% for key, value in ds18b20_table.iteritems() %}
                                             <li class="list-group-item"><span class="badge" style="background-color: green">{{ value }} °C</span>{{ key }}
                                             <input type="text" placeholder="use defined senor name" class="form-control input-sm" style="margin-top: 5px"></li>
                                         {% endfor %}
@@ -106,7 +106,7 @@
                                 <!-- body -->
                                 <div id="collapse4" class="panel-collapse collapse">
                                     <ul class="list-group">
-                                        {% for key, value in dht11_vars['sensors'].iteritems() %}
+                                        {% for key, value in dht11_table.iteritems() %}
                                             <li class="list-group-item"><span class="badge" style="background-color: green">{{ value }} °C</span>{{ key }}
                                             <input type="text" placeholder="use defined senor name" name="{{ key }}" class="form-control input-sm" style="margin-top: 5px"></li>
                                         {% endfor %}

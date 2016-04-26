@@ -46,36 +46,26 @@ class DBHandler(object):
     def get_session_config_hws(self):
         self.c.execute("SELECT * FROM SESSION_CONFIG_HWS")
         values = self.c.fetchall()
-        if values[0][6] is None:
-            sensors = dict()
-        else:
-            sensors = values[0][6]
 
         ds18b20_vars = {
             'status': values[0][1],
             'display': values[0][2],
             'list': values[0][3],
             'msg_1': values[0][4],
-            'msg_2': values[0][5],
-            'sensors': sensors
+            'msg_2': values[0][5]
         }
-
-        if values[1][6] is None:
-            sensors = dict()
-        else:
-            sensors = values[1][6]
 
         dht11_vars = {
             'status': values[1][1],
             'display': values[1][2],
             'list': values[1][3],
             'msg_1': values[1][4],
-            'msg_2': values[1][5],
-            'sensors': sensors
+            'msg_2': values[1][5]
         }
         return ds18b20_vars, dht11_vars
 
     def write_session_config_hws(self, ds18b20_vars, dht11_vars):
+        print ds18b20_vars
         for key in ds18b20_vars:
             if ds18b20_vars[key] is None:
                 value = ''
@@ -83,6 +73,7 @@ class DBHandler(object):
                 value = str(ds18b20_vars[key])
             self.c.execute("UPDATE SESSION_CONFIG_HWS SET {} = '{}'"
                            "WHERE TYP_ID = 1".format(key.upper(), value))
+        print dht11_vars
         for key in dht11_vars:
             if dht11_vars[key] is None:
                 value = ''
@@ -101,12 +92,21 @@ class DBHandler(object):
 
     def add_sensor_ids(self, sensor_type, sensors):
         for sensor in sensors:
-            self.c.execute("INSERT INTO SENSOR_IDS_{} (NAME) VALUES ({})"
+            self.c.execute("INSERT INTO SENSOR_IDS_{} (NAME) VALUES ('{}')"
                            "".format(sensor_type.upper(), sensor))
         self.conn.commit()
 
+    def get_all(self, table):
+        self.c.execute("SELECT * FROM {}".format(table))
+        return self.c.fetchall()
 
-
+    def check_table_exist(self, table):
+        self.c.execute("SELECT * FROM sqlite_master WHERE type='table' AND "
+                       "name='{}'".format(table))
+        if self.c.fetchall():
+            return True
+        else:
+            return False
 
 
 

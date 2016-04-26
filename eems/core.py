@@ -69,12 +69,14 @@ def config():
     global profile
     session = sqlite.DBHandler()
     session.start(profile)
-
+    ds18b20_table = {}
+    dht11_table = {}
     if request.method == 'POST':
         session_config = session.get_session_config()
         ds18b20_vars, dht11_vars = session.get_session_config_hws()
         print 'POST: ', session_config
         if 'hardware-next' in request.form:
+            head_flag = list()
             # DS18B20 sensor
             ds18b20_cb = 'ds18b20_cb' in request.form
             if ds18b20_cb is True:
@@ -92,32 +94,36 @@ def config():
                         # add sensor_ids_table
                         session.add_sensor_ids_table('ds18b20')
                         session.add_sensor_ids('ds18b20', sensors)
+                        print 'nach schreiben SQL'
                         # read temperatures
                         tmp_dict = dict()
                         for sensor in sensors:
                             tmp_dict[sensor] = 20
                         # ds18b20_vars['sensors'] = ds18b20.read_
                         # ds18b20(tmp_dict)
-                        ds18b20_vars['sensors'] = tmp_dict
+                        print 'tmp_dict: ', tmp_dict
+                        # ds18b20_vars['sensors'] = tmp_dict
+                        ds18b20_table = tmp_dict
                         ds18b20_vars['list'] = 'true'
                         ds18b20_vars['status'] = 'alert-success'
                         ds18b20_vars['msg_1'] = 'Success!'
                         ds18b20_vars['msg_2'] = ' - {} DS18B20 sensors have ' \
                                                 'been detected.'.format(
-                                len(ds18b20_vars['sensors']))
-                        ds18b20_vars['status'] = 'ok'
+                                len(ds18b20_table))
+                        head_flag.append('ok')
+                        print 'ende ds18b20 block'
                     else:
                         ds18b20_vars['status'] = 'alert-warning'
                         ds18b20_vars['msg_1'] = 'Warning!'
                         ds18b20_vars['msg_2'] = ' - No DS18B20 sensors have ' \
                                                 'been detected.'
-                        ds18b20_vars['status'] = 'war'
+                        head_flag.append('war')
                 else:
                     ds18b20_vars['status'] = 'alert-danger'
                     ds18b20_vars['msg_1'] = 'Error!'
                     ds18b20_vars['msg_2'] = ' - DS18B20 hardware ' \
                                             'requirements failed.'
-                    ds18b20_vars['status'] = 'error'
+                    head_flag.append('error')
 
             # DHT11 sensor
             dht11_cb = 'dht11_cb' in request.form
@@ -156,17 +162,18 @@ def config():
                                           'requirements failed.'
                     dht11_vars['status'] = 'error'
 
+            print 'vor overall status'
+            print dht11_vars['status']
+            print ds18b20_vars['status']
+
             # manage overall status
-            if 'error' in dht11_vars['status'] \
-                    or 'error' in ds18b20_vars['status']:
+            if 'error' in head_flag:
                 session_config['icon'] = 'fa-exclamation'
                 session_config['color'] = 'red'
-            elif 'war' in dht11_vars['status'] \
-                    or 'war' in ds18b20_vars['status']:
+            elif 'war' in head_flag:
                 session_config['icon'] = 'fa-flash'
                 session_config['color'] = 'orange'
-            elif 'ok' in dht11_vars['status'] \
-                    or 'ok' in ds18b20_vars['status']:
+            elif 'ok' in head_flag:
                 session_config['icon'] = 'fa-check'
                 session_config['color'] = 'green'
                 session_config['final'] = 'collapse'
@@ -174,13 +181,16 @@ def config():
             # update database
             print 'vor schreiben: ', session_config
             session.write_session_config(session_config)
+            print 'vor config hws '
             session.write_session_config_hws(ds18b20_vars, dht11_vars)
             session.close()
-
+            print 'vor return template'
             # render template
             return render_template("index.html", name='config',
                                    version=__version__,
                                    ds18b20_vars=ds18b20_vars,
+                                   ds18b20_table=ds18b20_table,
+                                   dht11_table=dht11_table,
                                    dht11_vars=dht11_vars,
                                    session_config=session_config)
         elif 'software' in request.form:
@@ -195,12 +205,24 @@ def config():
     else:
         session_config = session.get_session_config()
         ds18b20_vars, dht11_vars = session.get_session_config_hws()
+
+        # check if dsb18/dht11 tables exist and react
+        ds18b20_table_check = session.check_table_exist('SENSOR_IDS_DS18B20')
+        dht11_table_check = session.check_table_exist('SENSOR_IDS_DHT11')
+
         session.close()
+
+        """if ds18b20_table_check is True:
+            ds18b20_table = """
+
         print 'GET: ', session_config
         print 'GET: ', ds18b20_vars
         print 'GET: ', dht11_vars
         return render_template("index.html", name='config', version=__version__,
-                               ds18b20_vars=ds18b20_vars, dht11_vars=dht11_vars,
+                               ds18b20_vars=ds18b20_vars,
+                               ds18b20_table=ds18b20_table,
+                               dht11_table=dht11_table,
+                               dht11_vars=dht11_vars,
                                session_config=session_config)
 
 
