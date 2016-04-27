@@ -114,6 +114,7 @@ def config():
         session_config = session.get_session_config()
         session_config_hws_ds18b20 = session.get_session_config_hws()
         if 'hardware-next' in request.form:
+            print 'HARDWARE NEXT'
             head_flag = list()
             # DS18B20 sensor
             ds18b20_cb = 'ds18b20_cb' in request.form
@@ -132,14 +133,17 @@ def config():
                     if len(sensors):
                         tmp_dict = dict()
                         for sensor in sensors:
-                            tmp_dict[sensor] = -9999
+                            tmp_dict[sensor] = -9999.0
                         # read temperatures
                         # tmp_dict = ds18b20.read_ds18b20(tmp_dict)
                         # return: DICT(sensors, values)
 
                         # add sensor_ids_table
-                        session.add_sensor_ids_table('ds18b20')
-                        session.add_sensor_info('ds18b20', tmp_dict)
+                        ds18b20_table_check = session.check_table_exist(
+                            'SENSOR_IDS_DS18B20')
+                        if ds18b20_table_check is False:
+                            session.add_sensor_ids_table('ds18b20')
+                            session.add_sensor_info('ds18b20', tmp_dict)
 
                         # ds18b20_vars['sensors'] = tmp_dict
                         ds18b20_table = tmp_dict
@@ -204,11 +208,12 @@ def config():
             return render_template("index.html", name='monitor',
                                    version=__version__)
     else:
+        print 'GET'
         session_config = session.get_session_config()
         print session_config
         session_config_hws_ds18b20 = session.get_session_config_hws()
 
-        # duration, interval = session.get_session_config_sws()
+        duration, interval = session.get_session_config_sws()
 
         # check if dsb18 table exist and react
         ds18b20_table_check = session.check_table_exist('SENSOR_IDS_DS18B20')
@@ -223,7 +228,8 @@ def config():
                                navbar_status=navbar_status,
                                session_icon=session_icon,
                                session_color=session_color,
-                               session_name=session_name)
+                               session_name=session_name,
+                               duration=duration, interval=interval)
 
 
 @app.route("/monitor/")
