@@ -5,6 +5,7 @@ Server core module
 
 # import external modules
 import os
+import subprocess
 from flask import Flask, render_template, request, redirect, url_for
 from shutil import copyfile
 
@@ -17,7 +18,8 @@ from support import sqlite
 
 
 # get saved profiles
-tmp = os.listdir("D:\F_Projects\F-I_GitHub\eems\eems\data")
+# tmp = os.listdir("D:\F_Projects\F-I_GitHub\eems\eems\data")
+tmp = os.listdir('/Volumes/Tesla/05_Github/eems/eems/data')
 profiles = ['new']
 for i in tmp:
     if i != 'default.db':
@@ -42,12 +44,15 @@ def index():
             print profile
 
             # add default tables and contents
-            """subprocess.call(['cp', '/home/pi/eems/default.db',
-                             '/home/pi/eems/{}.db'.format(profile)])"""
+            """
+            subprocess.call(['cp', '/home/pi/eems/default.db',
+                             '/home/pi/eems/{}.db'.format(profile)])
 
             copyfile('D:/F_Projects/F-I_GitHub/eems/eems/data/default.db',
                      'D:/F_Projects/F-I_GitHub/eems/eems/data/{}.db'.format(profile))
-
+            """
+            subprocess.call(['cp', '/Volumes/Tesla/05_Github/eems/eems/data/default.db',
+                             '/Volumes/Tesla/05_Github/eems/eems/data/{}.db'.format(profile)])
             # redirect
             return redirect(url_for('config'))
         else:
@@ -92,6 +97,8 @@ def config():
                     # sensors = detects.ds18b20_sensors()
                     if len(sensors):
                         # add sensor_ids_table
+                        # warum nicht gleich mit werten?
+                        # verschieben hinter Zeile 108 bzw. 111
                         session.add_sensor_ids_table('ds18b20')
                         session.add_sensor_ids('ds18b20', sensors)
                         print 'nach schreiben SQL'
@@ -195,16 +202,25 @@ def config():
                                    session_config=session_config)
         elif 'software' in request.form:
             print 'software button'
+            """
             for key in dht11_vars['sensors'].keys():
                 print key, request.form[key]
-
+            """
+            duration = int(request.form['duration'])
+            print 'duration', duration, type(duration)
+            interval = int(request.form['interval'])
+            print 'interval', interval, type(interval)
+            session.write_session_config_sws(duration, interval)
             # close session
             session.close()
+            print 'session close, vor render template'
             return render_template("index.html", name='monitor',
                                    version=__version__)
     else:
         session_config = session.get_session_config()
         ds18b20_vars, dht11_vars = session.get_session_config_hws()
+
+        # duration, interval = session.get_session_config_sws()
 
         # check if dsb18/dht11 tables exist and react
         ds18b20_table_check = session.check_table_exist('SENSOR_IDS_DS18B20')

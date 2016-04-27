@@ -108,8 +108,21 @@ class DBHandler(object):
         else:
             return False
 
+    def get_session_config_sws(self):
+        self.c.execute("SELECT * FROM SESSION_CONFIG_SWS")
+        values = self.c.fetchall()
+        duration = values[0][0]
+        interval = values[0][1]
+        return duration, interval
 
-
+    def write_session_config_sws(self, duration, interval):
+        print 'open'
+        print 'sqlite duration', duration, type(duration)
+        print 'sqlite interval', interval, type(interval)
+        self.c.execute("UPDATE SESSION_CONFIG_SWS SET DURATION = {}".format(duration))
+        self.c.execute("UPDATE SESSION_CONFIG_SWS SET INTERVAL = '{}'".format(interval))
+        self.conn.commit()
+        print 'close'
 """
 def header2db(self, sensors):
     # Connecting to the database file
