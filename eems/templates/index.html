@@ -12,11 +12,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='font-mfizz/font-mfizz.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='sweetalert/sweetalert.css') }}">
-
-    <!--<link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap-social.css">
-    <link rel="stylesheet" href="../static/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="../static/font-mfizz/font-mfizz.css">-->
 </head>
 
 <body style="margin-bottom: 50px">
@@ -38,10 +33,14 @@
                     <ul class="nav navbar-nav">
                         <li class="{% if name == 'index' %}
                                         {{ navbar_status }}
+                                   {% elif name == 'licence' %}
+                                        {{ navbar_status }}
                                    {% elif name == 'config' %}
                                         active
                                    {% endif %}"><a href="{{ url_for('config') }}"><i class="fa fa-cogs"></i>&nbsp; Config</a></li>
                         <li class="{% if name == 'index' %}
+                                        {{ navbar_status }}
+                                   {% elif name == 'licence' %}
                                         {{ navbar_status }}
                                    {% elif name == 'monitor' %}
                                         active
@@ -88,9 +87,6 @@
     <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='sweetalert/sweetalert.min.js') }}"></script>
     <script src="{{ url_for('static', filename='chart.js/Chart.js') }}"></script>
-
-    <!--<script src="../static/jquery/jquery.min.js"></script>
-    <script src="../static/bootstrap/js/bootstrap.min.js"></script>-->
 
     <!-- JQuery activation -->
     <script>

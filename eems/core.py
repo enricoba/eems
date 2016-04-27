@@ -44,30 +44,44 @@ def index():
         session_color = 'green'
 
     if request.method == 'POST':
-        profile_tmp = request.form['session-input']
-        if len(profile_tmp):
-            profiles.append(str(profile_tmp))
-            session_name = profile_tmp
-            print session_name
+        if 'session-start' in request.form:
+            profile_tmp = request.form['session-input']
+            if len(profile_tmp):
+                profiles.append(str(profile_tmp))
+                session_name = profile_tmp
+                print session_name
 
-            # add default tables and contents
-            """
-            subprocess.call(['cp', '/home/pi/eems/default.db',
-                             '/home/pi/eems/{}.db'.format(profile)])"""
+                # add default tables and contents
+                """
+                subprocess.call(['cp', '/home/pi/eems/default.db',
+                                 '/home/pi/eems/{}.db'.format(profile)])"""
 
-            copyfile('D:/F_Projects/F-I_GitHub/eems/eems/data/default.db',
-                     'D:/F_Projects/F-I_GitHub/eems/eems/data/{}.db'
-                     .format(session_name))
+                copyfile('D:/F_Projects/F-I_GitHub/eems/eems/data/default.db',
+                         'D:/F_Projects/F-I_GitHub/eems/eems/data/{}.db'
+                         .format(session_name))
 
-            """subprocess.call(['cp', '/Volumes/Tesla/05_Github/eems/eems/data/default.db',
-                             '/Volumes/Tesla/05_Github/eems/eems/data/{}.db'.format(profile)])"""
-            # redirect
-            return redirect(url_for('config'))
-        else:
-            # todo profile laden
-            print 'load project'
-            session_name = request.form['session-load']
-            return redirect(url_for('config'))
+                """subprocess.call(['cp', '/Volumes/Tesla/05_Github/eems/eems/data/default.db',
+                                 '/Volumes/Tesla/05_Github/eems/eems/data/{}.db'.format(profile)])"""
+                # redirect
+                return redirect(url_for('config'))
+            else:
+                # todo profile laden
+                print 'load project'
+                session_name = request.form['session-load']
+                return redirect(url_for('config'))
+        elif 'session-logout' in request.form:
+            session_name = None
+            # handle session status
+            navbar_status = 'disabled'
+            session_icon = 'unlock'
+            session_color = 'darkred'
+            return render_template("index.html", name='index',
+                                   version=__version__,
+                                   profiles=profiles, len=len(profiles),
+                                   navbar_status=navbar_status,
+                                   session_name=session_name,
+                                   session_icon=session_icon,
+                                   session_color=session_color)
     else:
         print profiles
         return render_template("index.html", name='index', version=__version__,
@@ -235,7 +249,24 @@ def monitor():
 
 @app.route("/licence/")
 def licence():
-    return render_template("index.html", name='licence', version=__version__)
+    # get session name
+    global session_name
+    # handle session status
+    if session_name is None:
+        navbar_status = 'disabled'
+        session_icon = 'unlock'
+        session_color = 'darkred'
+    else:
+        navbar_status = ''
+        session_icon = 'lock'
+        session_color = 'green'
+    return render_template("index.html", name='licence',
+                           version=__version__,
+                           navbar_status=navbar_status,
+                           session_icon=session_icon,
+                           session_color=session_color,
+                           session_name=session_name
+                           )
 
 # host='0.0.0.0'
 

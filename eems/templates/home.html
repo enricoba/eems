@@ -1,20 +1,34 @@
-<h1 class="text-center">Welcome to EEMS</h1>
-<h4 class="text-center">Easy Energy Monitoring System</h4>
-<div class="form-group" style="margin-top: 50px">
-    <form role="form" method="post" action="{{ url_for('index') }}" onsubmit="return session_start(this)">
-        <select title="dropdown" class="form-control" name="session-load" style="text-align: center" id="drp1" onchange="dropdown_check()">
-            {% for profile in profiles %}
-            <option>{{ profile }}</option>
-            {% endfor %}
-        </select>
-        <input id="inp1" type="text" name="session-input" class="form-control" placeholder="project name" style="text-align: center; margin-top: 10px">
-        <!-- more buttons -->
-        <ul class="pager">
-            <li><button name="session-start" type="submit" style="width: 100px" class="btn btn-success">Start</button></li>
-            <!--<li><button type="submit" name="session-load" style="width: 100px" class="btn btn-primary">Load</button></li>-->
-        </ul>
-    </form>
-</div>
+{% if session_name == None %}
+    <h1 class="text-center">Welcome to EEMS</h1>
+    <h4 class="text-center">Easy Energy Monitoring System</h4>
+
+    <div class="form-group" style="margin-top: 50px">
+        <form role="form" method="post" action="{{ url_for('index') }}" onsubmit="return session_start(this)">
+            <select title="dropdown" class="form-control" name="session-load" style="text-align: center" id="drp1" onchange="dropdown_check()">
+                {% for profile in profiles %}
+                <option>{{ profile }}</option>
+                {% endfor %}
+            </select>
+            <input id="inp1" type="text" name="session-input" class="form-control" placeholder="project name" style="text-align: center; margin-top: 10px">
+            <!-- more buttons -->
+            <ul class="pager">
+                <li><button name="session-start" type="submit" style="width: 100px" class="btn btn-success">Start</button></li>
+                <!--<li><button type="submit" name="session-load" style="width: 100px" class="btn btn-primary">Load</button></li>-->
+            </ul>
+        </form>
+    </div>
+{% else %}
+    <div class="form-group">
+        <form role="form" method="post" action="{{ url_for('index') }}">
+           <div class="alert alert-info">
+               <strong>You are in a session!</strong><br>You have successfully logged into session: <strong>{{ session_name }}</strong>. Before adding a new session or loading an existing one, please logout.
+               <ul class="pager">
+                   <li><button name="session-logout" type="submit" style="width: 100px" class="btn  btn-default">Logout</button></li>
+               </ul>
+           </div>
+        </form>
+    </div>
+{% endif %}
 
 <script>
     function dropdown_check() {
