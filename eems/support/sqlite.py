@@ -54,33 +54,16 @@ class DBHandler(object):
             'msg_1': values[0][4],
             'msg_2': values[0][5]
         }
+        return ds18b20_vars
 
-        dht11_vars = {
-            'status': values[1][1],
-            'display': values[1][2],
-            'list': values[1][3],
-            'msg_1': values[1][4],
-            'msg_2': values[1][5]
-        }
-        return ds18b20_vars, dht11_vars
-
-    def write_session_config_hws(self, ds18b20_vars, dht11_vars):
-        print ds18b20_vars
+    def write_session_config_hws(self, ds18b20_vars):
         for key in ds18b20_vars:
             if ds18b20_vars[key] is None:
                 value = ''
             else:
                 value = str(ds18b20_vars[key])
             self.c.execute("UPDATE SESSION_CONFIG_HWS SET {} = '{}'"
-                           "WHERE TYP_ID = 1".format(key.upper(), value))
-        print dht11_vars
-        for key in dht11_vars:
-            if dht11_vars[key] is None:
-                value = ''
-            else:
-                value = str(dht11_vars[key])
-            self.c.execute("UPDATE SESSION_CONFIG_HWS SET {} = '{}'"
-                           "WHERE TYP_ID = 2".format(key.upper(), value))
+                           .format(key.upper(), value))
         self.conn.commit()
 
     def add_sensor_ids_table(self, sensor):
@@ -90,10 +73,10 @@ class DBHandler(object):
                             VALUE REAL
                           );""".format(sensor.upper()))
 
-    def add_sensor_ids(self, sensor_type, sensors):
-        for sensor in sensors:
-            self.c.execute("INSERT INTO SENSOR_IDS_{} (NAME) VALUES ('{}')"
-                           "".format(sensor_type.upper(), sensor))
+    def add_sensor_info(self, sensor_type, dic):
+        for key, value in dic.iteritems():
+            self.c.execute("INSERT INTO SENSOR_IDS_{} (NAME, VALUE) VALUES "
+                           "('{}', {})".format(sensor_type.upper(), key, value))
         self.conn.commit()
 
     def get_all(self, table):
@@ -108,6 +91,14 @@ class DBHandler(object):
         else:
             return False
 
+    def get_sensor_info(self, table):
+        self.c.execute("SELECT * FROM {}".format(table))
+        value = self.c.fetchall()
+        tmp = dict()
+        for x in value:
+            tmp[x[0]] = x[-1]
+        return tmp
+
     def get_session_config_sws(self):
         self.c.execute("SELECT * FROM SESSION_CONFIG_SWS")
         values = self.c.fetchall()
@@ -116,13 +107,10 @@ class DBHandler(object):
         return duration, interval
 
     def write_session_config_sws(self, duration, interval):
-        print 'open'
-        print 'sqlite duration', duration, type(duration)
-        print 'sqlite interval', interval, type(interval)
-        self.c.execute("UPDATE SESSION_CONFIG_SWS SET DURATION = {}".format(duration))
-        self.c.execute("UPDATE SESSION_CONFIG_SWS SET INTERVAL = '{}'".format(interval))
+        self.c.execute("UPDATE SESSION_CONFIG_SWS SET DURATION = {}, "
+                       "INTERVAL = {}".format(duration, interval))
         self.conn.commit()
-        print 'close'
+
 """
 def header2db(self, sensors):
     # Connecting to the database file

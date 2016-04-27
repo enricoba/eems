@@ -36,8 +36,17 @@
                 </div>
                 <div class="collapse navbar-collapse" id="eemsBar">
                     <ul class="nav navbar-nav">
-                        <li class="{% if name == 'config' %} active {% endif %}"><a href="{{ url_for('config') }}"><i class="fa fa-cogs"></i>&nbsp; Config</a></li>
-                        <li class="{% if name == 'monitor' %} active {% endif %}"><a href="{{ url_for('monitor') }}"><i class="fa fa-area-chart"></i>&nbsp; Monitor</a></li>
+                        <li class="{% if name == 'index' %}
+                                        {{ navbar_status }}
+                                   {% elif name == 'config' %}
+                                        active
+                                   {% endif %}"><a href="{{ url_for('config') }}"><i class="fa fa-cogs"></i>&nbsp; Config</a></li>
+                        <li class="{% if name == 'index' %}
+                                        {{ navbar_status }}
+                                   {% elif name == 'monitor' %}
+                                        active
+                                   {% endif %}"><a href="{{ url_for('monitor') }}"><i class="fa fa-area-chart"></i>&nbsp; Monitor</a></li>
+                        <li class="disabled"><a href="#" style="color: {{ session_color }}"><i class="fa fa-{{ session_icon }}"></i>&nbsp; Session: {{ session_name }}</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right nav-pills">
                         <li><a href="https://github.com/enricoba/eems">
@@ -85,6 +94,12 @@
 
     <!-- JQuery activation -->
     <script>
+        $(document).ready(function() {
+           $(".nav li.disabled a").click(function() {
+             return false;
+           });
+        });
+
         $(document).ready(function(){
             $('[data-toggle="popover"]').popover();
         });
