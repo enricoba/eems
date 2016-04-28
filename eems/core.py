@@ -108,18 +108,20 @@ def config():
 
     session = sqlite.DBHandler()
     session.start(session_name)
+
+    # default for no sensors read
     ds18b20_table = {}
+
     if request.method == 'POST':
         print 'POST'
-        session_config = session.get_session_config()
+        session_config_hw, session_config_sw = session.get_session_config()
         session_config_hws_ds18b20 = session.get_session_config_hws()
         if 'hardware-next' in request.form:
-            print 'HARDWARE NEXT'
             head_flag = list()
             # DS18B20 sensor
             ds18b20_cb = 'ds18b20_cb' in request.form
             if ds18b20_cb is True:
-                session_config['display'] = 'true'
+                session_config_hw['display'] = 'true'
                 session_config_hws_ds18b20['display'] = 'true'
 
                 # execute check
@@ -169,52 +171,74 @@ def config():
 
             # manage overall status
             if 'error' in head_flag:
-                session_config['icon'] = 'fa-exclamation'
-                session_config['color'] = 'red'
+                session_config_hw['icon'] = 'fa-exclamation'
+                session_config_hw['color'] = 'red'
             elif 'war' in head_flag:
-                session_config['icon'] = 'fa-flash'
-                session_config['color'] = 'orange'
+                session_config_hw['icon'] = 'fa-flash'
+                session_config_hw['color'] = 'orange'
             elif 'ok' in head_flag:
                 print 'IN OVERALL STATUS'
-                session_config['icon'] = 'fa-check'
-                session_config['color'] = 'green'
-                session_config['final'] = 'collapse'
+                session_config_hw['icon'] = 'fa-check'
+                session_config_hw['color'] = 'green'
+                session_config_hw['final'] = 1
+
+            if session_config_hw['final'] == 1:
+                toggle = 'collapse'
+            else:
+                toggle = 'deactivate'
 
             # update database
-            session.write_session_config(session_config)
+            session.write_session_config(session_config_hw, 'hardware')
             session.write_session_config_hws(session_config_hws_ds18b20)
             session.close()
+
             # render template
             return render_template("index.html", name='config',
                                    version=__version__,
                                    ds18b20_vars=session_config_hws_ds18b20,
                                    ds18b20_table=ds18b20_table,
-                                   session_config=session_config,
+                                   session_config=session_config_hw,
+                                   session_config_sw=session_config_sw,
                                    navbar_status=navbar_status,
                                    session_icon=session_icon,
                                    session_color=session_color,
-                                   session_name=session_name)
-        elif 'software' in request.form:
+                                   session_name=session_name,
+                                   toggle=toggle)
+        elif 'software-next' in request.form:
             print 'software button'
 
             for key in ds18b20_table.keys():
                 print key, request.form[key]
 
-            duration = int(request.form['duration'])
-            interval = int(request.form['interval'])
-            session.write_session_config_sws(duration, interval)
+            # set software_flag
+            if session_config_sw['final'] is 0:
+                session_config_sw['display'] = 'true'
+                session_config_sw['final'] = 1
+
+                duration = int(request.form['duration'])
+                interval = int(request.form['interval'])
+                session.write_session_config_sws(duration, interval)
+                session.write_session_config(session_config_sw, 'software')
             # close session
             session.close()
             return render_template("index.html", name='monitor',
-                                   version=__version__)
+                                   version=__version__,
+                                   session_icon=session_icon,
+                                   session_color=session_color,
+                                   session_name=session_name)
     else:
         print 'GET'
-        session_config = session.get_session_config()
-        print session_config
+        session_config_hw, session_config_sw = session.get_session_config()
         session_config_hws_ds18b20 = session.get_session_config_hws()
 
         duration, interval = session.get_session_config_sws()
 
+        # toggle
+        if session_config_hw['final'] == 1:
+            toggle = 'collapse'
+        else:
+            toggle = 'deactivate'
+            print toggle
         # check if dsb18 table exist and react
         ds18b20_table_check = session.check_table_exist('SENSOR_IDS_DS18B20')
         if ds18b20_table_check:
@@ -224,12 +248,14 @@ def config():
         return render_template("index.html", name='config', version=__version__,
                                ds18b20_vars=session_config_hws_ds18b20,
                                ds18b20_table=ds18b20_table,
-                               session_config=session_config,
+                               session_config=session_config_hw,
+                               session_config_sw=session_config_sw,
                                navbar_status=navbar_status,
                                session_icon=session_icon,
                                session_color=session_color,
                                session_name=session_name,
-                               duration=duration, interval=interval)
+                               duration=duration, interval=interval,
+                               toggle=toggle)
 
 
 @app.route("/monitor/")

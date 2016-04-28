@@ -4,7 +4,6 @@
         <!--heading-->
         <div class="panel-heading">
             <h4 class="panel-title">
-                <a href="#" data-toggle="popover" data-trigger="focus" title="Help" data-content="help text" data-placement="auto"><span class="fa fa-info"></span></a>
                 <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Hardeware Setup</a>
                 <span class="fa {{ session_config['icon'] }}" style="float: right; color: {{ session_config['color'] }}; display: {{ session_config['display'] }}"></span>
             </h4>
@@ -13,7 +12,7 @@
         <div class="panel-collapse collapse in" id="collapse1">
             <div class="panel-body">
                 <div class="form-group">
-                    <form role="form" method="post" action="{{ url_for('config') }}">
+                    <form role="form" method="post" action="{{ url_for('config') }}" onsubmit="return validateConfig()">
                         <!-- DS18B20 button -->
                         <button type="button" onclick="set_btn(this, ds18b20_cb)" style="width: 100px" class="btn btn-default">DS18B20</button>
                         <label><input class="form-control" type="checkbox" name="ds18b20_cb" style="display: none"></label>
@@ -45,16 +44,15 @@
         <!--heading-->
         <div class="panel-heading">
             <h4 class="panel-title">
-                <a href="#" data-toggle="popover" data-trigger="focus" title="Help" data-content="help text" data-placement="auto">
-                    <span class="fa fa-info"></span></a>
-                <a data-toggle="{{ session_config['final'] }}" data-parent="#accordion" href="#collapse2">Configuration</a>
+                <a data-toggle="{{ toggle }}" data-parent="#accordion" href="#collapse2">Configuration</a>
+                <span class="fa {{ session_config_sw['icon'] }}" style="float: right; color: {{ session_config_sw['color'] }}; display: {{ session_config_sw['display'] }}"></span>
             </h4>
         </div>
         <!--text/body-->
         <div class="panel-collapse collapse" id="collapse2">
             <div class="panel-body">
                 <div class="form-group">
-                    <form role="form" method="post" action="{{ url_for('config') }}" onsubmit="return validateForm(this)">
+                    <form role="form" method="post" action="{{ url_for('config') }}" onsubmit="return validateSoftware(this)">
                         <!-- DS18B20 sensors -->
                         <div class="panel-group" style="display: {{ ds18b20_vars['list'] }}; margin-bottom: 5px">
                             <div class="panel panel-default">
@@ -65,11 +63,11 @@
                                     </h4>
                                 </div>
                                 <!-- body -->
-                                <div id="collapse3" class="panel-collapse collapse">
+                                <div id="collapse3" class="panel-collapse collapse in">
                                     <ul class="list-group">
                                         {% for key, value in ds18b20_table.iteritems() %}
                                             <li class="list-group-item"><span class="badge" style="background-color: green">{{ value }} °C</span>{{ key }}
-                                            <input type="text" placeholder="use defined senor name" name="{{ key }}" class="form-control input-sm" style="margin-top: 5px"></li>
+                                            <input {% if session_config_sw['final'] == 1 %} disabled {% endif %} type="text" placeholder="use defined senor name" name="{{ key }}" class="form-control input-sm" style="margin-top: 5px"></li>
                                         {% endfor %}
                                     </ul>
                                 </div>
@@ -82,20 +80,25 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="duration">Duration (s):</label>
-                                    <input type="number" name="duration" min="10" placeholder="duration in seconds" class="form-control" id="duration">
+                                    <input {% if session_config_sw['final'] == 1%} disabled {% endif %} type="number" name="duration" min="10" placeholder="duration in seconds" class="form-control" id="duration">
                                 </div>
                             </div>
                             <!-- Interval -->
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="interval">Interval (s):</label>
-                                    <input type="number" name="interval" min="2" placeholder="interval in seconds" class="form-control" id="interval">
+                                    <input {% if session_config_sw['final'] == 1%} disabled {% endif %} type="number" name="interval" min="2" placeholder="interval in seconds" class="form-control" id="interval">
                                 </div>
                             </div>
                         </div>
 
+                        <!-- navigation -->
+                        <ul class="pager">
+                            <li><button type="button" onclick="getBack()" name="software-back" style="width: 100px" class="btn btn-primary">Back</button></li>
+                            <li><button type="submit" name="software-next" style="width: 100px" class="btn btn-success">Next</button></li>
+                        </ul>
                         <!-- button -->
-                        <button type="submit" name="software" style="float:right; width: 100px" class="btn btn-info">Start</button>
+
                     </form>
                 </div>
             </div>
@@ -116,30 +119,54 @@
         }
     }
 
-    function validateForm(form) {
+    function validateConfig() {
+        var flag = '{{ session_config['final'] }}';
+        if (flag == 1) {
+            $("#collapse1").collapse('toggle');
+            $("#collapse2").collapse('toggle');
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function getBack() {
+        $("#collapse2").collapse('toggle');
+        $("#collapse1").collapse('toggle');
+    }
+
+    function validateSoftware(form) {
         var x = form["duration"].value;
         var y = form["interval"].value;
-        if (x == null || x == "") {
-            sweetAlert({
-                title: "Oops!",
-                text: "Duration must be set.",
-                type: "error"
-            });
-            return false;
-        } if (y == null || y == "") {
-            sweetAlert({
-                title: "Oops!",
-                text: "Interval must be set.",
-                type: "error"
-            });
-            return false;
-        } if (parseInt(y) > parseInt(x)) {
+        var z = parseInt({{ session_config_sw['final'] }});
+
+        if (z == 1) {
+            return true;
+        } else {
+            if (x == null || x == "") {
                 sweetAlert({
-                title: "Oops!",
-                text: "Duration must be greater interval.",
-                type: "error"
-            });
-            return false;
+                    title: "Oops!",
+                    text: "Duration must be set.",
+                    type: "error"
+                });
+                return false;
+            }
+            if (y == null || y == "") {
+                sweetAlert({
+                    title: "Oops!",
+                    text: "Interval must be set.",
+                    type: "error"
+                });
+                return false;
+            }
+            if (parseInt(y) > parseInt(x)) {
+                sweetAlert({
+                    title: "Oops!",
+                    text: "Duration must be greater interval.",
+                    type: "error"
+                });
+                return false;
+            }
         }
     }
 </script>

@@ -29,18 +29,30 @@ class DBHandler(object):
     def get_session_config(self):
         self.c.execute("SELECT * FROM SESSION_CONFIG")
         values = self.c.fetchall()
-        tmp_dic = {
-            'display': values[0][0],
-            'icon': values[0][1],
-            'color': values[0][2],
-            'final': values[0][3]
+        hardware = {
+            'panel': values[0][0],
+            'display': values[0][1],
+            'icon': values[0][2],
+            'color': values[0][3],
+            'final': values[0][4]
         }
-        return tmp_dic
 
-    def write_session_config(self, dic):
+        software = {
+            'panel': values[1][0],
+            'display': values[1][1],
+            'icon': values[1][2],
+            'color': values[1][3],
+            'final': values[1][4]
+        }
+        return hardware, software
+
+    def write_session_config(self, dic, panel):
         for key in dic:
-            self.c.execute("UPDATE SESSION_CONFIG SET {} = '{}'"
-                           "".format(key.upper(), str(dic[key])))
+            if key != 'panel':
+                self.c.execute("UPDATE SESSION_CONFIG SET {} = '{}' "
+                               "WHERE PANEL_ID = '{}'".format(key.upper(),
+                                                              str(dic[key]),
+                                                              panel))
         self.conn.commit()
 
     def get_session_config_hws(self):
