@@ -91,9 +91,12 @@ class DBHandler(object):
                            "('{}', {})".format(sensor_type.upper(), key, value))
         self.conn.commit()
 
-    def get_all(self, table):
-        self.c.execute("SELECT * FROM {}".format(table))
-        return self.c.fetchall()
+    def update_user_sensor_names(self, table, dic):
+        for key in dic:
+            self.c.execute("UPDATE SENSOR_IDS_{} SET USER_NAME = '{}' "
+                           "WHERE NAME = '{}'".format(table.upper(), dic[key],
+                                                      key))
+        self.conn.commit()
 
     def check_table_exist(self, table):
         self.c.execute("SELECT * FROM sqlite_master WHERE type='table' AND "
@@ -111,6 +114,14 @@ class DBHandler(object):
             tmp[x[0]] = x[-1]
         return tmp
 
+    def get_sensor_user_name(self, table):
+        self.c.execute("SELECT * FROM {}".format(table))
+        value = self.c.fetchall()
+        tmp = dict()
+        for x in value:
+            tmp[x[0]] = x[1]
+        return tmp
+
     def get_session_config_sws(self):
         self.c.execute("SELECT * FROM SESSION_CONFIG_SWS")
         values = self.c.fetchall()
@@ -123,34 +134,6 @@ class DBHandler(object):
                        "INTERVAL = {}".format(duration, interval))
         self.conn.commit()
 
-    def write_user_sensor_names(self, table, dic):
-        for key in dic:
-            self.c.execute("UPDATE SENSOR_IDS_{} SET USER_NAME = {} WHERE NAME = {}".format(table, key, dic[key]))
-        self.conn.commit()
-"""
-def header2db(self, sensors):
-    # Connecting to the database file
-    conn = sqlite3.connect(self.db_path)
-    c = conn.cursor()
-
-    # Creating a new SQLite table
-    # Jetztiger Aufbau sieht alle Sensoren in einer Tabelle vor
-    # Alternativ je Sensortyp eine Tabelle wo der Tabellenname gleich der Sensortyp ist
-    c.execute('CREATE TABLE {} {} {} {} {} {} {} {}'
-              .format(self.table_name,
-                      'ID', 'INTEGER', 'PRIMARY KEY',
-                      'TIMESTAMP', 'INTEGER',
-                      'DATE TIME', 'DATE'))
-
-    # Adding a new column without a row value
-    # Alternativ zu sensors das ganze Dic aus dem core-Modul wo dann die einzelnen Sensoren
-    # hier rausgegriffen werden
-    for i in sensors:
-        c.execute('ALTER TABLE {} ADD COLUMN {} {}'
-                  .format(self.table_name,
-                          str(i), 'REAL'))
-
-    # Committing changes and closing the connection to the database file
-    conn.commit()
-    conn.close()
-"""
+    def get_all(self, table):
+        self.c.execute("SELECT * FROM {}".format(table))
+        return self.c.fetchall()

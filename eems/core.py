@@ -7,14 +7,14 @@ Server core module
 import os
 import subprocess
 from flask import Flask, render_template, request, redirect, url_for
-from shutil import copyfile
+# from shutil import copyfile
 
 
 # import eems modules
 from __init__ import __version__
 from support import sqlite
-# from support import detects, checks
-# from sensors import ds18b20
+from support import detects, checks
+from sensors import ds18b20
 
 
 session_name = None
@@ -24,8 +24,12 @@ app = Flask(__name__)
 @app.route("/", methods=['GET', 'POST'])
 def index():
     # get saved profiles
+    # henrik
     # tmp = os.listdir("D:\F_Projects\F-I_GitHub\eems\eems\data")
-    tmp = os.listdir('/Volumes/Tesla/05_Github/eems/eems/data')
+    # auro
+    # tmp = os.listdir('/Volumes/Tesla/05_Github/eems/eems/data')
+    # pipi
+    tmp = os.listdir('/home/pi/eems/data')
     profiles = ['new']
     for i in tmp:
         if i != 'default.db':
@@ -52,16 +56,16 @@ def index():
                 print session_name
 
                 # add default tables and contents
-                """
                 subprocess.call(['cp', '/home/pi/eems/default.db',
-                                 '/home/pi/eems/{}.db'.format(session_name)])"""
+                                 '/home/pi/eems/{}.db'.format(session_name)])
                 """
                 copyfile('D:/F_Projects/F-I_GitHub/eems/eems/data/default.db',
                          'D:/F_Projects/F-I_GitHub/eems/eems/data/{}.db'
                          .format(session_name))
-                """
+
                 subprocess.call(['cp', '/Volumes/Tesla/05_Github/eems/eems/data/default.db',
                                  '/Volumes/Tesla/05_Github/eems/eems/data/{}.db'.format(session_name)])
+                """
                 # redirect
                 return redirect(url_for('config'))
             else:
@@ -109,14 +113,12 @@ def config():
     session = sqlite.DBHandler()
     session.start(session_name)
 
-    # default for no sensors read
-    ds18b20_table = {}
-
     if request.method == 'POST':
         print 'POST'
         session_config_hw, session_config_sw = session.get_session_config()
         session_config_hws_ds18b20 = session.get_session_config_hws()
         if 'hardware-next' in request.form:
+            ds18b20_table = {}
             head_flag = list()
             # DS18B20 sensor
             ds18b20_cb = 'ds18b20_cb' in request.form
@@ -125,19 +127,19 @@ def config():
                 session_config_hws_ds18b20['display'] = 'true'
 
                 # execute check
-                # c = checks.Check()
-                check = True
-                # if c.w1_config() is True and c.w1_modules() is True:
-                if check is True:
+                c = checks.Check()
+                # check = True
+                if c.w1_config() is True and c.w1_modules() is True:
+                # if check is True:
                     # check sensors
-                    sensors = ['1', '2', 'adsad']
-                    # sensors = detects.ds18b20_sensors()
+                    # sensors = ['1', '2', 'adsad']
+                    sensors = detects.ds18b20_sensors()
                     if len(sensors):
                         tmp_dict = dict()
                         for sensor in sensors:
                             tmp_dict[sensor] = -9999.0
                         # read temperatures
-                        # tmp_dict = ds18b20.read_ds18b20(tmp_dict)
+                        tmp_dict = ds18b20.read_ds18b20(tmp_dict)
                         # return: DICT(sensors, values)
 
                         # add sensor_ids_table
@@ -147,7 +149,6 @@ def config():
                             session.add_sensor_ids_table('ds18b20')
                             session.add_sensor_info('ds18b20', tmp_dict)
 
-                        # ds18b20_vars['sensors'] = tmp_dict
                         ds18b20_table = tmp_dict
                         session_config_hws_ds18b20['list'] = 'true'
                         session_config_hws_ds18b20['status'] = 'alert-success'
@@ -206,20 +207,31 @@ def config():
                                    toggle=toggle)
         elif 'software-next' in request.form:
             print 'software button'
-            print 'ds18b20_table before', ds18b20_table
-            for key in ds18b20_table.keys():
-                print key, request.form[key]
-            print 'ds18b20_table', ds18b20_table
+            # get sensors
+            ds18b20_table_check = session.check_table_exist(
+                'SENSOR_IDS_DS18B20')
+            if ds18b20_table_check:
+                ds18b20_table = session.get_sensor_info('SENSOR_IDS_DS18B20')
+            else:
+                ds18b20_table = {}
 
             # set software_flag
             if session_config_sw['final'] is 0:
                 session_config_sw['display'] = 'true'
                 session_config_sw['final'] = 1
 
+                print 'ds18b20_table before', ds18b20_table
+                tmp_dict = dict()
+                for key in ds18b20_table.keys():
+                    print key, request.form[key]
+                    tmp_dict[key] = request.form[key]
+                print tmp_dict
+
                 duration = int(request.form['duration'])
                 interval = int(request.form['interval'])
                 session.write_session_config_sws(duration, interval)
                 session.write_session_config(session_config_sw, 'software')
+                session.update_user_sensor_names('ds18b20', tmp_dict)
             # close session
             session.close()
             return render_template("index.html", name='monitor',
@@ -244,6 +256,10 @@ def config():
         ds18b20_table_check = session.check_table_exist('SENSOR_IDS_DS18B20')
         if ds18b20_table_check:
             ds18b20_table = session.get_sensor_info('SENSOR_IDS_DS18B20')
+            user_names = session.get_sensor_user_name('SENSOR_IDS_DS18B20')
+        else:
+            ds18b20_table = dict()
+            user_names = dict()
 
         session.close()
         return render_template("index.html", name='config', version=__version__,
@@ -256,7 +272,8 @@ def config():
                                session_color=session_color,
                                session_name=session_name,
                                duration=duration, interval=interval,
-                               toggle=toggle)
+                               toggle=toggle,
+                               user_names=user_names)
 
 
 @app.route("/monitor/")
@@ -304,4 +321,4 @@ def licence():
 # host='0.0.0.0'
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0')
