@@ -12,9 +12,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='font-mfizz/font-mfizz.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='sweetalert/sweetalert.css') }}">
+
 </head>
 
 <body style="margin-bottom: 50px">
+    <!-- Chart.js import -->
+    <script src="{{ url_for('static', filename='chart.js/Chart.js') }}"></script>
+
+
     <!-- Header -->
     <header class="container">
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -86,7 +91,6 @@
     <script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='sweetalert/sweetalert.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='chart.js/Chart.js') }}"></script>
 
     <!-- JQuery activation -->
     <script>
