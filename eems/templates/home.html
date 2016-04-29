@@ -19,11 +19,12 @@
     </div>
 {% else %}
     <div class="form-group">
-        <form role="form" method="post" action="{{ url_for('index') }}">
+        <form role="form" name="logout" method="post" action="{{ url_for('index') }}" onsubmit="return session_logout()">
            <div class="alert alert-info">
                <strong>You are in a session!</strong><br>You have successfully logged into session: <strong>{{ session_name }}</strong>. Before adding a new session or loading an existing one, please logout.
                <ul class="pager">
-                   <li><button name="session-logout" type="submit" style="width: 100px" class="btn  btn-default">Logout</button></li>
+                   <li><button onclick="click_button()" type="button" style="width: 100px" class="btn  btn-default">Logout</button></li>
+                   <li><button name="sessionLogout" type="submit" style="visibility: hidden"></button></li>
                </ul>
            </div>
         </form>
@@ -38,6 +39,26 @@
         } else {
             document.getElementById("inp1").style.visibility = "hidden";
         }
+    }
+
+    function session_logout() {
+        return true;
+    }
+
+    function click_button() {
+        swal({
+            title: "Warning!",
+            text: "If you press Logout, you will be logged out ... no " +
+            "seriously, monitoring will stop. However, you can still access " +
+            "your monitored data afterwards.",
+            type: "warning",
+            showCancelButton: true,
+            closeOnConfirm: true,
+            confirmButtonText: "Logout",
+            confirmButtonColor: "#ec6c62"
+        }, function() {
+            document.logout.sessionLogout.click();
+        });
     }
 
     function session_start(form) {
@@ -65,10 +86,5 @@
                 }
             }
         }
-    }
-
-    function test() {
-        var test = "{{ profiles }}";
-        alert(test);
     }
 </script>
