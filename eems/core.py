@@ -5,7 +5,7 @@ Server core module
 
 # import external modules
 import os
-# import subprocess
+import subprocess
 from flask import Flask, render_template, request, redirect, url_for
 from shutil import copyfile
 
@@ -24,8 +24,8 @@ app = Flask(__name__)
 @app.route("/", methods=['GET', 'POST'])
 def index():
     # get saved profiles
-    tmp = os.listdir("D:\F_Projects\F-I_GitHub\eems\eems\data")
-    # tmp = os.listdir('/Volumes/Tesla/05_Github/eems/eems/data')
+    # tmp = os.listdir("D:\F_Projects\F-I_GitHub\eems\eems\data")
+    tmp = os.listdir('/Volumes/Tesla/05_Github/eems/eems/data')
     profiles = ['new']
     for i in tmp:
         if i != 'default.db':
@@ -54,14 +54,14 @@ def index():
                 # add default tables and contents
                 """
                 subprocess.call(['cp', '/home/pi/eems/default.db',
-                                 '/home/pi/eems/{}.db'.format(profile)])"""
-
+                                 '/home/pi/eems/{}.db'.format(session_name)])"""
+                """
                 copyfile('D:/F_Projects/F-I_GitHub/eems/eems/data/default.db',
                          'D:/F_Projects/F-I_GitHub/eems/eems/data/{}.db'
                          .format(session_name))
-
-                """subprocess.call(['cp', '/Volumes/Tesla/05_Github/eems/eems/data/default.db',
-                                 '/Volumes/Tesla/05_Github/eems/eems/data/{}.db'.format(profile)])"""
+                """
+                subprocess.call(['cp', '/Volumes/Tesla/05_Github/eems/eems/data/default.db',
+                                 '/Volumes/Tesla/05_Github/eems/eems/data/{}.db'.format(session_name)])
                 # redirect
                 return redirect(url_for('config'))
             else:
@@ -206,9 +206,10 @@ def config():
                                    toggle=toggle)
         elif 'software-next' in request.form:
             print 'software button'
-
+            print 'ds18b20_table before', ds18b20_table
             for key in ds18b20_table.keys():
                 print key, request.form[key]
+            print 'ds18b20_table', ds18b20_table
 
             # set software_flag
             if session_config_sw['final'] is 0:

@@ -123,6 +123,10 @@ class DBHandler(object):
                        "INTERVAL = {}".format(duration, interval))
         self.conn.commit()
 
+    def write_user_sensor_names(self, table, dic):
+        for key in dic:
+            self.c.execute("UPDATE SENSOR_IDS_{} SET USER_NAME = {} WHERE NAME = {}".format(table, key, dic[key]))
+        self.conn.commit()
 """
 def header2db(self, sensors):
     # Connecting to the database file

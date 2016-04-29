@@ -80,14 +80,14 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="duration">Duration (s):</label>
-                                    <input {% if session_config_sw['final'] == 1%} disabled {% endif %} type="number" name="duration" min="10" placeholder="duration in seconds" class="form-control" id="duration">
+                                    <input {% if session_config_sw['final'] == 1%} disabled {% endif %} type="number" name="duration" min="10" placeholder={% if session_config_sw['final'] == 1 %} {{ duration }} {% else %}"duration in seconds" {% endif %} class="form-control" id="duration">
                                 </div>
                             </div>
                             <!-- Interval -->
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="interval">Interval (s):</label>
-                                    <input {% if session_config_sw['final'] == 1%} disabled {% endif %} type="number" name="interval" min="2" placeholder="interval in seconds" class="form-control" id="interval">
+                                    <input {% if session_config_sw['final'] == 1%} disabled {% endif %} type="number" name="interval" min="2" placeholder={% if session_config_sw['final'] == 1 %} {{ interval }} {% else %}"interval in seconds" {% endif %} class="form-control" id="interval">
                                 </div>
                             </div>
                         </div>
