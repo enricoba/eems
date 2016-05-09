@@ -19,6 +19,7 @@ from sensors import ds18b20
 
 session_name = None
 app = Flask(__name__)
+# test
 
 
 @app.route("/", methods=['GET', 'POST'])
