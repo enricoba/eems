@@ -7,7 +7,6 @@ Server core module
 import os
 import subprocess
 from flask import Flask, render_template, request, redirect, url_for
-from shutil import copyfile
 
 
 # import eems modules
@@ -26,7 +25,7 @@ app = Flask(__name__)
 def index():
     # get saved profiles
     # henrik
-    tmp = os.listdir("D:\F_Projects\F-I_GitHub\eems\eems\data")
+    tmp = os.listdir('/data/F_Projects/F-I_GitHub/eems/eems')
     # auro
     # tmp = os.listdir('/Volumes/Tesla/05_Github/eems/eems/data')
     # pipi
@@ -57,13 +56,17 @@ def index():
                 print session_name
 
                 # add default tables and contents
+                # pi
                 """
                 subprocess.call(['cp', '/home/pi/eems/default.db',
                                  '/home/pi/eems/{}.db'.format(session_name)])
                 """
-                copyfile('D:/F_Projects/F-I_GitHub/eems/eems/data/default.db',
-                         'D:/F_Projects/F-I_GitHub/eems/eems/data/{}.db'
-                         .format(session_name))
+
+                # henrik
+                subprocess.call(['cp', '/data/F_Projects/F-I_GitHub/eems/eems/data/default.db',
+                                 '/data/F_Projects/F-I_GitHub/eems/eems/data/{}.db'.format(session_name)])
+
+                # auro
                 """
                 subprocess.call(['cp', '/Volumes/Tesla/05_Github/eems/eems/data/default.db',
                                  '/Volumes/Tesla/05_Github/eems/eems/data/{}.db'.format(session_name)])
