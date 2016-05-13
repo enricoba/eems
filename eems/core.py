@@ -25,7 +25,7 @@ app = Flask(__name__)
 def index():
     # get saved profiles
     # henrik
-    tmp = os.listdir('/data/F_Projects/F-I_GitHub/eems/eems')
+    tmp = os.listdir('/data/F_Projects/F-I_GitHub/eems/eems/data')
     # auro
     # tmp = os.listdir('/Volumes/Tesla/05_Github/eems/eems/data')
     # pipi
