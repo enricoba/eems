@@ -19,7 +19,7 @@ setup(
     author_email='henrik.baran@online.de, a.hoehn@mailbox.org',
     license='MIT',
     install_requires=[
-        'flask', 'numpy'
+        'flask'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
