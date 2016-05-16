@@ -4,14 +4,27 @@ Setup file for eems.
 """
 
 import getpass
+import subprocess
 from setuptools import setup, find_packages
-from eems.support.shell import set_permissions
 from eems import __project__, __version__, __author__
 
 
-user = getpass.getuser()
+def set_permissions(user):
+    """Public function *set_permissions* sets the permissions of the directory
+        */home/$USER/eems* to *$USER:$USER*. *$USER* will be replaced with the actual user's name.
+        Requires *sudo*!
+
+    :return:
+        Returns *None*.
+    """
+    args = ['sudo', 'chown', '-cR', '{}:{}'.format(user, user), '/home/{}/eems'.format(user)]
+    subprocess.Popen(args)
 
 
+# identify actual user
+actual_user = getpass.getuser()
+
+# run setup
 setup(
     name=__project__,
     version=__version__,
@@ -43,9 +56,9 @@ setup(
         'console_scripts': ['eems = eems.scripts:main']
     },
     data_files=[
-        ('/home/{}/eems'.format(user), ['eems/data/default.db'])
+        ('/home/{}/eems'.format(actual_user), ['eems/data/default.db'])
     ]
 )
 
-# set correct rights
-set_permissions(user)
+# set permissions
+set_permissions(actual_user)
