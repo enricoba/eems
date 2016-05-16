@@ -1,0 +1,5 @@
+#!/usr/bin/python
+
+from eems.support.scripts import main
+
+main()

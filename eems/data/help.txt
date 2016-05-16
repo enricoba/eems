@@ -1,0 +1,21 @@
+Help Information for eems.
+
+Usage:
+  eems <command> [options]
+Commands:
+  check                 Check sensor requirements.
+  prepare               Prepare configuration files (requires sudo!).
+  read                  Read sensors once.
+  monitor               Start monitoring sensors.
+  help                  Show help for commands.
+Options for check:
+  -m, --modules         Check required modules.
+  -c, --config          Check config.txt file.
+  -h, --help            Show help for command check.
+Options for monitor:
+  -i, --interval <sec>  Define measurement interval (default is 60s).
+  -d, --duration <sec>  Define maximum duration (default is infinity).
+  --csv                 Write values into csv file.
+  --log                 Write log file.
+  --console             Enable console output.
+  -h, --help            Show help for command monitor.
