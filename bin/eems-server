@@ -37,13 +37,13 @@ def main():
         sys.exit()
 
     if args.command == 'start':
-        pass
+        print 'start'
 
     elif args.command == 'stop':
-        pass
+        print 'stop'
 
     elif args.command == 'restart':
-        pass
+        print 'restart'
 
     else:
         print help_text
