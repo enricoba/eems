@@ -12,8 +12,8 @@ from flask import Flask, render_template, request, redirect, url_for
 # import eems modules
 from __init__ import __version__
 from support import sqlite
-from support import detects, checks
-from sensors import ds18b20
+# from support import detects, checks
+# from sensors import ds18b20
 
 
 session_name = None

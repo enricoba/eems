@@ -6,6 +6,7 @@ Scripts for eems-server.
 
 import argparse
 import sys
+import eems
 
 
 help_text = """Help Information for eems-server.
@@ -38,6 +39,8 @@ def main():
 
     if args.command == 'start':
         print 'start'
+        eems.__core__.app.debug = False
+        eems.__core__.app.run(host='0.0.0.0')
 
     elif args.command == 'stop':
         print 'stop'
