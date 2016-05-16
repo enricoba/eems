@@ -3,9 +3,13 @@
 Setup file for eems.
 """
 
+import getpass
 from setuptools import setup, find_packages
 from eems.support.shell import set_permissions
 from eems import __project__, __version__, __author__
+
+
+user = getpass.getuser()
 
 
 setup(
@@ -39,7 +43,7 @@ setup(
         'console_scripts': ['eems = eems.scripts:main']
     },
     data_files=[
-        ('/home/pi/eems', ['eems/data/default.db'])
+        ('/home/{}/eems'.format(user), ['eems/data/default.db'])
     ]
 )
 
