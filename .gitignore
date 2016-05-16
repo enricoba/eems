@@ -16,7 +16,7 @@ build/*
 docs/*
 
 # Ablage folder
-ablage/*.py
+ablage/*
 
 # test files
 test.*
