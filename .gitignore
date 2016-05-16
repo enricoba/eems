@@ -16,7 +16,7 @@ build/*
 docs/*
 
 # Ablage folder
-ablage/*
+ablage/*.py
 
 # test files
 test.*
@@ -27,3 +27,4 @@ ablage.py
 
 # excel files for documentation
 *.xlsx
+
