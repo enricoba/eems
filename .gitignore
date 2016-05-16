@@ -21,9 +21,6 @@ ablage/*.py
 # test files
 test.*
 
-# some files
-ablage.py
-
 
 # excel files for documentation
 *.xlsx
