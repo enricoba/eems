@@ -32,7 +32,7 @@ def index():
     # tmp = os.listdir('/home/pi/eems/data')
     profiles = ['new']
     for i in tmp:
-        if i != 'default.db':
+        if i != 'default.db' and i != 'help.txt':
             profiles.append(i[:-3])
 
     # get session name
@@ -325,7 +325,7 @@ def licence():
                            session_name=session_name
                            )
 
-# host='0.0.0.0'
 
 if __name__ == "__main__":
-    app.run()
+    app.debug = False
+    app.run(host='0.0.0.0')

@@ -54,7 +54,8 @@ setup(
     },
     scripts=['bin/eems-server'],
     data_files=[
-        ('/home/{}/eems'.format(actual_user), ['eems/data/default.db'])
+        ('/home/{}/eems'.format(actual_user), ['eems/data/default.db']),
+        ('/home/{}/eems'.format(actual_user), ['eems/data/config.db']),
     ]
 )
 
