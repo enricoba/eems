@@ -52,9 +52,7 @@ setup(
     package_data={
         'eems': ['data/*'],
     },
-    entry_points={
-        'console_scripts': ['eems = eems.scripts:main']
-    },
+    scripts=['bin/eems-server'],
     data_files=[
         ('/home/{}/eems'.format(actual_user), ['eems/data/default.db'])
     ]
@@ -62,3 +60,7 @@ setup(
 
 # set permissions
 set_permissions(actual_user)
+
+"""entry_points={
+    'console_scripts': ['eems = eems.scripts:main']
+},"""
