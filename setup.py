@@ -48,4 +48,4 @@ setup(
 )
 
 # set correct rights
-set_permissions()
+set_permissions(user)
