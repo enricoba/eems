@@ -4,7 +4,6 @@ SQlite3 core module
 """
 
 
-import os
 import sqlite3
 from others import get_user
 
