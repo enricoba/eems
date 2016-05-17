@@ -32,11 +32,11 @@ def define_urls(app):
 def index():
     # get saved profiles
     # henrik
-    tmp = os.listdir('/data/F_Projects/F-I_GitHub/eems/eems/data')
+    # tmp = os.listdir('/data/F_Projects/F-I_GitHub/eems/eems/data')
     # auro
     # tmp = os.listdir('/Volumes/Tesla/05_Github/eems/eems/data')
     # pipi
-    # tmp = os.listdir('/home/pi/eems/data')
+    tmp = os.listdir('/home/henrik/.eems')
     profiles = ['new']
     for i in tmp:
         if i != 'default.db' and i != 'help.txt':
@@ -64,17 +64,17 @@ def index():
 
                 # add default tables and contents
                 # pi
-                """
-                subprocess.call(['cp', '/home/pi/eems/default.db',
-                                 '/home/pi/eems/{}.db'.format(session_name)])
-                """
+
+                subprocess.call(['cp', '/home/henrik/.eems/default.db',
+                                 '/home/henrik/.eems/{}.db'.format(session_name)])
 
                 # henrik
+                """
                 subprocess.call(['cp', '/data/F_Projects/F-I_GitHub/eems/eems/data/default.db',
                                  '/data/F_Projects/F-I_GitHub/eems/eems/data/{}.db'.format(session_name)])
 
                 # auro
-                """
+
                 subprocess.call(['cp', '/Volumes/Tesla/05_Github/eems/eems/data/default.db',
                                  '/Volumes/Tesla/05_Github/eems/eems/data/{}.db'.format(session_name)])
                 """

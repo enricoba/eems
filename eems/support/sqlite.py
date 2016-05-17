@@ -27,7 +27,8 @@ class DBHandler(object):
             actual_user = os.getenv("USER")
         else:
             actual_user = sudo_user
-        conn = sqlite3.connect('home/{}/.eems/data/{}.db'.format(actual_user, self.db))
+        db_file = '/home/{}/.eems/{}.db'.format(actual_user, self.db)
+        conn = sqlite3.connect(db_file)
         return conn
 
     def close(self):
