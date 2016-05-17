@@ -57,7 +57,9 @@ setup(
     package_data={
         'eems': ['data/*'],
     },
-    scripts=['bin/eems-server'],
+    entry_points={
+        'console_scripts': ['eems-server = eems.core:run'],
+    },
     data_files=[
         ('/home/{}/.eems'.format(actual_user), ['eems/data/default.db']),
         ('/home/{}/.eems'.format(actual_user), ['eems/data/config.db']),

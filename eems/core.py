@@ -7,6 +7,7 @@ Server core module
 import os
 import subprocess
 from flask import Flask, render_template, request, redirect, url_for
+from support.scripts import main
 
 
 # import eems modules
@@ -326,6 +327,9 @@ def licence():
                            )
 
 
+def run():
+    main(app)
+
+
 if __name__ == "__main__":
-    app.debug = False
-    app.run(host='0.0.0.0')
+    main(app)
