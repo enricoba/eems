@@ -54,11 +54,14 @@ setup(
     ],
     keywords='easy energy monitoring system raspberrry pi',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+    include_package_data=True,
     package_data={
         'eems': ['data/*'],
+        'static': 'eems/static/*',
+        'templates': 'eems/templates/*',
     },
     entry_points={
-        'console_scripts': ['eems-server = eems.core:run'],
+        'console_scripts': ['eems-server = eems.scripts.scripts:run'],
     },
     data_files=[
         ('/home/{}/.eems'.format(actual_user), ['eems/data/default.db']),

@@ -5,6 +5,8 @@ Scripts for eems-server.
 
 import argparse
 import sys
+from eems import __app__
+from eems.core import define_urls
 
 
 help_text = """Help Information for eems-server.
@@ -25,7 +27,8 @@ class ThrowingArgumentParser(argparse.ArgumentParser):
         raise ArgumentParserError(message)
 
 
-def main(eems):
+def run():
+    define_urls(__app__)
     parser = ThrowingArgumentParser(add_help=False)
     parser.add_argument('command')
 
@@ -37,8 +40,8 @@ def main(eems):
 
     if args.command == 'start':
         print 'start'
-        eems.debug = False
-        eems.run(host='0.0.0.0')
+        __app__.debug = True
+        __app__.run()
 
     elif args.command == 'stop':
         print 'stop'
@@ -48,3 +51,6 @@ def main(eems):
 
     else:
         print help_text
+
+if __name__ == '__main__':
+    run()

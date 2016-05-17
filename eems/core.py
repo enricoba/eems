@@ -6,8 +6,8 @@ Server core module
 # import external modules
 import os
 import subprocess
-from flask import Flask, render_template, request, redirect, url_for
-from support.scripts import main
+from eems import __app__
+from flask import render_template, request, redirect, url_for
 
 
 # import eems modules
@@ -18,11 +18,17 @@ from support import sqlite
 
 
 session_name = None
-app = Flask(__name__)
 # test
 
 
-@app.route("/", methods=['GET', 'POST'])
+def define_urls(app):
+    app.add_url_rule('/', view_func=index)
+    app.add_url_rule('/config/', view_func=config)
+    app.add_url_rule('/monitor/', view_func=monitor)
+    app.add_url_rule('/licence/', view_func=licence)
+
+
+@__app__.route('/', methods=['GET', 'POST'])
 def index():
     # get saved profiles
     # henrik
@@ -86,7 +92,7 @@ def index():
             navbar_status = 'disabled'
             session_icon = 'unlock'
             session_color = 'darkred'
-            return render_template("index.html", name='index',
+            return render_template('index.html', name='index',
                                    version=__version__,
                                    profiles=profiles, len=len(profiles),
                                    navbar_status=navbar_status,
@@ -95,7 +101,7 @@ def index():
                                    session_color=session_color)
     else:
         print 'GET: INDEX'
-        return render_template("index.html", name='index', version=__version__,
+        return render_template('index.html', name='index', version=__version__,
                                profiles=profiles, len=len(profiles),
                                navbar_status=navbar_status,
                                session_name=session_name,
@@ -103,7 +109,7 @@ def index():
                                session_color=session_color)
 
 
-@app.route("/config/", methods=['GET', 'POST'])
+@__app__.route('/config/', methods=['GET', 'POST'])
 def config():
     # get session name
     global session_name
@@ -201,7 +207,7 @@ def config():
             session.close()
 
             # render template
-            return render_template("index.html", name='config',
+            return render_template('index.html', name='config',
                                    version=__version__,
                                    ds18b20_vars=session_config_hws_ds18b20,
                                    ds18b20_table=ds18b20_table,
@@ -242,7 +248,7 @@ def config():
                 session.update_user_sensor_names('ds18b20', tmp_dict)
             # close session
             session.close()
-            return render_template("index.html", name='monitor',
+            return render_template('index.html', name='monitor',
                                    version=__version__,
                                    session_icon=session_icon,
                                    session_color=session_color,
@@ -270,7 +276,7 @@ def config():
             user_names = dict()
 
         session.close()
-        return render_template("index.html", name='config', version=__version__,
+        return render_template('index.html', name='config', version=__version__,
                                ds18b20_vars=session_config_hws_ds18b20,
                                ds18b20_table=ds18b20_table,
                                session_config=session_config_hw,
@@ -284,7 +290,7 @@ def config():
                                user_names=user_names)
 
 
-@app.route("/monitor/")
+@__app__.route('/monitor/')
 def monitor():
     # get session name
     global session_name
@@ -298,14 +304,14 @@ def monitor():
         session_icon = 'lock'
         session_color = 'green'
     print 'monitor called'
-    return render_template("index.html", name='monitor', version=__version__,
+    return render_template('index.html', name='monitor', version=__version__,
                            navbar_status=navbar_status,
                            session_icon=session_icon,
                            session_color=session_color,
                            session_name=session_name)
 
 
-@app.route("/licence/")
+@__app__.route('/licence/')
 def licence():
     # get session name
     global session_name
@@ -318,18 +324,10 @@ def licence():
         navbar_status = ''
         session_icon = 'lock'
         session_color = 'green'
-    return render_template("index.html", name='licence',
+    return render_template('index.html', name='licence',
                            version=__version__,
                            navbar_status=navbar_status,
                            session_icon=session_icon,
                            session_color=session_color,
                            session_name=session_name
                            )
-
-
-def run():
-    main(app)
-
-
-if __name__ == "__main__":
-    main(app)
