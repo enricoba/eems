@@ -41,7 +41,7 @@ def run():
     if args.command == 'start':
         print 'start'
         __app__.debug = True
-        __app__.run()
+        __app__.run(host='0.0.0.0')
 
     elif args.command == 'stop':
         print 'stop'

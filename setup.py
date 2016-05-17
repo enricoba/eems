@@ -3,31 +3,13 @@
 Setup file for eems.
 """
 
-import os
-import subprocess
+
 from setuptools import setup, find_packages
 from eems import __project__, __version__, __author__
-
-
-def set_permissions(user):
-    """Public function *set_permissions* sets the permissions of the directory
-        */home/$USER/eems* to *$USER:$USER*. *$USER* will be replaced with the actual user's name.
-        Requires *sudo*!
-
-    :return:
-        Returns *None*.
-    """
-    args = ['sudo', 'chown', '-cR', '{}:{}'.format(user, user), '/home/{}/.eems'.format(user)]
-    subprocess.Popen(args)
-
+from eems.support.others import get_user, set_permissions
 
 # identify actual user
-sudo_user = os.getenv("SUDO_USER")
-if sudo_user is None:
-    actual_user = os.getenv("USER")
-else:
-    actual_user = sudo_user
-
+actual_user = get_user()
 
 # run setup
 setup(

@@ -6,6 +6,7 @@ SQlite3 core module
 
 import os
 import sqlite3
+from others import get_user
 
 
 class DBHandler(object):
@@ -22,11 +23,7 @@ class DBHandler(object):
 
     def connect(self):
         # identify actual user
-        sudo_user = os.getenv("SUDO_USER")
-        if sudo_user is None:
-            actual_user = os.getenv("USER")
-        else:
-            actual_user = sudo_user
+        actual_user = get_user()
         db_file = '/home/{}/.eems/{}.db'.format(actual_user, self.db)
         conn = sqlite3.connect(db_file)
         return conn

@@ -6,12 +6,11 @@ Server core module
 # import external modules
 import os
 import subprocess
-from eems import __app__
 from flask import render_template, request, redirect, url_for
 
 
 # import eems modules
-from __init__ import __version__
+from eems import __app__, __version__
 from support import sqlite
 # from support import detects, checks
 # from sensors import ds18b20
