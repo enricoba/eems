@@ -66,4 +66,3 @@ setup(
 
 # set permissions
 set_permissions(actual_user)
-
