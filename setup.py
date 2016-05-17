@@ -3,7 +3,7 @@
 Setup file for eems.
 """
 
-import getpass
+import os
 import subprocess
 from setuptools import setup, find_packages
 from eems import __project__, __version__, __author__
@@ -17,12 +17,17 @@ def set_permissions(user):
     :return:
         Returns *None*.
     """
-    args = ['sudo', 'chown', '-cR', '{}:{}'.format(user, user), '/home/{}/eems'.format(user)]
+    args = ['sudo', 'chown', '-cR', '{}:{}'.format(user, user), '/home/{}/.eems'.format(user)]
     subprocess.Popen(args)
 
 
 # identify actual user
-actual_user = getpass.getuser()
+sudo_user = os.getenv("SUDO_USER")
+if sudo_user is None:
+    actual_user = os.getenv("USER")
+else:
+    actual_user = sudo_user
+
 
 # run setup
 setup(
@@ -54,14 +59,11 @@ setup(
     },
     scripts=['bin/eems-server'],
     data_files=[
-        ('/home/{}/eems'.format(actual_user), ['eems/data/default.db']),
-        ('/home/{}/eems'.format(actual_user), ['eems/data/config.db']),
+        ('/home/{}/.eems'.format(actual_user), ['eems/data/default.db']),
+        ('/home/{}/.eems'.format(actual_user), ['eems/data/config.db']),
     ]
 )
 
 # set permissions
 set_permissions(actual_user)
 
-"""entry_points={
-    'console_scripts': ['eems = eems.scripts:main']
-},"""
