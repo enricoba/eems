@@ -15,7 +15,7 @@ docs/*
 # test files
 setup.sh
 deploy.sh
-test.py
+test.*
 
 # excel files
 *.xlsx

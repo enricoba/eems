@@ -7,7 +7,6 @@ Setup file for eems.
 from setuptools import setup, find_packages
 from eems import __project__, __version__, __author__
 
-# print find_packages()
 
 # run setup
 setup(
