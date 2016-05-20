@@ -7,6 +7,7 @@ Setup file for eems.
 from setuptools import setup, find_packages
 from eems import __project__, __version__, __author__
 
+# print find_packages()
 
 # run setup
 setup(
@@ -32,9 +33,9 @@ setup(
         'Programming Language :: Python :: 2.7'
     ],
     keywords='easy energy monitoring system raspberrry pi',
-    include_package_data=True,
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+    include_package_data=True,
     entry_points={
-        'console_scripts': ['eems = eems.script:main']
+        'console_scripts': ['eems=eems.scripts.script:main'],
     }
 )

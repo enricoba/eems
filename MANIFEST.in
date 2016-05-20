@@ -7,4 +7,3 @@ recursive-include eems/templates *
 recursive-include eems/scripts *
 recursive-include eems/data *
 recursive-include eems/scripts *
-exclude .gitignore

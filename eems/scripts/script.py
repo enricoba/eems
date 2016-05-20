@@ -10,15 +10,13 @@ import argparse
 import subprocess
 
 
-help_text = """
-Help Information for eems setup.
+help_text = """Help Information for eems setup.
 Usage:
   eems-server <command>
 Commands:
   install             Install eems server.
   uninstall           Uninstall eems server.
-  -h --help           Show help.
-"""
+  -h --help           Show help."""
 
 
 class ArgumentParserError(Exception):
@@ -50,8 +48,8 @@ def main():
 
     if args.command == 'install':
         print 'install'
-        file_path = '{}/setup.sh'.format(path)
-        # file_path = '/data/F_Projects/F-I_GitHub/eems/eems/scripts/install.sh'
+        # file_path = '{}/setup.sh'.format(path)
+        file_path = '/data/F_Projects/F-I_GitHub/eems/eems/scripts/install.sh'
         p = subprocess.Popen([file_path],
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
@@ -59,8 +57,8 @@ def main():
 
     elif args.command == 'uninstall':
         print 'uninstall'
-        file_path = '{}/setup.sh'.format(path)
-        # file_path = '/data/F_Projects/F-I_GitHub/eems/eems/scripts/install.sh'
+        # file_path = '{}/setup.sh'.format(path)
+        file_path = '/data/F_Projects/F-I_GitHub/eems/eems/scripts/install.sh'
         p = subprocess.Popen([file_path],
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
