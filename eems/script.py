@@ -10,9 +10,6 @@ import argparse
 import subprocess
 
 
-path = os.path.dirname(__file__)
-
-
 help_text = """
 Help Information for eems setup.
 Usage:
@@ -33,7 +30,8 @@ class ThrowingArgumentParser(argparse.ArgumentParser):
         raise ArgumentParserError(message)
 
 
-def main(setup_path):
+def main():
+    path = os.path.dirname(__file__)
     sudo_user = os.getenv("SUDO_USER")
     if sudo_user is None:
         print "Please run eems as *sudo*."
@@ -52,7 +50,7 @@ def main(setup_path):
 
     if args.command == 'install':
         print 'install'
-        file_path = '{}/setup.sh'.format(setup_path)
+        file_path = '{}/setup.sh'.format(path)
         # file_path = '/data/F_Projects/F-I_GitHub/eems/eems/scripts/install.sh'
         p = subprocess.Popen([file_path],
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -61,7 +59,7 @@ def main(setup_path):
 
     elif args.command == 'uninstall':
         print 'uninstall'
-        file_path = '{}/setup.sh'.format(setup_path)
+        file_path = '{}/setup.sh'.format(path)
         # file_path = '/data/F_Projects/F-I_GitHub/eems/eems/scripts/install.sh'
         p = subprocess.Popen([file_path],
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -73,4 +71,4 @@ def main(setup_path):
 
 
 if __name__ == '__main__':
-    main(path)
+    main()
