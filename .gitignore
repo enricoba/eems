@@ -7,17 +7,15 @@
 # Package files
 *.egg-info
 
-# make files
-make.sh
-
 # Build and docs folder/files
 dist/*
 build/*
 docs/*
 
 # test files
-test.*
+setup.sh
+deploy.sh
+test.py
 
 # excel files
 *.xlsx
-

@@ -30,5 +30,5 @@ def set_permissions(user):
     :return:
         Returns *None*.
     """
-    args = ['sudo', 'chown', '-cR', '{}:{}'.format(user, user), '/home/{}/.eems'.format(user)]
+    args = ['sudo', 'chown', '-cR', '{}:{}'.format(user, user), '/var/www/eems']
     subprocess.Popen(args)

@@ -4,15 +4,15 @@ SQlite3 core module
 """
 
 
+import os
 import sqlite3
-from others import get_user
 
 
 class DBHandler(object):
     def __init__(self):
         self.db = None
-        self.conn = None
         self.c = None
+        self.conn = None
         # connect to db and create cursor
 
     def start(self, db):
@@ -21,9 +21,9 @@ class DBHandler(object):
         self.c = self.conn.cursor()
 
     def connect(self):
-        # identify actual user
-        actual_user = get_user()
-        db_file = '/home/{}/.eems/{}.db'.format(actual_user, self.db)
+        path = os.path.dirname(__file__)
+        db_file = '{}/data/db/{}.db'.format(os.path.dirname(path), self.db)
+        print db_file
         conn = sqlite3.connect(db_file)
         return conn
 

@@ -6,10 +6,7 @@ Setup file for eems.
 
 from setuptools import setup, find_packages
 from eems import __project__, __version__, __author__
-from eems.support.others import get_user, set_permissions
 
-# identify actual user
-actual_user = get_user()
 
 # run setup
 setup(
@@ -35,21 +32,9 @@ setup(
         'Programming Language :: Python :: 2.7'
     ],
     keywords='easy energy monitoring system raspberrry pi',
-    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     include_package_data=True,
-    package_data={
-        'eems': ['data/*'],
-        'static': 'eems/static/*',
-        'templates': 'eems/templates/*',
-    },
     entry_points={
-        'console_scripts': ['eems-server = eems.scripts.scripts:run'],
+        'console_scripts': ['eems = eems.scripts.script:main'],
     },
-    data_files=[
-        ('/home/{}/.eems'.format(actual_user), ['eems/data/default.db']),
-        ('/home/{}/.eems'.format(actual_user), ['eems/data/config.db']),
-    ]
+    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
 )
-
-# set permissions
-set_permissions(actual_user)
