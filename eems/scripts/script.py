@@ -47,18 +47,14 @@ def main():
         sys.exit()
 
     if args.command == 'install':
-        print 'install'
-        # file_path = '{}/setup.sh'.format(path)
-        file_path = '/data/F_Projects/F-I_GitHub/eems/eems/scripts/install.sh'
+        file_path = '{}/install.sh'.format(path)
         p = subprocess.Popen([file_path],
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
         print out
 
     elif args.command == 'uninstall':
-        print 'uninstall'
-        # file_path = '{}/setup.sh'.format(path)
-        file_path = '/data/F_Projects/F-I_GitHub/eems/eems/scripts/uninstall.sh'
+        file_path = '{}/uninstall.sh'.format(path)
         p = subprocess.Popen([file_path],
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
