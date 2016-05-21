@@ -48,17 +48,11 @@ def main():
 
     if args.command == 'install':
         file_path = '{}/install.sh'.format(path)
-        p = subprocess.Popen([file_path],
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, err = p.communicate()
-        print out
+        subprocess.call([file_path])
 
     elif args.command == 'uninstall':
         file_path = '{}/uninstall.sh'.format(path)
-        p = subprocess.Popen([file_path],
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, err = p.communicate()
-        print out
+        subprocess.call([file_path])
 
     else:
         print help_text
