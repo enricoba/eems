@@ -27,6 +27,9 @@ __author__ = 'Henrik Baran, Aurofree Hoehn'
 
 app = Flask(__name__)
 session_name = None
+# TODO fehler mit der session besteht noch
+# vielleich auf flask session module wechseln
+
 path = os.path.dirname(__file__)
 
 
