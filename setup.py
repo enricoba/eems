@@ -33,8 +33,8 @@ setup(
     ],
     keywords='easy energy monitoring system raspberrry pi',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    include_package_data=True,
     entry_points={
-        'console_scripts': ['eems=eems.scripts.script:main'],
-    }
+        'console_scripts': ['eems = eems.scripts.script:main']
+    },
+    include_package_data=True,
 )

@@ -4,5 +4,6 @@ include LICENSE.rst
 include README.rst
 include setup.py
 recursive-include eems/templates *
-recursive-include eems/scripts *
+recursive-include eems/static *
 recursive-include eems/data *
+recursive-include eems/scripts *

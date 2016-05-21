@@ -7,4 +7,4 @@ logging.basicConfig(stream=sys.stderr)
 sys.path.insert(0, '/var/www/eems/')
 
 
-from eems import __app__ as application
+from eems import app as application

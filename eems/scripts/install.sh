@@ -49,10 +49,10 @@ if [ $USER == "root" ]
     then
         if [ -d /etc/apache2 ]
             then
-                # echo "apache2 is installed."
+                echo "apache2 is installed."
                 if [ -f /etc/apache2/mods-available/wsgi.conf ]
                     then
-                        # echo "libapache2-mod-wsgi is installed."
+                        echo "libapache2-mod-wsgi is installed."
                         setup
                         exit 1
                     else

@@ -23,18 +23,17 @@ __project__ = 'eems'
 __version__ = '0.2.0.1b1'
 __copyright__ = '2016, Henrik Baran, Aurofree Hoehn'
 __author__ = 'Henrik Baran, Aurofree Hoehn'
-__app__ = Flask(__name__)
 
 
+app = Flask(__name__)
 session_name = None
-__path__ = os.path.dirname(__file__)
-# test
+path = os.path.dirname(__file__)
 
 
-@__app__.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
     # get saved profiles
-    tmp = os.listdir('{}/data/db/'.format(__path__))
+    tmp = os.listdir('{}/data/db/'.format(path))
     profiles = ['new']
     for i in tmp:
         if i != 'default.db' and i != 'config.db':
@@ -62,8 +61,8 @@ def index():
 
                 # add default tables and contents
                 # TODO determine alternative way to copy DB
-                subprocess.call(['cp', '{}/data/db/default.db'.format(__path__),
-                                 '{}/data/db/{}.db'.format(__path__, session_name)])
+                subprocess.call(['cp', '{}/data/db/default.db'.format(path),
+                                 '{}/data/db/{}.db'.format(path, session_name)])
 
                 # redirect
                 return redirect(url_for('config'))
@@ -95,7 +94,7 @@ def index():
                                session_color=session_color)
 
 
-@__app__.route('/config/', methods=['GET', 'POST'])
+@app.route('/config/', methods=['GET', 'POST'])
 def config():
     # get session name
     global session_name
@@ -276,7 +275,7 @@ def config():
                                user_names=user_names)
 
 
-@__app__.route('/monitor/')
+@app.route('/monitor/')
 def monitor():
     # get session name
     global session_name
@@ -297,7 +296,7 @@ def monitor():
                            session_name=session_name)
 
 
-@__app__.route('/licence/')
+@app.route('/licence/')
 def licence():
     # get session name
     global session_name
@@ -320,5 +319,5 @@ def licence():
 
 
 if __name__ == "__main__":
-    __app__.debug = True
-    __app__.run()
+    app.debug = True
+    app.run()
