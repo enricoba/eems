@@ -29,6 +29,8 @@ if [ $USER == "root" ]
                 rm /etc/apache2/sites-enabled/eems.conf
                 echo "  Successfully removed link to eems.conf"
         fi
+
+        # removing hosts entry
     else
         echo "Please run as *sudo*"
 fi
