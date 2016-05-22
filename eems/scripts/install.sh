@@ -1,47 +1,101 @@
 #!/bin/bash
 
 
+
+# hosts function
+hosts() {
+    echo "127.0.0.1 eems" >> /etc/hosts
+}
+
+
+# setup function
 setup(){
     # create directories
+    echo "Creating eems locations in /var/www/:"
+    if [ -d /var/www/eems ] ; then
+        echo "  Directory /var/www/eems already exists"
+        echo "  Cleanup ..."
+        rm -r /var/www/eems
+        if [ $? -eq 0  ] ; then
+            echo "  Successfully cleaned up"
+        else
+            echo "  Failed to clean up"
+            echo -e "\e[31mSetup failed and exited\e[0m"
+            exit 1
+        fi
+    fi
+
     mkdir /var/www/eems
-    mkdir /var/www/eems/eems
-    mkdir /var/www/eems/eems/data
-    # copy WSGI script
-    cp /usr/local/lib/python2.7/dist-packages/eems/data/eems.wsgi /var/www/eems/
-
-    # copy database files
-    cp -a /usr/local/lib/python2.7/dist-packages/eems/data/db /var/www/eems/eems/data/
-
-    # copy python modules
-    cp -a /usr/local/lib/python2.7/dist-packages/eems/support /var/www/eems/eems/
-    cp -a /usr/local/lib/python2.7/dist-packages/eems/sensors /var/www/eems/eems/
-
-    # copy init file
-    cp /usr/local/lib/python2.7/dist-packages/eems/__init__.py /var/www/eems/eems/
-
-    # copy templates and static files
-    cp -a /usr/local/lib/python2.7/dist-packages/eems/static /var/www/eems/eems/
-    cp -a /usr/local/lib/python2.7/dist-packages/eems/templates /var/www/eems/eems/
+    if [ $? -eq 0 ] ; then
+        cp -r /usr/local/lib/python2.7/dist-packages/eems /var/www/eems/
+        c_01=$?
+        mv /var/www/eems/eems/data/eems.wsgi /var/www/eems/eems.wsgi
+        c_02=$?
+        if [ $c_01 -eq 0 ] && [ $c_02 -eq 0 ] ; then
+            echo "  Successfully created eems directory and copied data"
+        else
+            echo "  Failed to copy eems data"
+            echo -e "\e[31mSetup failed and exited\e[0m"
+            exit 1
+        fi
+    else
+        echo "  Failed to create eems location"
+        echo -e "\e[31mSetup failed and exited\e[0m"
+        exit 1
+    fi
 
     # manage permissions for files
     # TODO permissions for var/www/eems/* files!
 
     # set permissions to local user
-    chown -R www-data:www-data /var/www/eems
-    chown  root:root /var/www/eems
+    echo "Setting up permissions for eems directories:"
+    if [ chown -R www-data:www-data /var/www/eems ] && [ chown  root:root /var/www/eems ] ; then
+        echo "  Successfully set up permissions"
+    else
+        echo "  Failed to set permissions"
+        echo -e "\e[31mSetup failed and exited\e[0m"
+        exit 1
+    fi
 
     # copy apache2 files and enable site
-    cp /usr/local/lib/python2.7/dist-packages/eems/data/eems.conf /etc/apache2/sites-available/
-    chown root:root /etc/apache2/sites-available/eems.conf
-    chmod 644 /etc/apache2/sites-available/eems.conf
-    a2ensite eems.conf
+    echo "Setting up apache2 configuration:"
+    if  [ cp /usr/local/lib/python2.7/dist-packages/eems/data/eems.conf /etc/apache2/sites-available/ ] && \
+        [ chown root:root /etc/apache2/sites-available/eems.conf ] && \
+        [ chmod 644 /etc/apache2/sites-available/eems.conf ] && \
+        [ a2ensite eems.conf ]
+    then
+        echo "  Successfully set up apache2 configuration"
+    else
+        echo "  Failed to set permissions"
+        echo -e "\e[31mSetup failed and exited\e[0m"
+        exit 1
+    fi
+
 
     # add host "eems"
-    echo "127.0.0.1       eems" >> /etc/hosts
+    echo "Adding eems to hosts"
+    if [ hosts ] ; then
+        echo "  Successfully added eems to hosts"
+    else
+        echo "  Failed to set permissions"
+        echo -e "\e[31mSetup failed and exited\e[0m"
+        exit 1
+    fi
+
 
     # restart apache server
-    service apache2 restart
+    if [ service apache2 restart ] ; then
+        echo "  Successfully restarted apache2"
+    else
+        echo "  Failed to set permissions"
+        echo -e "\e[31mSetup failed and exited\e[0m"
+        exit 1
+    fi
 
+    echo -e "\e[92mSuccessfully installed eems!\e[0m"
+    echo "Start monitoring at:"
+    echo -e "  \e[4m\e[34mhttp://eems"
+    # TODO PRofile in Home Verzeichnis /home/user/eems abspeichern
 }
 
 
@@ -50,7 +104,7 @@ if [ $USER == "root" ]
         if [ -d /etc/apache2 ]
             then
                 echo "apache2 is installed."
-                if [ -f /etc/apache2/mods-available/wsgi.conf ]
+                if [ -e /etc/apache2/mods-available/wsgi.conf ]
                     then
                         echo "libapache2-mod-wsgi is installed."
                         setup

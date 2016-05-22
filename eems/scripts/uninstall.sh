@@ -1,39 +1,90 @@
 #!/bin/bash
 
 
-if [ $USER == "root" ]
-    then
-        # uninstalling eems using pip
-        pip uninstall eems -y
+# main code
+if [ $USER == "root" ] ; then
+    # uninstalling eems using pip
+    # pip uninstall eems -y
 
-        # removing server files
-        if [ -d /var/www/eems ]
-            then
-                echo "Removing var/www/eems:"
-                rm -r /var/www/eems
+    # removing server files
+    if [ -d /var/www/eems ]
+        then
+            echo "Removing var/www/eems:"
+            rm -r /var/www/eems
+            if [ $? -eq 0 ] ; then
                 echo "  Successfully removed /var/www/eems"
-        fi
+                flag_01="true"
+            else
+                echo "  Failed to remove/var/www"
+                echo "  Please clean up manually"
+                flag_01="false"
+            fi
+        else
+            flag_01="true"
+    fi
 
-        # removing apache configuration file
-        if [ -f  /etc/apache2/sites-available/eems.conf ]
-            then
-                echo "Removing apache configuration file eems.conf:"
-                rm /etc/apache2/sites-available/eems.conf
-                echo "  Successfully removed eems.conf"
+    # removing apache configuration file
+    if  [ -e /etc/apache2/sites-available/eems.conf ] ; then
+        echo "Removing apache config file:"
+        rm /etc/apache2/sites-available/eems.conf
+        if [ $? -eq 0 ] ; then
+            echo "  Successfully removed apache config  files"
+            flag_02="true"
+        else
+            echo "  Failed to remove apache config files"
+            echo "  Please clean up manually"
+            flag_02="false"
         fi
+    else
+        flag_02="true"
+    fi
 
-        # removing apache configuration file link
-        if [ /etc/apache2/sites-enabled/eems.conf ]
-            then
-                echo "Removing apache configuration link to eems.conf:"
-                rm /etc/apache2/sites-enabled/eems.conf
-                echo "  Successfully removed link to eems.conf"
+    # removing apache configuration file link
+    if  [ -e /etc/apache2/sites-enabled/eems.conf ] ; then
+        echo "Removing apache config file link:"
+        rm /etc/apache2/sites-enabled/eems.conf
+        if [ $? -eq 0 ] ; then
+            echo "  Successfully removed apache config file link"
+            flag_03="true"
+        else
+            echo "  Failed to remove apache config file link"
+            echo "  Please clean up manually"
+            flag_03="false"
         fi
+    else
+        flag_03="true"
+    fi
 
-        # removing hosts entry
+    # removing hosts entry
+
+    grep '127.0.0.1 eems' /etc/hosts
+    if [ $? -eq 0 ] ; then
         echo "Cleaning hosts files:"
         sed -i.bak '/127.0.0.1 eems/d' /etc/hosts
-        echo "  Successfully cleared hosts file"
+        if [ $? -eq 0 ] ; then
+            echo "  Successfully cleaned up hosts file"
+            flag_04="true"
+        else
+            echo "  Failed to clean up hosts file"
+            echo "  Please clean up manually"
+            flag_04="false"
+        fi
     else
-        echo "Please run as *sudo*"
+        flag_04="true"
+    fi
+
+    # final check
+    if  [ $flag_01 == "true" ] && \
+        [ $flag_02 == "true"  ] && \
+        [ $flag_03 == "true"  ] && \
+        [ $flag_04 == "true" ]
+    then
+        echo -e "\e[92mSuccessfully uninstalled eems\e[0m"
+    else
+        echo -e "\e[31mFailed to uninstall eems\e[0m"
+        echo "An error occurred during uninstall, please follow the manual steps"
+    fi
+
+else
+    echo "Please run as *sudo*"
 fi
