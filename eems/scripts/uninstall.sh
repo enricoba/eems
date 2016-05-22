@@ -25,12 +25,15 @@ if [ $USER == "root" ]
         # removing apache configuration file link
         if [ /etc/apache2/sites-enabled/eems.conf ]
             then
-                echo "Removing apache configuration link to eems.conf"
+                echo "Removing apache configuration link to eems.conf:"
                 rm /etc/apache2/sites-enabled/eems.conf
                 echo "  Successfully removed link to eems.conf"
         fi
 
         # removing hosts entry
+        echo "Cleaning hosts files:"
+        sed -i.bak '/127.0.0.1 eems/d' /etc/hosts
+        echo "  Successfully cleared hosts file"
     else
         echo "Please run as *sudo*"
 fi
