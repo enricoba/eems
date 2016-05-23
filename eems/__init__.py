@@ -88,11 +88,6 @@ def index():
                                    session_icon=session_icon,
                                    session_color=session_color)
     else:
-        print 'session: ', session_name
-        print 'profiles: ', profiles
-        print 'navbar_status: ', navbar_status
-        print 'session_icon', session_icon
-        print 'session_colo', session_color
         return render_template('index.html', name='index',
                                version=__version__,
                                profiles=profiles, len=len(profiles),
