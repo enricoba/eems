@@ -2,12 +2,6 @@
 
 
 
-# hosts function
-hosts() {
-    echo "127.0.0.1 eems" >> /etc/hosts
-}
-
-
 # setup function
 setup(){
     # create directories
@@ -49,7 +43,12 @@ setup(){
 
     # set permissions to local user
     echo "Setting up permissions for eems directories:"
-    if [ chown -R www-data:www-data /var/www/eems ] && [ chown  root:root /var/www/eems ] ; then
+    chown -R www-data:www-data /var/www/eems
+    c_03=$?
+    chown  root:root /var/www/eems
+    c_04=$?
+
+    if [ $c_03 -eq 0 ] && [ $c_04 -eq 0 ] ; then
         echo "  Successfully set up permissions"
     else
         echo "  Failed to set permissions"
@@ -59,11 +58,15 @@ setup(){
 
     # copy apache2 files and enable site
     echo "Setting up apache2 configuration:"
-    if  [ cp /usr/local/lib/python2.7/dist-packages/eems/data/eems.conf /etc/apache2/sites-available/ ] && \
-        [ chown root:root /etc/apache2/sites-available/eems.conf ] && \
-        [ chmod 644 /etc/apache2/sites-available/eems.conf ] && \
-        [ a2ensite eems.conf ]
-    then
+    cp /usr/local/lib/python2.7/dist-packages/eems/data/eems.conf /etc/apache2/sites-available/
+    c_05=$?
+    chown root:root /etc/apache2/sites-available/eems.conf
+    c_06=$?
+    chmod 644 /etc/apache2/sites-available/eems.conf
+    c_07=$?
+    a2ensite eems.conf
+    c_08=$?
+    if  [ $c_05 -eq 0 ] && [ $c_06 -eq 0 ] && [ $c_07 -eq 0 ] && [ $c_08 -eq 0 ] ; then
         echo "  Successfully set up apache2 configuration"
     else
         echo "  Failed to set permissions"
@@ -74,7 +77,9 @@ setup(){
 
     # add host "eems"
     echo "Adding eems to hosts"
-    if [ hosts ] ; then
+    echo "127.0.0.1 eems" >> /etc/hosts
+    c_09=$?
+    if [ $c_09 -eq 0 ] ; then
         echo "  Successfully added eems to hosts"
     else
         echo "  Failed to set permissions"
@@ -84,7 +89,9 @@ setup(){
 
 
     # restart apache server
-    if [ service apache2 restart ] ; then
+    service apache2 restart
+    c_10=$?
+    if [ $c_10 -eq 0 ] ; then
         echo "  Successfully restarted apache2"
     else
         echo "  Failed to set permissions"
@@ -94,7 +101,7 @@ setup(){
 
     echo -e "\e[92mSuccessfully installed eems!\e[0m"
     echo "Start monitoring at:"
-    echo -e "  \e[4m\e[34mhttp://eems"
+    echo -e "  \e[4m\e[34mhttp://eems\e[0m"
     # TODO PRofile in Home Verzeichnis /home/user/eems abspeichern
 }
 
