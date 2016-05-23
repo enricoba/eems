@@ -94,7 +94,9 @@ def index():
                                    session_icon=session_icon,
                                    session_color=session_color)
     else:
-        return render_template('index.html', name='index', version=__version__,
+        print session_name
+        return render_template('index.html', name='index',
+                               version=__version__,
                                profiles=profiles, len=len(profiles),
                                navbar_status=navbar_status,
                                session_name=session_name,
