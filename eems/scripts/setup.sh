@@ -3,9 +3,27 @@
 
 # setup function
 setup(){
-    # create directories
-    echo "EEMS setup starting"
-    echo "Creating eems locations in /var/www/:"
+    # create HOME directories
+    echo "Creating EEMS home directory:"
+    if [ -d /home/$actual_user/eems ] ; then
+        echo "  EEMS home directory already exists"
+        echo "  using existing personal data"
+    else
+        mkdir /home/$actual_user/eems
+        c_13=$?
+        chown $actual_user:$actual_user /home/$actual_user/eems
+        c_14=$?
+        if [ $c_13 -eq 0 ] && [ $c_14 -eq 0 ] ; then
+            echo "  Successfully created EEMS home directory"
+        else
+            echo "  Failed create EEMS home directory"
+            echo -e "\e[31mSetup failed and exited\e[0m"
+            exit 1
+        fi
+    fi
+
+    # create SERVER directories
+    echo "Creating EEMS server directory and copying data:"
     if [ -d /var/www/eems ] ; then
         echo "  Directory /var/www/eems already exists"
         echo "  Cleanup ..."
@@ -26,20 +44,17 @@ setup(){
         mv /var/www/eems/eems/data/eems.wsgi /var/www/eems/eems.wsgi
         c_02=$?
         if [ $c_01 -eq 0 ] && [ $c_02 -eq 0 ] ; then
-            echo "  Successfully created eems directory and copied data"
+            echo "  Successfully created EEMS server directory and copied data"
         else
-            echo "  Failed to copy eems data"
+            echo "  Failed to copy EEMS data"
             echo -e "\e[31mSetup failed and exited\e[0m"
             exit 1
         fi
     else
-        echo "  Failed to create eems location"
+        echo "  Failed to create EEMS server directory"
         echo -e "\e[31mSetup failed and exited\e[0m"
         exit 1
     fi
-
-    # manage permissions for files
-    # TODO permissions for var/www/eems/* files!
 
     # set permissions to local user
     echo "Setting up permissions for eems directories:"
@@ -103,11 +118,11 @@ setup(){
     echo -e "\e[92mSuccessfully installed eems!\e[0m"
     echo "Start monitoring at:"
     echo -e "  \e[4m\e[34mhttp://localhost/eems\e[0m"
-    # TODO PRofile in Home Verzeichnis /home/user/eems abspeichern
 }
 
 
 if [ $USER == "root" ] ; then
+    actual_user=$1
     echo "Looking for required packages (apache2 and libapache2-mod-wsgi):"
     if [ -d /etc/apache2 ] ; then
         echo "  Successfully determined package apache2"

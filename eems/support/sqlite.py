@@ -4,10 +4,49 @@ SQlite3 core module
 """
 
 
-import os
 import sqlite3
+import others
 
 
+class ConfigHandler(object):
+    def __init__(self):
+        """Private class *ConfigHandler* provides functions to interact with config database.
+
+        :return:
+            Returns a in-memory object tree providing the functions
+            *tbd*.
+        """
+        self.db = None
+        self.c = None
+        self.conn = None
+        # connect to db and create cursor
+
+    def start(self):
+        """Public function *start* sets up the connection to the database and creates the cursor.
+
+        :return:
+            Returns *None*.
+        """
+        self.conn = sqlite3.connect('/var/www/eems/eems/data/db/config.db')
+        self.c = self.conn.cursor()
+
+    def close(self):
+        """Public function *close* closes the connection to the database.
+
+        :return:
+            Returns *None*.
+        """
+        self.conn.close()
+
+    def write(self, item, value):
+        self.c.execute("UPDATE GENERAL SET VALUE = {} WHERE ITEM = {}".format(value, item))
+        self.conn.commit()
+
+    def get(self, item):
+        self.c.execute("SELECT VALUE FROM GENERAL WHERE ITEM = {}".format(item))
+
+
+# DBHandler for interacting with the eems database
 class DBHandler(object):
     def __init__(self):
         self.db = None
@@ -21,9 +60,9 @@ class DBHandler(object):
         self.c = self.conn.cursor()
 
     def connect(self):
-        path = os.path.dirname(__file__)
-        db_file = '{}/data/db/{}.db'.format(os.path.dirname(path), self.db)
-        print db_file
+        actual_user = others.get_user()
+        home = '/home/{}/eems'.format(actual_user)
+        db_file = '{}/{}.db'.format(home, self.db)
         conn = sqlite3.connect(db_file)
         return conn
 

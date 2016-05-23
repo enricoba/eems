@@ -10,7 +10,7 @@ from flask import Flask, render_template, request, redirect, url_for
 
 
 # import eems modules
-from support import sqlite
+from support import sqlite, others
 # from support import detects, checks
 # from sensors import ds18b20
 
@@ -27,20 +27,30 @@ __author__ = 'Henrik Baran, Aurofree Hoehn'
 
 app = Flask(__name__)
 session_name = None
-# TODO fehler mit der session besteht noch
-# vielleich auf flask session module wechseln
+# TODO Vorschlag: session nicht über globale variable sondern über config.db
 
 path = os.path.dirname(__file__)
+
+
+# config db
+config = sqlite.ConfigHandler()
+config.start()
+home = config.get('HOME')
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     # get saved profiles
-    tmp = os.listdir('{}/data/db/'.format(path))
+    """tmp = os.listdir('{}/data/db/'.format(path))
     profiles = ['new']
     for i in tmp:
         if i != 'default.db' and i != 'config.db':
-            profiles.append(i[:-3])
+            profiles.append(i[:-3])"""
+
+    profiles = ['new']
+    tmp = os.listdir(home)
+    for profile in tmp:
+        profiles.append(profile[:-3])
 
     # get session name
     global session_name
@@ -60,21 +70,17 @@ def index():
             if len(profile_tmp):
                 profiles.append(str(profile_tmp))
                 session_name = profile_tmp
-                print session_name
 
                 # add default tables and contents
-                # TODO determine alternative way to copy DB
                 subprocess.call(['cp', '{}/data/db/default.db'.format(path),
-                                 '{}/data/db/{}.db'.format(path, session_name)])
+                                 '{}/{}.db'.format(home, session_name)])
 
                 # redirect
                 return redirect(url_for('config'))
             else:
-                print 'load project'
                 session_name = request.form['session-load']
                 return redirect(url_for('config'))
         elif 'sessionLogout' in request.form:
-            print 'LOGOUT'
             session_name = None
             # handle session status
             navbar_status = 'disabled'
@@ -88,7 +94,6 @@ def index():
                                    session_icon=session_icon,
                                    session_color=session_color)
     else:
-        print 'GET: INDEX'
         return render_template('index.html', name='index', version=__version__,
                                profiles=profiles, len=len(profiles),
                                navbar_status=navbar_status,
@@ -115,7 +120,6 @@ def config():
     session.start(session_name)
 
     if request.method == 'POST':
-        print 'POST'
         session_config_hw, session_config_sw = session.get_session_config()
         session_config_hws_ds18b20 = session.get_session_config_hws()
         if 'hardware-next' in request.form:
@@ -207,7 +211,6 @@ def config():
                                    session_name=session_name,
                                    toggle=toggle)
         elif 'software-next' in request.form:
-            print 'software button'
             # get sensors
             ds18b20_table_check = session.check_table_exist(
                 'SENSOR_IDS_DS18B20')
@@ -221,12 +224,9 @@ def config():
                 session_config_sw['display'] = 'true'
                 session_config_sw['final'] = 1
 
-                print 'ds18b20_table before', ds18b20_table
                 tmp_dict = dict()
                 for key in ds18b20_table.keys():
-                    print key, request.form[key]
                     tmp_dict[key] = request.form[key]
-                print tmp_dict
 
                 # todo HIER NOCH EIN FEHLER !
                 duration = int(request.form['duration'])
@@ -242,7 +242,6 @@ def config():
                                    session_color=session_color,
                                    session_name=session_name)
     else:
-        print 'GET'
         session_config_hw, session_config_sw = session.get_session_config()
         session_config_hws_ds18b20 = session.get_session_config_hws()
 
@@ -253,7 +252,6 @@ def config():
             toggle = 'collapse'
         else:
             toggle = 'deactivate'
-            print toggle
         # check if dsb18 table exist and react
         ds18b20_table_check = session.check_table_exist('SENSOR_IDS_DS18B20')
         if ds18b20_table_check:
@@ -291,7 +289,6 @@ def monitor():
         navbar_status = ''
         session_icon = 'lock'
         session_color = 'green'
-    print 'monitor called'
     return render_template('index.html', name='monitor', version=__version__,
                            navbar_status=navbar_status,
                            session_icon=session_icon,
