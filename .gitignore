@@ -13,7 +13,6 @@ build/*
 docs/*
 
 # test files
-setup.sh
 deploy.sh
 test.*
 

@@ -14,7 +14,7 @@ help_text = """Help Information for eems setup.
 Usage:
   eems-server <command>
 Commands:
-  install             Install eems server.
+  setup               Set up eems server.
   uninstall           Uninstall eems server.
   -h --help           Show help."""
 
@@ -46,8 +46,8 @@ def main():
         print help_text
         sys.exit()
 
-    if args.command == 'install':
-        file_path = '{}/install.sh'.format(path)
+    if args.command == 'setup':
+        file_path = '{}/setup.sh'.format(path)
         subprocess.call([file_path])
 
     elif args.command == 'uninstall':
