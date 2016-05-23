@@ -332,5 +332,6 @@ def licence():
 
 
 if __name__ == "__main__":
+    # in deployment MUST be False !!!
     app.debug = True
     app.run()
