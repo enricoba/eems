@@ -32,12 +32,6 @@ session_name = None
 path = os.path.dirname(__file__)
 
 
-# config db
-config = sqlite.ConfigHandler()
-config.start()
-home = config.get('HOME')
-
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
     # get saved profiles
@@ -46,6 +40,12 @@ def index():
     for i in tmp:
         if i != 'default.db' and i != 'config.db':
             profiles.append(i[:-3])"""
+
+    # config db
+    config_db = sqlite.ConfigHandler()
+    config_db.start()
+    home = config_db.get('HOME')
+    config_db.close()
 
     profiles = ['new']
     tmp = os.listdir(home)

@@ -8,10 +8,18 @@ setup(){
     if [ -d /home/$actual_user/eems ] ; then
         echo "  EEMS home directory already exists"
         echo "  using existing personal data"
+        chown www-data:www-data /home/$actual_user/eems
+        if [ $? -eq 0  ] ; then
+            echo "  Successfully set EEMS home directory permissions"
+        else
+            echo "  Failed to set permissions for EEMS home directory"
+            echo -e "\e[31mSetup failed and exited\e[0m"
+            exit 1
+        fi
     else
         mkdir /home/$actual_user/eems
         c_13=$?
-        chown $actual_user:$actual_user /home/$actual_user/eems
+        chown www-data:www-data /home/$actual_user/eems
         c_14=$?
         if [ $c_13 -eq 0 ] && [ $c_14 -eq 0 ] ; then
             echo "  Successfully created EEMS home directory"

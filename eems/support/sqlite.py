@@ -4,8 +4,8 @@ SQlite3 core module
 """
 
 
+import os
 import sqlite3
-import others
 
 
 class ConfigHandler(object):
@@ -27,7 +27,12 @@ class ConfigHandler(object):
         :return:
             Returns *None*.
         """
-        self.conn = sqlite3.connect('/var/www/eems/eems/data/db/config.db')
+        try:
+            self.conn = sqlite3.connect('/var/www/eems/eems/data/db/config.db')
+        except sqlite3.OperationalError:
+            path = os.path.dirname(__file__)
+            db_dir = '{}/data/db/config.db'.format(os.path.dirname(path))
+            self.conn = sqlite3.connect(db_dir)
         self.c = self.conn.cursor()
 
     def close(self):
@@ -39,11 +44,13 @@ class ConfigHandler(object):
         self.conn.close()
 
     def write(self, item, value):
-        self.c.execute("UPDATE GENERAL SET VALUE = {} WHERE ITEM = {}".format(value, item))
+        self.c.execute("UPDATE GENERAL SET VALUE = '{}' WHERE ITEM = '{}'".format(value, item))
         self.conn.commit()
 
     def get(self, item):
-        self.c.execute("SELECT VALUE FROM GENERAL WHERE ITEM = {}".format(item))
+        self.c.execute("SELECT VALUE FROM GENERAL WHERE ITEM = '{}'".format(item))
+        value = self.c.fetchall()
+        return value[0][0]
 
 
 # DBHandler for interacting with the eems database
@@ -60,8 +67,10 @@ class DBHandler(object):
         self.c = self.conn.cursor()
 
     def connect(self):
-        actual_user = others.get_user()
-        home = '/home/{}/eems'.format(actual_user)
+        config_db = ConfigHandler()
+        config_db.start()
+        home = config_db.get('HOME')
+        config_db.close()
         db_file = '{}/{}.db'.format(home, self.db)
         conn = sqlite3.connect(db_file)
         return conn
