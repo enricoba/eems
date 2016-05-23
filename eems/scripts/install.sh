@@ -1,10 +1,10 @@
 #!/bin/bash
 
 
-
 # setup function
 setup(){
     # create directories
+    echo "EEMS setup starting"
     echo "Creating eems locations in /var/www/:"
     if [ -d /var/www/eems ] ; then
         echo "  Directory /var/www/eems already exists"
@@ -58,6 +58,21 @@ setup(){
 
     # copy apache2 files and enable site
     echo "Setting up apache2 configuration:"
+    if [ -e /etc/apache2/sites-available/eems.conf ] ; then
+        echo "  Apache2 config file already exists"
+        echo "  Cleanup ..."
+        rm /etc/apache2/sites-available/eems.conf
+        c_11=$?
+        rm /etc/apache2/sites-enabled/eems.conf
+        c_12=$?
+        if [ $c_11 -eq 0 ] && [ $c_12 -eq 0 ] ; then
+            echo "  Successfully cleaned up"
+        else
+            echo "  Failed to clean up"
+            echo -e "\e[31mSetup failed and exited\e[0m"
+            exit 1
+        fi
+    fi
     cp /usr/local/lib/python2.7/dist-packages/eems/data/eems.conf /etc/apache2/sites-available/
     c_05=$?
     chown root:root /etc/apache2/sites-available/eems.conf
@@ -92,49 +107,38 @@ setup(){
 }
 
 
-if [ $USER == "root" ]
-    then
-        if [ -d /etc/apache2 ]
+if [ $USER == "root" ] ; then
+    echo "Looking for required packages (apache2 and libapache2-mod-wsgi):"
+    if [ -d /etc/apache2 ] ; then
+        echo "  Successfully determined package apache2"
+        if [ -e /etc/apache2/mods-available/wsgi.conf ]
             then
-                echo "apache2 is installed."
-                if [ -e /etc/apache2/mods-available/wsgi.conf ]
-                    then
-                        echo "libapache2-mod-wsgi is installed."
-                        setup
-                        exit 1
-                    else
-                        echo "libapache2-mod-wsgi is not installed."
-                        read -p "Do you want to install *libapache2-mod-wsgi* automatically? (y/n) (y): " answer_1
-                        case "$answer_1" in
-                            Yes|yes|Y|y|"")
-                                echo "install libapache2-mod-wsgi"
-                                apt-get update
-                                apt-get install libapache2-mod-wsgi -y
-                                setup
-                                ;;
-                            No|no|N|n)
-                                echo "Automatic installation aborted."
-                                echo "To use eems, please install *libapache2-mod-wsgi* manually."
-                                exit 1
-                                ;;
-                            *)
-                                exit 1
-                                ;;
-                        esac
-                fi
+                echo "  Successfully determined package libapache2-mod-wsgi"
+                setup
+                exit 0
             else
-                echo "apache2 is not installed."
-                read -p "Do you want to install *apache2* and *libapache2-mod-wsgi* mod automatically? (y/n) (y): " answer_2
-                case "$answer_2" in
+                echo "  Failed to determine package libapache2-mod-wsgi"
+                read -p "Do you want to install libapache2-mod-wsgi automatically? (y/n) (y): " answer_1
+                case "$answer_1" in
                     Yes|yes|Y|y|"")
-                        echo "install *apache2* and *libapache2-mod-wsgi*"
+                        echo "  Running apt-get update: "
                         apt-get update
-                        apt-get install apache2 libapache2-mod-wsgi -y
-                        setup
+                        echo "  Installing package libapache2-mod-wsgi"
+                        apt-get install libapache2-mod-wsgi -y
+                        if [ $? -eq 0 ] ; then
+                            echo "  Successfully installed package libapache2-mod-wsgi"
+                            setup
+                            exit 0
+                        else
+                            echo "  Failed to install package libapache2-mod-wsgi"
+                            echo -e "\e[31mAutomatic installation failed\e[0m"
+                            echo "Please install libapache2-mod-wsgi manually and restart the setup afterwards"
+                            exit 1
+                        fi
                         ;;
                     No|no|N|n)
-                        echo "Automatic installation aborted."
-                        echo "To use eems, please install *apache2* and *libapache2-mod-wsgi* manually."
+                        echo -e "\e[31mAutomatic installation aborted\e[0m"
+                        echo "Please install libapache2-mod-wsgi manually and restart the setup afterwards"
                         exit 1
                         ;;
                     *)
@@ -143,5 +147,36 @@ if [ $USER == "root" ]
                 esac
         fi
     else
-        echo "Please run as *sudo*."
+        echo "  Failed to determine package apache2"
+        echo "  Failed to determine package libapache2-mod-wsgi"
+        read -p "Do you want to install apache2 and libapache2-mod-wsgi mod automatically? (y/n) (y): " answer_2
+        case "$answer_2" in
+            Yes|yes|Y|y|"")
+                echo "  Running apt-get update: "
+                apt-get update
+                echo "  Installing packages apache2 and libapache2-mod-wsgi"
+                apt-get install apache2 libapache2-mod-wsgi -y
+                if [ $? -eq 0 ] ; then
+                    echo "  Successfully installed packages apache2 and libapache2-mod-wsgi"
+                    setup
+                    exit 0
+                else
+                    echo "  Failed to install packages apache2 and libapache2-mod-wsgi"
+                    echo -e "\e[31mAutomatic installation failed\e[0m"
+                    echo "Please install apache2 and libapache2-mod-wsgi manually and restart the setup afterwards"
+                    exit 1
+                fi
+                ;;
+            No|no|N|n)
+                echo -e "\e[31mAutomatic installation aborted\e[0m"
+                echo "Please install apache2 and libapache2-mod-wsgi manually and restart the setup afterwards"
+                exit 1
+                ;;
+            *)
+                exit 1
+                ;;
+        esac
+    fi
+else
+    echo "Please run as sudo."
 fi
