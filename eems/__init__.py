@@ -35,12 +35,6 @@ path = os.path.dirname(__file__)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     # get saved profiles
-    """tmp = os.listdir('{}/data/db/'.format(path))
-    profiles = ['new']
-    for i in tmp:
-        if i != 'default.db' and i != 'config.db':
-            profiles.append(i[:-3])"""
-
     # config db
     config_db = sqlite.ConfigHandler()
     config_db.start()
@@ -49,9 +43,8 @@ def index():
 
     profiles = ['new']
     tmp = os.listdir(home)
-    print tmp
     for profile in tmp:
-        profiles.append(profile[:-3])
+        profiles.append(str(profile[:-3]))
 
     # get session name
     global session_name
@@ -96,6 +89,10 @@ def index():
                                    session_color=session_color)
     else:
         print 'session: ', session_name
+        print 'profiles: ', profiles
+        print 'navbar_status: ', navbar_status
+        print 'session_icon', session_icon
+        print 'session_colo', session_color
         return render_template('index.html', name='index',
                                version=__version__,
                                profiles=profiles, len=len(profiles),
