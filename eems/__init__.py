@@ -49,6 +49,7 @@ def index():
 
     profiles = ['new']
     tmp = os.listdir(home)
+    print tmp
     for profile in tmp:
         profiles.append(profile[:-3])
 
@@ -94,7 +95,7 @@ def index():
                                    session_icon=session_icon,
                                    session_color=session_color)
     else:
-        print session_name
+        print 'session: ', session_name
         return render_template('index.html', name='index',
                                version=__version__,
                                profiles=profiles, len=len(profiles),
@@ -185,7 +186,6 @@ def config():
                 session_config_hw['icon'] = 'fa-flash'
                 session_config_hw['color'] = 'orange'
             elif 'ok' in head_flag:
-                print 'IN OVERALL STATUS'
                 session_config_hw['icon'] = 'fa-check'
                 session_config_hw['color'] = 'green'
                 session_config_hw['final'] = 1
