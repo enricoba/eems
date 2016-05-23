@@ -87,7 +87,7 @@ setup(){
 
     echo -e "\e[92mSuccessfully installed eems!\e[0m"
     echo "Start monitoring at:"
-    echo -e "  \e[4m\e[34mhttp://eems\e[0m"
+    echo -e "  \e[4m\e[34mhttp://localhost/eems\e[0m"
     # TODO PRofile in Home Verzeichnis /home/user/eems abspeichern
 }
 
