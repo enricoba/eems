@@ -1,4 +1,4 @@
-{% if session_name == None %}
+{% if global_data.session == 'None' %}
     <h1 class="text-center">Welcome to EEMS</h1>
     <h4 class="text-center">Easy Energy Monitoring System</h4>
 
@@ -21,7 +21,7 @@
     <div class="form-group">
         <form role="form" name="logout" method="post" action="{{ url_for('index') }}" onsubmit="return session_logout()">
            <div class="alert alert-info">
-               <strong>You are in a session!</strong><br>You have successfully logged into session: <strong>{{ session_name }}</strong>. Before adding a new session or loading an existing one, please logout.
+               <strong>You are in a session!</strong><br>You have successfully logged into session: <strong>{{ global_data.session }}</strong>. Before adding a new session or loading an existing one, please logout.
                <ul class="pager">
                    <li><button onclick="click_button()" type="button" style="width: 100px" class="btn  btn-default">Logout</button></li>
                    <li><button name="sessionLogout" type="submit" style="visibility: hidden"></button></li>

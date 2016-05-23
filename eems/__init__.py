@@ -25,19 +25,29 @@ __copyright__ = '2016, Henrik Baran, Aurofree Hoehn'
 __author__ = 'Henrik Baran, Aurofree Hoehn'
 
 
+# Flask object
 app = Flask(__name__)
-session_name = None
-# TODO Vorschlag: session nicht über globale variable sondern über config.db
 
-path = os.path.dirname(__file__)
+
+# global template data
+global_data = {
+    'version':              __version__,
+    'session':              None,
+    'navbar_status':        '',
+    'session_icon':         '',
+    'session_color':        ''
+}
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    # get saved profiles
-    # config db
+    # level-0 :: VARIABLES
+    global global_data
+
+    # level-1 :: CONFIG
     config_db = sqlite.ConfigHandler()
     config_db.start()
+    global_data['session'] = config_db.get('SESSION')
     home = config_db.get('HOME')
     config_db.close()
 
@@ -46,73 +56,86 @@ def index():
     for profile in tmp:
         profiles.append(str(profile[:-3]))
 
-    # get session name
-    global session_name
     # handle session status
-    if session_name is None:
-        navbar_status = 'disabled'
-        session_icon = 'unlock'
-        session_color = 'darkred'
+    if global_data['session'] == 'None':
+        global_data['navbar_status'] = 'disabled'
+        global_data['session_icon'] = 'unlock'
+        global_data['session_color'] = 'darkred'
     else:
-        navbar_status = ''
-        session_icon = 'lock'
-        session_color = 'green'
+        global_data['navbar_status'] = ''
+        global_data['session_icon'] = 'lock'
+        global_data['session_color'] = 'green'
 
     if request.method == 'POST':
         if 'session-start' in request.form:
             profile_tmp = request.form['session-input']
             if len(profile_tmp):
-                profiles.append(str(profile_tmp))
-                session_name = profile_tmp
+                # TODO notwendig?
+                # profiles.append(str(profile_tmp))
+
+                config_db = sqlite.ConfigHandler()
+                config_db.start()
+                config_db.write('SESSION', profile_tmp)
+                config_db.close()
 
                 # add default tables and contents
+                path = os.path.dirname(__file__)
                 subprocess.call(['cp', '{}/data/db/default.db'.format(path),
-                                 '{}/{}.db'.format(home, session_name)])
+                                 '{}/{}.db'.format(home, profile_tmp)])
 
                 # redirect
                 return redirect(url_for('config'))
             else:
-                session_name = request.form['session-load']
+                profile_load = request.form['session-load']
+                config_db = sqlite.ConfigHandler()
+                config_db.start()
+                config_db.write('SESSION', profile_load)
+                config_db.close()
                 return redirect(url_for('config'))
         elif 'sessionLogout' in request.form:
-            session_name = None
+            config_db = sqlite.ConfigHandler()
+            config_db.start()
+            config_db.write('SESSION', 'None')
+            config_db.close()
+
             # handle session status
-            navbar_status = 'disabled'
-            session_icon = 'unlock'
-            session_color = 'darkred'
+            global_data['session'] = 'None'
+            global_data['navbar_status'] = 'disabled'
+            global_data['session_icon'] = 'unlock'
+            global_data['session_color'] = 'darkred'
             return render_template('index.html', name='index',
-                                   version=__version__,
-                                   profiles=profiles, len=len(profiles),
-                                   navbar_status=navbar_status,
-                                   session_name=session_name,
-                                   session_icon=session_icon,
-                                   session_color=session_color)
+                                   global_data=global_data,
+                                   profiles=profiles, len=len(profiles))
     else:
         return render_template('index.html', name='index',
-                               version=__version__,
-                               profiles=profiles, len=len(profiles),
-                               navbar_status=navbar_status,
-                               session_name=session_name,
-                               session_icon=session_icon,
-                               session_color=session_color)
+                               global_data=global_data,
+                               profiles=profiles, len=len(profiles))
 
 
 @app.route('/config/', methods=['GET', 'POST'])
 def config():
-    # get session name
-    global session_name
+    # level-0 :: VARIABLES
+    global global_data
+
+    # level-1 :: CONFIG
+    config_db = sqlite.ConfigHandler()
+    config_db.start()
+    global_data['session'] = config_db.get('SESSION')
+    config_db.close()
+
     # handle session status
-    if session_name is None:
-        navbar_status = 'disabled'
-        session_icon = 'unlock'
-        session_color = 'darkred'
+    if global_data['session'] == 'None':
+        global_data['navbar_status'] = 'disabled'
+        global_data['session_icon'] = 'unlock'
+        global_data['session_color'] = 'darkred'
     else:
-        navbar_status = ''
-        session_icon = 'lock'
-        session_color = 'green'
+        global_data['navbar_status'] = ''
+        global_data['session_icon'] = 'lock'
+        global_data['session_color'] = 'green'
 
     session = sqlite.DBHandler()
-    session.start(session_name)
+    tmp = global_data['session']
+    session.start(tmp)
 
     if request.method == 'POST':
         session_config_hw, session_config_sw = session.get_session_config()
@@ -194,15 +217,11 @@ def config():
 
             # render template
             return render_template('index.html', name='config',
-                                   version=__version__,
+                                   global_data=global_data,
                                    ds18b20_vars=session_config_hws_ds18b20,
                                    ds18b20_table=ds18b20_table,
                                    session_config=session_config_hw,
                                    session_config_sw=session_config_sw,
-                                   navbar_status=navbar_status,
-                                   session_icon=session_icon,
-                                   session_color=session_color,
-                                   session_name=session_name,
                                    toggle=toggle)
         elif 'software-next' in request.form:
             # get sensors
@@ -231,10 +250,7 @@ def config():
             # close session
             session.close()
             return render_template('index.html', name='monitor',
-                                   version=__version__,
-                                   session_icon=session_icon,
-                                   session_color=session_color,
-                                   session_name=session_name)
+                                   global_data=global_data)
     else:
         session_config_hw, session_config_sw = session.get_session_config()
         session_config_hws_ds18b20 = session.get_session_config_hws()
@@ -256,15 +272,12 @@ def config():
             user_names = dict()
 
         session.close()
-        return render_template('index.html', name='config', version=__version__,
+        return render_template('index.html', name='config',
+                               global_data=global_data,
                                ds18b20_vars=session_config_hws_ds18b20,
                                ds18b20_table=ds18b20_table,
                                session_config=session_config_hw,
                                session_config_sw=session_config_sw,
-                               navbar_status=navbar_status,
-                               session_icon=session_icon,
-                               session_color=session_color,
-                               session_name=session_name,
                                duration=duration, interval=interval,
                                toggle=toggle,
                                user_names=user_names)
@@ -272,44 +285,50 @@ def config():
 
 @app.route('/monitor/')
 def monitor():
-    # get session name
-    global session_name
+    # level-0 :: VARIABLES
+    global global_data
+
+    # level-1 :: CONFIG
+    config_db = sqlite.ConfigHandler()
+    config_db.start()
+    global_data['session'] = config_db.get('SESSION')
+    config_db.close()
+
     # handle session status
-    if session_name is None:
-        navbar_status = 'disabled'
-        session_icon = 'unlock'
-        session_color = 'darkred'
+    if global_data['session'] == 'None':
+        global_data['navbar_status'] = 'disabled'
+        global_data['session_icon'] = 'unlock'
+        global_data['session_color'] = 'darkred'
     else:
-        navbar_status = ''
-        session_icon = 'lock'
-        session_color = 'green'
-    return render_template('index.html', name='monitor', version=__version__,
-                           navbar_status=navbar_status,
-                           session_icon=session_icon,
-                           session_color=session_color,
-                           session_name=session_name)
+        global_data['navbar_status'] = ''
+        global_data['session_icon'] = 'lock'
+        global_data['session_color'] = 'green'
+    return render_template('index.html', name='monitor',
+                           global_data=global_data)
 
 
 @app.route('/licence/')
 def licence():
-    # get session name
-    global session_name
+    # level-0 :: VARIABLES
+    global global_data
+
+    # level-1 :: CONFIG
+    config_db = sqlite.ConfigHandler()
+    config_db.start()
+    global_data['session'] = config_db.get('SESSION')
+    config_db.close()
+
     # handle session status
-    if session_name is None:
-        navbar_status = 'disabled'
-        session_icon = 'unlock'
-        session_color = 'darkred'
+    if global_data['session'] == 'None':
+        global_data['navbar_status'] = 'disabled'
+        global_data['session_icon'] = 'unlock'
+        global_data['session_color'] = 'darkred'
     else:
-        navbar_status = ''
-        session_icon = 'lock'
-        session_color = 'green'
+        global_data['navbar_status'] = ''
+        global_data['session_icon'] = 'lock'
+        global_data['session_color'] = 'green'
     return render_template('index.html', name='licence',
-                           version=__version__,
-                           navbar_status=navbar_status,
-                           session_icon=session_icon,
-                           session_color=session_color,
-                           session_name=session_name
-                           )
+                           global_data=global_data)
 
 
 if __name__ == "__main__":

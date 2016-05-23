@@ -13,6 +13,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='font-mfizz/font-mfizz.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='sweetalert/sweetalert.css') }}">
 
+
+    <script>
+        var global_data = {{ global_data|tojson }};
+    </script>
 </head>
 
 <body style="margin-bottom: 50px">
@@ -37,20 +41,20 @@
                 <div class="collapse navbar-collapse" id="eemsBar">
                     <ul class="nav navbar-nav">
                         <li class="{% if name == 'index' %}
-                                        {{ navbar_status }}
+                                        {{ global_data.navbar_status }}
                                    {% elif name == 'licence' %}
-                                        {{ navbar_status }}
+                                        {{ global_data.navbar_status }}
                                    {% elif name == 'config' %}
                                         active
                                    {% endif %}"><a href="{{ url_for('config') }}"><i class="fa fa-cogs"></i>&nbsp; Config</a></li>
                         <li class="{% if name == 'index' %}
-                                        {{ navbar_status }}
+                                        {{ global_data.navbar_status }}
                                    {% elif name == 'licence' %}
-                                        {{ navbar_status }}
+                                        {{ global_data.navbar_status }}
                                    {% elif name == 'monitor' %}
                                         active
                                    {% endif %}"><a href="{{ url_for('monitor') }}"><i class="fa fa-area-chart"></i>&nbsp; Monitor</a></li>
-                        <li class="disabled"><a href="#" style="color: {{ session_color }}"><i class="fa fa-{{ session_icon }}"></i>&nbsp; Session: {{ session_name }}</a></li>
+                        <li class="disabled"><a href="#" style="color: {{ global_data.session_color }}"><i class="fa fa-{{ global_data.session_icon }}"></i>&nbsp; Session: {{ global_data.session_name }}</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right nav-pills">
                         <li><a href="https://github.com/enricoba/eems" target="_blank">
@@ -83,7 +87,7 @@
     <footer class="navbar-fixed-bottom" style="position: absolute; bottom: 0; height: 50px; padding-top: 5px">
         <div class="container">
             <p class="text-center"><i class="fa fa-copyright"></i> 2016 <a href="mailto:&#104;&#101;&#110;&#114;&#105;&#107;&#046;&#098;&#097;&#114;&#097;&#110;&#064;&#111;&#110;&#108;&#105;&#110;&#101;&#046;&#100;&#101;">Henrik Baran</a>,
-            <a href="mailto:&#097;&#046;&#104;&#111;&#101;&#104;&#110;&#064;&#109;&#097;&#105;&#108;&#098;&#111;&#120;&#046;&#111;&#114;&#103;"> Aurofree Hoehn</a>, Licence: <a href="{{ url_for('licence') }}">MIT</a>, Version: {{ version }}</p>
+            <a href="mailto:&#097;&#046;&#104;&#111;&#101;&#104;&#110;&#064;&#109;&#097;&#105;&#108;&#098;&#111;&#120;&#046;&#111;&#114;&#103;"> Aurofree Hoehn</a>, Licence: <a href="{{ url_for('licence') }}">MIT</a>, Version: {{ global_data.version }}</p>
         </div>
     </footer>
 
