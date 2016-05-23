@@ -74,20 +74,6 @@ setup(){
         exit 1
     fi
 
-
-    # add host "eems"
-    echo "Adding eems to hosts"
-    echo "127.0.0.1 eems" >> /etc/hosts
-    c_09=$?
-    if [ $c_09 -eq 0 ] ; then
-        echo "  Successfully added eems to hosts"
-    else
-        echo "  Failed to set permissions"
-        echo -e "\e[31mSetup failed and exited\e[0m"
-        exit 1
-    fi
-
-
     # restart apache server
     service apache2 restart
     c_10=$?

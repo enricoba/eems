@@ -55,30 +55,8 @@ if [ $USER == "root" ] ; then
         flag_03="true"
     fi
 
-    # removing hosts entry
-
-    grep '127.0.0.1 eems' /etc/hosts
-    if [ $? -eq 0 ] ; then
-        echo "Cleaning hosts files:"
-        sed -i.bak '/127.0.0.1 eems/d' /etc/hosts
-        if [ $? -eq 0 ] ; then
-            echo "  Successfully cleaned up hosts file"
-            flag_04="true"
-        else
-            echo "  Failed to clean up hosts file"
-            echo "  Please clean up manually"
-            flag_04="false"
-        fi
-    else
-        flag_04="true"
-    fi
-
     # final check
-    if  [ $flag_01 == "true" ] && \
-        [ $flag_02 == "true"  ] && \
-        [ $flag_03 == "true"  ] && \
-        [ $flag_04 == "true" ]
-    then
+    if  [ $flag_01 == "true" ] && [ $flag_02 == "true"  ] && [ $flag_03 == "true"  ] ; then
         echo -e "\e[92mSuccessfully uninstalled eems\e[0m"
     else
         echo -e "\e[31mFailed to uninstall eems\e[0m"
