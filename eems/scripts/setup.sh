@@ -8,7 +8,7 @@ setup(){
     if [ -d /home/$actual_user/eems ] ; then
         echo "  EEMS home directory already exists"
         echo "  using existing personal data"
-        chown www-data:www-data /home/$actual_user/eems
+        chown -R www-data:www-data /home/$actual_user/eems
         if [ $? -eq 0  ] ; then
             echo "  Successfully set EEMS home directory permissions"
         else

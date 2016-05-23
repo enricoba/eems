@@ -59,8 +59,9 @@ def main():
         config_db.write('HOME', '/home/{}/eems'.format(actual_user))
         config_db.close()
     elif args.command == 'uninstall':
+        actual_user = others.get_user()
         file_path = '{}/uninstall.sh'.format(path)
-        subprocess.call([file_path])
+        subprocess.call([file_path, actual_user])
 
     else:
         print help_text

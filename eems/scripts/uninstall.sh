@@ -3,8 +3,7 @@
 
 # main code
 if [ $USER == "root" ] ; then
-    # uninstalling eems using pip
-    # pip uninstall eems -y
+    actual_user=$1
 
     # removing server files
     if [ -d /var/www/eems ]
@@ -55,8 +54,24 @@ if [ $USER == "root" ] ; then
         flag_03="true"
     fi
 
+    # applying permissions to EEMS home directory
+    if [ -d /home/$actual_user/eems ] ; then
+        echo "Change permissions for EEMS home directory:"
+        chown -R $actual_user:$actual_user /home/$actual_user/eems
+        if [ $? -eq 0 ] ; then
+            echo "  Successfully changed permissions for EEMS home directory"
+            flag_04="true"
+        else
+            echo "  Failed to change permissions for EEMS home directory"
+            echo "  Please clean up manually"
+            flag_04="false"
+        fi
+    else
+        flag_04="true"
+    fi
+
     # final check
-    if  [ $flag_01 == "true" ] && [ $flag_02 == "true"  ] && [ $flag_03 == "true"  ] ; then
+    if  [ $flag_01 == "true" ] && [ $flag_02 == "true"  ] && [ $flag_03 == "true"  ] && [ $flag_04 == "true"  ] ; then
         echo -e "\e[92mSuccessfully uninstalled eems\e[0m"
     else
         echo -e "\e[31mFailed to uninstall eems\e[0m"

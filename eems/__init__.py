@@ -32,7 +32,7 @@ app = Flask(__name__)
 # global template data
 global_data = {
     'version':              __version__,
-    'session':              None,
+    'session':              'None',
     'navbar_status':        '',
     'session_icon':         '',
     'session_color':        ''
