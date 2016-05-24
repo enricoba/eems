@@ -31,17 +31,16 @@ class ThrowingArgumentParser(argparse.ArgumentParser):
 
 
 def main():
-    path = os.path.dirname(__file__)
     sudo_user = os.getenv("SUDO_USER")
     if sudo_user is None:
-        print "Please run eems as *sudo*."
+        print "Please run eems as sudo"
         sys.exit()
     else:
         pass
 
+    path = os.path.dirname(__file__)
     parser = ThrowingArgumentParser(add_help=False)
     parser.add_argument('command')
-
 
     try:
         args = parser.parse_args()

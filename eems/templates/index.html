@@ -54,7 +54,7 @@
                                    {% elif name == 'monitor' %}
                                         active
                                    {% endif %}"><a href="{{ url_for('monitor') }}"><i class="fa fa-area-chart"></i>&nbsp; Monitor</a></li>
-                        <li class="disabled"><a href="#" style="color: {{ global_data.session_color }}"><i class="fa fa-{{ global_data.session_icon }}"></i>&nbsp; Session: {{ global_data.session_name }}</a></li>
+                        <li class="disabled"><a href="#" style="color: {{ global_data.session_color }}"><i class="fa fa-{{ global_data.session_icon }}"></i>&nbsp; Session: {{ global_data.session }}</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right nav-pills">
                         <li><a href="https://github.com/enricoba/eems" target="_blank">
