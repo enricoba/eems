@@ -313,7 +313,9 @@ def monitor():
         'SENSOR_IDS_DS18B20')
     if ds18b20_table_check:
         ds18b20_user_names = session.get_sensor_user_name('SENSOR_IDS_DS18B20')
-        print ds18b20_user_names
+        for key, value in ds18b20_user_names.iteritems():
+            print key, type(key)
+            print value, type(value)
     else:
         ds18b20_user_names = {}
     session.close()
