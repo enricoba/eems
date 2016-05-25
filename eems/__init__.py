@@ -10,7 +10,7 @@ from flask import Flask, render_template, request, redirect, url_for
 
 
 # import eems modules
-from support import sqlite, others
+from support import sqlite
 # from support import detects, checks
 # from sensors import ds18b20
 
