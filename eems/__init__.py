@@ -48,6 +48,9 @@ def index():
     config_db = sqlite.ConfigHandler()
     config_db.start()
     global_data['session'] = config_db.get('SESSION')
+    global_data['navbar_status'] = config_db.get('NAVBAR_STATUS')
+    global_data['session_icon'] = config_db.get('SESSION_ICON')
+    global_data['session_color'] = config_db.get('SESSION_COLOR')
     home = config_db.get('HOME')
     config_db.close()
 
@@ -56,46 +59,34 @@ def index():
     for profile in tmp:
         profiles.append(str(profile[:-3]))
 
-    # handle session status
-    if global_data['session'] == 'None':
-        global_data['navbar_status'] = 'disabled'
-        global_data['session_icon'] = 'unlock'
-        global_data['session_color'] = 'darkred'
-    else:
-        global_data['navbar_status'] = ''
-        global_data['session_icon'] = 'lock'
-        global_data['session_color'] = 'green'
-
     if request.method == 'POST':
         if 'session-start' in request.form:
             profile_tmp = request.form['session-input']
+            config_db = sqlite.ConfigHandler()
+            config_db.start()
             if len(profile_tmp):
-                # TODO notwendig?
-                # profiles.append(str(profile_tmp))
-
-                config_db = sqlite.ConfigHandler()
-                config_db.start()
                 config_db.write('SESSION', profile_tmp)
-                config_db.close()
 
                 # add default tables and contents
                 path = os.path.dirname(__file__)
                 subprocess.call(['cp', '{}/data/db/default.db'.format(path),
                                  '{}/{}.db'.format(home, profile_tmp)])
-
-                # redirect
-                return redirect(url_for('config'))
             else:
                 profile_load = request.form['session-load']
-                config_db = sqlite.ConfigHandler()
-                config_db.start()
                 config_db.write('SESSION', profile_load)
-                config_db.close()
-                return redirect(url_for('config'))
+
+            config_db.write('NAVBAR_STATUS', '')
+            config_db.write('SESSION_ICON', 'lock')
+            config_db.write('SESSION_COLOR', 'green')
+            config_db.close()
+            return redirect(url_for('config'))
         elif 'sessionLogout' in request.form:
             config_db = sqlite.ConfigHandler()
             config_db.start()
             config_db.write('SESSION', 'None')
+            config_db.write('NAVBAR_STATUS', 'disabled')
+            config_db.write('SESSION_ICON', 'unlock')
+            config_db.write('SESSION_COLOR', 'darkred')
             config_db.close()
 
             # handle session status
@@ -121,17 +112,10 @@ def config():
     config_db = sqlite.ConfigHandler()
     config_db.start()
     global_data['session'] = config_db.get('SESSION')
+    global_data['navbar_status'] = config_db.get('NAVBAR_STATUS')
+    global_data['session_icon'] = config_db.get('SESSION_ICON')
+    global_data['session_color'] = config_db.get('SESSION_COLOR')
     config_db.close()
-
-    # handle session status
-    if global_data['session'] == 'None':
-        global_data['navbar_status'] = 'disabled'
-        global_data['session_icon'] = 'unlock'
-        global_data['session_color'] = 'darkred'
-    else:
-        global_data['navbar_status'] = ''
-        global_data['session_icon'] = 'lock'
-        global_data['session_color'] = 'green'
 
     # level-2 :: SESSION
     session = sqlite.DBHandler()
@@ -296,17 +280,10 @@ def monitor():
     config_db = sqlite.ConfigHandler()
     config_db.start()
     global_data['session'] = config_db.get('SESSION')
+    global_data['navbar_status'] = config_db.get('NAVBAR_STATUS')
+    global_data['session_icon'] = config_db.get('SESSION_ICON')
+    global_data['session_color'] = config_db.get('SESSION_COLOR')
     config_db.close()
-
-    # handle session status
-    if global_data['session'] == 'None':
-        global_data['navbar_status'] = 'disabled'
-        global_data['session_icon'] = 'unlock'
-        global_data['session_color'] = 'darkred'
-    else:
-        global_data['navbar_status'] = ''
-        global_data['session_icon'] = 'lock'
-        global_data['session_color'] = 'green'
 
     # level-2 :: SESSION
     session = sqlite.DBHandler()
