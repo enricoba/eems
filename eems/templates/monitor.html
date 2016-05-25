@@ -1,5 +1,23 @@
 <div class="container-fluid">
     <div class="row">
+        <div class="form-group">
+            <form role="form" method="post" action="{{ url_for('monitor') }}" onsubmit="">
+                <!-- checkboxes for available sensors -->
+                {% for key, value in ds18b20_user_names.iteritems() %}
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="{{ key }}">{{ value }}</label>
+                    </div>
+                {% endfor %}
+
+                <!-- navigation -->
+                <ul class="pager">
+                    <li><button type="button" onclick="" name="chart-show-js" style="width: 100px" class="btn btn-success">JS</button></li>
+                    <li><button type="submit" name="chart-show-post" style="width: 100px" class="btn btn-success">POST</button></li>
+                </ul>
+            </form>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-sm-6">
             <canvas id="myChart_01" height="250"></canvas>
         </div>

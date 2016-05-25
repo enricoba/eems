@@ -133,9 +133,9 @@ def config():
         global_data['session_icon'] = 'lock'
         global_data['session_color'] = 'green'
 
+    # level-2 :: SESSION
     session = sqlite.DBHandler()
-    tmp = global_data['session']
-    session.start(tmp)
+    session.start(global_data['session'])
 
     if request.method == 'POST':
         session_config_hw, session_config_sw = session.get_session_config()
@@ -250,7 +250,8 @@ def config():
             # close session
             session.close()
             return render_template('index.html', name='monitor',
-                                   global_data=global_data)
+                                   global_data=global_data,
+                                   ds18b20_user_names=tmp_dict)
     else:
         session_config_hw, session_config_sw = session.get_session_config()
         session_config_hws_ds18b20 = session.get_session_config_hws()
@@ -303,8 +304,22 @@ def monitor():
         global_data['navbar_status'] = ''
         global_data['session_icon'] = 'lock'
         global_data['session_color'] = 'green'
+
+    # level-2 :: SESSION
+    session = sqlite.DBHandler()
+    session.start(global_data['session'])
+
+    ds18b20_table_check = session.check_table_exist(
+        'SENSOR_IDS_DS18B20')
+    if ds18b20_table_check:
+        ds18b20_user_names = session.get_sensor_user_name('SENSOR_IDS_DS18B20')
+        print ds18b20_user_names
+    else:
+        ds18b20_user_names = {}
+    session.close()
     return render_template('index.html', name='monitor',
-                           global_data=global_data)
+                           global_data=global_data,
+                           ds18b20_user_names=ds18b20_user_names)
 
 
 @app.route('/licence/')
