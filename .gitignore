@@ -7,10 +7,6 @@
 # Package files
 *.egg-info
 
-# Build and docs folder/files
-dist/*
-build/*
-docs/*
 
 # test files
 deploy.sh
@@ -19,3 +15,6 @@ test.*
 
 # excel files
 *.xlsx
+build/
+dist/
+docs/
