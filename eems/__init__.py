@@ -81,6 +81,9 @@ def index():
             config_db.close()
             return redirect(url_for('config'))
         elif 'sessionLogout' in request.form:
+            # TODO only redirect to monitor if config is all done!
+            # and disable monitor permanently when config unfinished
+
             config_db = sqlite.ConfigHandler()
             config_db.start()
             config_db.write('SESSION', 'None')
