@@ -13,17 +13,20 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='font-mfizz/font-mfizz.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='sweetalert/sweetalert.css') }}">
 
+    <!-- Pace -->
+    <script src="{{ url_for('static', filename='pace/pace.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='pace/pace-theme-center-simple.css') }}">
 
+    <!-- Chart.js -->
+    <script src="{{ url_for('static', filename='chart.js/Chart.js') }}"></script>
+
+    <!-- global data -->
     <script>
         var global_data = {{ global_data|tojson }};
     </script>
 </head>
 
 <body style="margin-bottom: 50px">
-    <!-- Chart.js import -->
-    <script src="{{ url_for('static', filename='chart.js/Chart.js') }}"></script>
-
-
     <!-- Header -->
     <header class="container">
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
