@@ -310,17 +310,11 @@ def licence():
     config_db = sqlite.ConfigHandler()
     config_db.start()
     global_data['session'] = config_db.get('SESSION')
+    global_data['session'] = config_db.get('SESSION')
+    global_data['navbar_status'] = config_db.get('NAVBAR_STATUS')
+    global_data['session_icon'] = config_db.get('SESSION_ICON')
+    global_data['session_color'] = config_db.get('SESSION_COLOR')
     config_db.close()
-
-    # handle session status
-    if global_data['session'] == 'None':
-        global_data['navbar_status'] = 'disabled'
-        global_data['session_icon'] = 'unlock'
-        global_data['session_color'] = 'darkred'
-    else:
-        global_data['navbar_status'] = ''
-        global_data['session_icon'] = 'lock'
-        global_data['session_color'] = 'green'
     return render_template('index.html', name='licence',
                            global_data=global_data)
 
