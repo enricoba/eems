@@ -231,6 +231,7 @@ def config():
                     tmp_dict[key] = request.form[key]
 
                 # todo HIER NOCH EIN FEHLER !
+                # was für einer? sehe keinen bisher
                 duration = int(request.form['duration'])
                 interval = int(request.form['interval'])
                 session.write_session_config_sws(duration, interval)
