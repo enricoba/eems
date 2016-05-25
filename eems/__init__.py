@@ -229,8 +229,10 @@ def config():
                 'SENSOR_IDS_DS18B20')
             if ds18b20_table_check:
                 ds18b20_table = session.get_sensor_info('SENSOR_IDS_DS18B20')
+                ds18b20_user_names = session.get_sensor_user_name('SENSOR_IDS_DS18B20')
             else:
                 ds18b20_table = {}
+                ds18b20_user_names = {}
 
             # set software_flag
             if session_config_sw['final'] is 0:
@@ -247,11 +249,12 @@ def config():
                 session.write_session_config_sws(duration, interval)
                 session.write_session_config(session_config_sw, 'software')
                 session.update_user_sensor_names('ds18b20', tmp_dict)
+                ds18b20_user_names = tmp_dict
             # close session
             session.close()
             return render_template('index.html', name='monitor',
                                    global_data=global_data,
-                                   ds18b20_user_names=tmp_dict)
+                                   ds18b20_user_names=ds18b20_user_names)
     else:
         session_config_hw, session_config_sw = session.get_session_config()
         session_config_hws_ds18b20 = session.get_session_config_hws()
@@ -313,9 +316,6 @@ def monitor():
         'SENSOR_IDS_DS18B20')
     if ds18b20_table_check:
         ds18b20_user_names = session.get_sensor_user_name('SENSOR_IDS_DS18B20')
-        for key, value in ds18b20_user_names.iteritems():
-            print key, type(key)
-            print value, type(value)
     else:
         ds18b20_user_names = {}
     session.close()
