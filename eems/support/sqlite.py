@@ -13,8 +13,7 @@ class ConfigHandler(object):
         """Private class *ConfigHandler* provides functions to interact with config database.
 
         :return:
-            Returns a in-memory object tree providing the functions
-            *tbd*.
+            Returns a in-memory object tree providing the functions *start*, *close*, *write* and *get*.
         """
         self.db = None
         self.c = None
@@ -22,7 +21,7 @@ class ConfigHandler(object):
         # connect to db and create cursor
 
     def start(self):
-        """Public function *start* sets up the connection to the database and creates the cursor.
+        """Public function *start* sets up the connection to the database and creates the cursor variable.
 
         :return:
             Returns *None*.
@@ -44,10 +43,26 @@ class ConfigHandler(object):
         self.conn.close()
 
     def write(self, item, value):
+        """Public function *write* changes the value of an existing item.
+
+        :param item:
+            Expects a *string* containing the item name.
+        :param value:
+            Expects a *string* containing the item's value.
+        :return:
+            Returns *None*.
+        """
         self.c.execute("UPDATE GENERAL SET VALUE = '{}' WHERE ITEM = '{}'".format(value, item))
         self.conn.commit()
 
     def get(self, item):
+        """Public function *get* returns the value of a requested item.
+
+        :param item:
+            Expects a *string* containing the item name.
+        :return:
+            Returns a *string* containing the item's value.
+        """
         self.c.execute("SELECT VALUE FROM GENERAL WHERE ITEM = '{}'".format(item))
         value = self.c.fetchall()
         return value[0][0]
