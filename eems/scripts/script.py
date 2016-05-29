@@ -9,7 +9,7 @@ import sys
 import argparse
 import subprocess
 
-from eems.support import others, sqlite
+from eems.support import sqlite
 
 
 help_text = """Help Information for eems setup.
@@ -19,6 +19,20 @@ Commands:
   setup               Set up eems server.
   uninstall           Uninstall eems server.
   -h --help           Show help."""
+
+
+def get_user():
+    """Public function *get_user* determines the actual user name.
+
+    :return:
+        Returns *string*.
+    """
+    sudo_user = os.getenv("SUDO_USER")
+    if sudo_user is None:
+        actual_user = os.getenv("USER")
+    else:
+        actual_user = sudo_user
+    return actual_user
 
 
 class ArgumentParserError(Exception):
@@ -50,7 +64,7 @@ def main():
 
     if args.command == 'setup':
         file_path = '{}/setup.sh'.format(path)
-        actual_user = others.get_user()
+        actual_user = get_user()
         subprocess.call([file_path, actual_user])
         config_db = sqlite.ConfigHandler()
         config_db.start()
@@ -58,7 +72,7 @@ def main():
         config_db.write('HOME', '/home/{}/eems'.format(actual_user))
         config_db.close()
     elif args.command == 'uninstall':
-        actual_user = others.get_user()
+        actual_user = get_user()
         file_path = '{}/uninstall.sh'.format(path)
         subprocess.call([file_path, actual_user])
 
