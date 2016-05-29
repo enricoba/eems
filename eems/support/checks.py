@@ -57,10 +57,8 @@ class Check(object):
             check = [c for c in config if c.strip('\n')[:17] ==
                      'dtoverlay=w1-gpio']
             if len(check) == 0:
-                logger.error('Config.txt check failed: "dtoverlay=w1-gpio"'
-                             ' is not set')
-                logger.info('Please use the command script <sudo eems '
-                            'prepare> to prepare "/boot/config.txt"')
+                logger.error('Config.txt check failed: "dtoverlay=w1-gpio" is not set')
+                logger.info('Please use the command script <sudo eems prepare> to prepare "/boot/config.txt"')
                 return False
             else:
                 logger.info('Config.txt check ok: "dtoverlay=w1-gpio" is set')
