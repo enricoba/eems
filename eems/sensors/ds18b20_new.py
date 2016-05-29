@@ -24,8 +24,8 @@ Private classes / functions
 class DS18B20(object):
     def __init__(self):
         # System paths
-        self.dir_modules = '/etc/modules'
-        self.dir_config = '/boot/config.txt'
+        self.path_modules = '/etc/modules'
+        self.path_config = '/boot/config.txt'
         self.dir_sensors = '/sys/bus/w1/devices'
 
         # Flags
@@ -69,7 +69,7 @@ class DS18B20(object):
 
     def check_w1_config(self):
         try:
-            with open(self.dir_config, 'r') as config_file:
+            with open(self.path_config, 'r') as config_file:
                 config = config_file.readlines()
         except IOError as e:
             logger.error('{}'.format(e))
@@ -89,7 +89,7 @@ class DS18B20(object):
 
     def check_w1_modules(self):
         try:
-            with open(self.dir_modules, 'r') as modules_file:
+            with open(self.path_modules, 'r') as modules_file:
                 modules = modules_file.readlines()
         except IOError as e:
             logger.error('{}'.format(e))
