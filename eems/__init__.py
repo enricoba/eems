@@ -170,14 +170,12 @@ def config():
                     else:
                         session_config_hws_ds18b20['status'] = 'alert-warning'
                         session_config_hws_ds18b20['msg_1'] = 'Warning!'
-                        session_config_hws_ds18b20['msg_2'] = ' - No DS18B20 ' \
-                            'sensors have been detected.'
+                        session_config_hws_ds18b20['msg_2'] = ' - No DS18B20 sensors have been detected.'
                         head_flag.append('war')
                 else:
                     session_config_hws_ds18b20['status'] = 'alert-danger'
                     session_config_hws_ds18b20['msg_1'] = 'Error!'
-                    session_config_hws_ds18b20['msg_2'] = ' - DS18B20 ' \
-                        'hardware requirements failed.'
+                    session_config_hws_ds18b20['msg_2'] = ' - DS18B20 hardware requirements failed.'
                     head_flag.append('error')
 
             # manage overall status
@@ -212,8 +210,7 @@ def config():
                                    toggle=toggle)
         elif 'software-next' in request.form:
             # get sensors
-            ds18b20_table_check = session.check_table_exist(
-                'SENSOR_IDS_DS18B20')
+            ds18b20_table_check = session.check_table_exist('SENSOR_IDS_DS18B20')
             if ds18b20_table_check:
                 ds18b20_table = session.get_sensor_info('SENSOR_IDS_DS18B20')
                 ds18b20_user_names = session.get_sensor_user_name('SENSOR_IDS_DS18B20')
