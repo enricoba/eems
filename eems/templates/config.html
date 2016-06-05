@@ -140,12 +140,14 @@
         var ds18b20 = form["ds18b20_cb"].value;
 
         if (ds18b20 == true) {
+            return true;
+        } else {
             sweetAlert({
                     title: "Oops!",
-                    text: "Duration must be set.",
-                    type: "error"
+                    text: "Please select a sensor type.",
+                    type: "warning"
                 });
-                return false;
+            return false;
         }
     }
 
