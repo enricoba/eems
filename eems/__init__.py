@@ -153,8 +153,7 @@ def config():
                         # return: DICT(sensors, values)
 
                         # add sensor_ids_table
-                        ds18b20_table_check = session.check_table_exist(
-                            'SENSOR_IDS_DS18B20')
+                        ds18b20_table_check = session.check_table_exist('SENSOR_IDS_DS18B20')
                         if ds18b20_table_check is False:
                             session.add_sensor_ids_table('ds18b20')
                             session.add_sensor_info('ds18b20', tmp_dict)
@@ -290,8 +289,7 @@ def monitor():
     session = sqlite.DBHandler()
     session.start(global_data['session'])
 
-    ds18b20_table_check = session.check_table_exist(
-        'SENSOR_IDS_DS18B20')
+    ds18b20_table_check = session.check_table_exist('SENSOR_IDS_DS18B20')
     if ds18b20_table_check:
         ds18b20_user_names = session.get_sensor_user_name('SENSOR_IDS_DS18B20')
     else:

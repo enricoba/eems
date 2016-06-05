@@ -132,6 +132,7 @@ setup(){
 if [ $USER == "root" ] ; then
     actual_user=$1
     echo "Looking for required packages (apache2 and libapache2-mod-wsgi):"
+    # TODO zweite/bessere methode zur identifirzierung von Apache2 installation
     if [ -d /etc/apache2 ] ; then
         echo "  Successfully determined package apache2"
         if [ -e /etc/apache2/mods-available/wsgi.conf ]
