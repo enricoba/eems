@@ -133,6 +133,8 @@ def config():
             # DS18B20 sensor
             ds18b20_cb = 'ds18b20_cb' in request.form
             if ds18b20_cb is True:
+                # TODO anstatt POST-Skript FUnktion über JS ausführen und rückwert bearbeiten.
+                # alle rückmeldungen in JS um schneller zu arbeiten und page reloads zu vermeiden
                 senssor_ds18b20 = ds18b20_new.DS18B20()
                 session_config_hw['display'] = 'true'
                 session_config_hws_ds18b20['display'] = 'true'
