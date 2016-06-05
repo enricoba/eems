@@ -135,6 +135,20 @@
         $("#collapse1").collapse('toggle');
     }
 
+    <!-- potentielle FUnotion für Hardware check -->
+    function validateHardware(form) {
+        var ds18b20 = form["ds18b20_cb"].value;
+
+        if (ds18b20 == true) {
+            sweetAlert({
+                    title: "Oops!",
+                    text: "Duration must be set.",
+                    type: "error"
+                });
+                return false;
+        }
+    }
+
     function validateSoftware(form) {
         var x = form["duration"].value;
         var y = form["interval"].value;
