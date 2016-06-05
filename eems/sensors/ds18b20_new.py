@@ -13,6 +13,7 @@ from threading import Thread
 defining logger
 """
 
+# TODO catch error handler from flask to integrate into global logging
 logger = logging.getLogger(__name__)
 
 
@@ -29,15 +30,15 @@ class DS18B20(object):
         self.dir_sensors = '/sys/bus/w1/devices'
 
         # Flags
-        self.detect_flag = False
+        self.detect_flag_status = False
         self.check_flags = {'config': False, 'modules': False}
         self.check_modules_flags = {'w1-therm': False, 'w1-gpio': False}
 
         # Sensor dictionaries
         self.sensor_dict = dict()
 
-    def __flags(self):
-        if self.detect_flag is True and self.check_flags['config'] is True and self.check_flags['modules'] is True:
+    def check_flags_status(self):
+        if self.check_flags['config'] is True and self.check_flags['modules'] is True:
             return True
         else:
             return False
@@ -152,7 +153,7 @@ class DS18B20(object):
         :return:
             Returns a dictionary containing sensor names and temperature values.
         """
-        if self.__flags() is True:
+        if self.detect_flag is True and self.check_flags_status() is True:
             threads = []
             # reset dict
             for sensor in self.sensor_dict.keys():

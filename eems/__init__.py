@@ -12,7 +12,7 @@ from flask import Flask, render_template, request, redirect, url_for
 # import eems modules
 from support import sqlite
 # from support import detects, checks
-# from sensors import ds18b20
+from sensors import ds18b20_new
 
 
 """
@@ -133,20 +133,22 @@ def config():
             # DS18B20 sensor
             ds18b20_cb = 'ds18b20_cb' in request.form
             if ds18b20_cb is True:
+                senssor_ds18b20 = ds18b20_new.DS18B20()
                 session_config_hw['display'] = 'true'
                 session_config_hws_ds18b20['display'] = 'true'
 
                 # execute check
-                # c = checks.Check()
-                check = True
-                # if c.w1_config() is True and c.w1_modules() is True:
-                if check is True:
+                senssor_ds18b20.check_w1_modules()
+                senssor_ds18b20.check_w1_config()
+                # check = True
+                if senssor_ds18b20.check_flags_status() is True:
+                # if check is True:
                     # check sensors
-                    sensors = ['1', '2', 'adsad']
+                    ds18b20_sensors = ['1', '2', 'adsad']
                     # sensors = detects.ds18b20_sensors()
-                    if len(sensors):
+                    if len(ds18b20_sensors):
                         tmp_dict = dict()
-                        for sensor in sensors:
+                        for sensor in ds18b20_sensors:
                             tmp_dict[sensor] = -9999.0
                         # read temperatures
                         # tmp_dict = ds18b20.read_ds18b20(tmp_dict)
