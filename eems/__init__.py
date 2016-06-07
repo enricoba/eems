@@ -7,6 +7,7 @@ Initiation module for eems.
 import os
 import subprocess
 from flask import Flask, render_template, request, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
 
 
 # import eems modules
@@ -27,6 +28,19 @@ __author__ = 'Henrik Baran, Aurofree Hoehn'
 
 # Flask object
 app = Flask(__name__)
+path = os.path.dirname(__file__)
+db_dir = '{}/data/db/config.db'.format(path)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////{}'.format(db_dir)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+
+db = SQLAlchemy(app)
+
+
+class General(db.Model):
+    __tablename__ = 'GENERAL'
+    ID = db.Column('ID', db.INTEGER, primary_key=True)
+    ITEM = db.Column('ITEM', db.TEXT)
+    VALUE = db.Column('VALUE', db.TEXT)
 
 
 # global template data
@@ -37,6 +51,14 @@ global_data = {
     'session_icon':         '',
     'session_color':        ''
 }
+
+
+test = General.query.all()
+# for x in test:
+#     print x.ITEM
+
+three = General.query.filter_by(ID=3).first()
+print three.ITEM
 
 
 @app.route('/', methods=['GET', 'POST'])
