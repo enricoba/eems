@@ -1,10 +1,9 @@
-<button class="doc_go" onclick="nanobar.go(30)">nanobar.go(30)</button>
-<button class="doc_go" onclick="nanobar.go(100)">nanobar.go(100)</button>
+<button class="btn btn-default" onclick="nanobar.go(30)">nanobar.go(30)</button>
+<button class="btn btn-default" onclick="nanobar.go(100)">nanobar.go(100)</button>
 
 {% if global_data.session == 'None' %}
     <h1 class="text-center">Welcome to EEMS</h1>
     <h4 class="text-center">Easy Energy Monitoring System</h4>
-
     <div class="form-group" style="margin-top: 50px">
         <form role="form" method="post" action="{{ url_for('index') }}" onsubmit="return session_start(this)">
             <select title="dropdown" class="form-control" name="session-load" style="text-align: center" id="drp1" onchange="dropdown_check()">

@@ -142,9 +142,9 @@ def config():
                 # execute check
                 senssor_ds18b20.check_w1_modules()
                 senssor_ds18b20.check_w1_config()
-                # check = True
-                if senssor_ds18b20.check_flags_status() is True:
-                # if check is True:
+                check = True
+                # if senssor_ds18b20.check_flags_status() is True:
+                if check is True:
                     # check sensors
                     ds18b20_sensors = ['1', '2', 'adsad']
                     # sensors = detects.ds18b20_sensors()
