@@ -8,6 +8,7 @@ import os
 import sqlite3
 
 
+# TODO SQL INJECTION !!!
 class ConfigHandler(object):
     def __init__(self):
         """Private class *ConfigHandler* provides functions to interact with config database.
