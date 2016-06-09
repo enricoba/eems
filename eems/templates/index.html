@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='font-mfizz/font-mfizz.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='sweetalert/sweetalert.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='flag-icon/css/flag-icon.min.css') }}">
 
     <!-- Nanobar -->
     <script src="{{ url_for('static', filename='nanobar/nanobar.min.js') }}"></script>
@@ -66,6 +67,13 @@
                             <i class="icon-python"></i>&nbsp; PyPi</a></li>
                         <li><a href="https://www.pythonhosted.org/eems/" target="_blank">
                             <i class="fa fa-book"></i>&nbsp; Docu</a></li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-language"></i>&nbsp; Language<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#"><span class="flag-icon flag-icon-de"></span>&nbsp; German</a></li>
+                                <li><a href="#"><span class="flag-icon flag-icon-gb"></span>&nbsp; English</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </div>
