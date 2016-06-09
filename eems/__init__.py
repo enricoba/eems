@@ -41,9 +41,17 @@ db = SQLAlchemy(app)
 
 class General(db.Model):
     __tablename__ = 'GENERAL'
-    ID = db.Column('ID', db.INTEGER, primary_key=True)
+    ID = db.Column('ID', db.INTEGER, primary_key=True, unique=True)
     ITEM = db.Column('ITEM', db.TEXT)
     VALUE = db.Column('VALUE', db.TEXT)
+
+
+class Content(db.Model):
+    __tablename__ = 'CONTENT'
+    ID = db.Column('ID', db.INTEGER, primary_key=True, unique=True)
+    POSITION = db.Column('POSITION', db.TEXT)
+    GERMAN = db.Column('GERMAN', db.TEXT)
+    ENGLISH = db.Column('ENGLISH', db.TEXT)
 
 
 # global template data
