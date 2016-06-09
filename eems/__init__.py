@@ -63,6 +63,27 @@ global_data = {
     'session_color':        ''
 }
 
+content = {
+    'INDEX_CONFIG':         '',
+    'INDEX_MONITOR':        '',
+    'INDEX_SESSION':        '',
+    'INDEX_DOCU':           '',
+    'INDEX_LICENCE':        '',
+    'INDEX_VERSION':        '',
+    'INDEX_LANGUAGE':       '',
+    'INDEX_LANGUAGE_DE':    '',
+    'INDEX_LANGUAGE_EN':    ''
+}
+
+
+def cms(lang):
+    cms = Content.query.all()
+    for i in cms:
+        if lang == 'de':
+            content[i.POSITION] = i.GERMAN
+        elif lang == 'en':
+            content[i.POSITION] = i.ENGLISH
+
 
 test = General.query.all()
 # for x in test:
@@ -76,6 +97,7 @@ print three.ITEM
 def index():
     # level-0 :: VARIABLES
     global global_data
+    global content
 
     # level-1 :: CONFIG
     config_db = sqlite.ConfigHandler()
@@ -85,7 +107,11 @@ def index():
     global_data['session_icon'] = config_db.get('SESSION_ICON')
     global_data['session_color'] = config_db.get('SESSION_COLOR')
     home = config_db.get('HOME')
+    language = config_db.get('LANGUAGE')
     config_db.close()
+
+    # level-2 :: CONTENT
+    cms(language)
 
     profiles = ['new']
     tmp = os.listdir(home)
@@ -119,23 +145,25 @@ def index():
 
             config_db = sqlite.ConfigHandler()
             config_db.start()
-            config_db.write('SESSION', 'None')
+            config_db.write('SESSION', '-')
             config_db.write('NAVBAR_STATUS', 'disabled')
             config_db.write('SESSION_ICON', 'unlock')
             config_db.write('SESSION_COLOR', 'darkred')
             config_db.close()
 
             # handle session status
-            global_data['session'] = 'None'
+            global_data['session'] = '-'
             global_data['navbar_status'] = 'disabled'
             global_data['session_icon'] = 'unlock'
             global_data['session_color'] = 'darkred'
             return render_template('index.html', name='index',
                                    global_data=global_data,
+                                   content=content,
                                    profiles=profiles, len=len(profiles))
     else:
         return render_template('index.html', name='index',
                                global_data=global_data,
+                               content=content,
                                profiles=profiles, len=len(profiles))
 
 
@@ -143,6 +171,7 @@ def index():
 def config():
     # level-0 :: VARIABLES
     global global_data
+    global content
 
     # level-1 :: CONFIG
     config_db = sqlite.ConfigHandler()
@@ -153,7 +182,7 @@ def config():
     global_data['session_color'] = config_db.get('SESSION_COLOR')
     config_db.close()
 
-    # level-2 :: SESSION
+    # level-3 :: SESSION
     session = sqlite.DBHandler()
     session.start(global_data['session'])
 
@@ -239,6 +268,7 @@ def config():
             # render template
             return render_template('index.html', name='config',
                                    global_data=global_data,
+                                   content=content,
                                    ds18b20_vars=session_config_hws_ds18b20,
                                    ds18b20_table=ds18b20_table,
                                    session_config=session_config_hw,
@@ -275,6 +305,7 @@ def config():
             session.close()
             return render_template('index.html', name='monitor',
                                    global_data=global_data,
+                                   content=content,
                                    ds18b20_user_names=ds18b20_user_names)
     else:
         session_config_hw, session_config_sw = session.get_session_config()
@@ -299,6 +330,7 @@ def config():
         session.close()
         return render_template('index.html', name='config',
                                global_data=global_data,
+                               content=content,
                                ds18b20_vars=session_config_hws_ds18b20,
                                ds18b20_table=ds18b20_table,
                                session_config=session_config_hw,
@@ -312,6 +344,7 @@ def config():
 def monitor():
     # level-0 :: VARIABLES
     global global_data
+    global content
 
     # level-1 :: CONFIG
     config_db = sqlite.ConfigHandler()
@@ -322,7 +355,7 @@ def monitor():
     global_data['session_color'] = config_db.get('SESSION_COLOR')
     config_db.close()
 
-    # level-2 :: SESSION
+    # level-3 :: SESSION
     session = sqlite.DBHandler()
     session.start(global_data['session'])
 
@@ -334,6 +367,7 @@ def monitor():
     session.close()
     return render_template('index.html', name='monitor',
                            global_data=global_data,
+                           content=content,
                            ds18b20_user_names=ds18b20_user_names)
 
 
@@ -341,18 +375,19 @@ def monitor():
 def licence():
     # level-0 :: VARIABLES
     global global_data
+    global content
 
     # level-1 :: CONFIG
     config_db = sqlite.ConfigHandler()
     config_db.start()
-    global_data['session'] = config_db.get('SESSION')
     global_data['session'] = config_db.get('SESSION')
     global_data['navbar_status'] = config_db.get('NAVBAR_STATUS')
     global_data['session_icon'] = config_db.get('SESSION_ICON')
     global_data['session_color'] = config_db.get('SESSION_COLOR')
     config_db.close()
     return render_template('index.html', name='licence',
-                           global_data=global_data)
+                           global_data=global_data,
+                           content=content)
 
 
 if __name__ == "__main__":

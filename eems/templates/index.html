@@ -24,6 +24,7 @@
     <!-- global data -->
     <script>
         var global_data = {{ global_data|tojson }};
+        var content = {{ content|tojson }};
     </script>
 </head>
 
@@ -50,15 +51,15 @@
                                         {{ global_data.navbar_status }}
                                    {% elif name == 'config' %}
                                         active
-                                   {% endif %}"><a href="{{ url_for('config') }}"><i class="fa fa-cogs"></i>&nbsp; Config</a></li>
+                                   {% endif %}"><a href="{{ url_for('config') }}"><i class="fa fa-cogs"></i>&nbsp; {{ content['INDEX_CONFIG'] }}</a></li>
                         <li class="{% if name == 'index' %}
                                         {{ global_data.navbar_status }}
                                    {% elif name == 'licence' %}
                                         {{ global_data.navbar_status }}
                                    {% elif name == 'monitor' %}
                                         active
-                                   {% endif %}"><a href="{{ url_for('monitor') }}"><i class="fa fa-area-chart"></i>&nbsp; Monitor</a></li>
-                        <li class="disabled"><a href="#" style="color: {{ global_data.session_color }}"><i class="fa fa-{{ global_data.session_icon }}"></i>&nbsp; Session: {{ global_data.session }}</a></li>
+                                   {% endif %}"><a href="{{ url_for('monitor') }}"><i class="fa fa-area-chart"></i>&nbsp; {{ content['INDEX_MONITOR'] }}</a></li>
+                        <li class="disabled"><a href="#" style="color: {{ global_data.session_color }}"><i class="fa fa-{{ global_data.session_icon }}"></i>&nbsp; {{ content['INDEX_SESSION'] }}: {{ global_data.session }}</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right nav-pills">
                         <li><a href="https://github.com/enricoba/eems" target="_blank">
@@ -66,12 +67,12 @@
                         <li><a href="https://pypi.python.org/pypi/eems" target="_blank">
                             <i class="icon-python"></i>&nbsp; PyPi</a></li>
                         <li><a href="https://www.pythonhosted.org/eems/" target="_blank">
-                            <i class="fa fa-book"></i>&nbsp; Docu</a></li>
+                            <i class="fa fa-book"></i>&nbsp; {{ content['INDEX_DOCU'] }}</a></li>
                         <li class="dropdown">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-language"></i>&nbsp; Language<span class="caret"></span></a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-language"></i>&nbsp; {{ content['INDEX_LANGUAGE'] }}<span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="#"><span class="flag-icon flag-icon-de"></span>&nbsp; German</a></li>
-                                <li><a href="#"><span class="flag-icon flag-icon-gb"></span>&nbsp; English</a></li>
+                                <li><a href="#"><span class="flag-icon flag-icon-de"></span>&nbsp; {{ content['INDEX_LANGUAGE_DE'] }}</a></li>
+                                <li><a href="#"><span class="flag-icon flag-icon-gb"></span>&nbsp; {{ content['INDEX_LANGUAGE_EN'] }}</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -98,7 +99,7 @@
     <footer class="navbar-fixed-bottom" style="position: absolute; bottom: 0; height: 50px; padding-top: 5px">
         <div class="container">
             <p class="text-center"><i class="fa fa-copyright"></i> 2016 <a href="mailto:&#104;&#101;&#110;&#114;&#105;&#107;&#046;&#098;&#097;&#114;&#097;&#110;&#064;&#111;&#110;&#108;&#105;&#110;&#101;&#046;&#100;&#101;">Henrik Baran</a>,
-            <a href="mailto:&#097;&#046;&#104;&#111;&#101;&#104;&#110;&#064;&#109;&#097;&#105;&#108;&#098;&#111;&#120;&#046;&#111;&#114;&#103;"> Aurofree Hoehn</a>, Licence: <a href="{{ url_for('licence') }}">MIT</a>, Version: {{ global_data.version }}</p>
+            <a href="mailto:&#097;&#046;&#104;&#111;&#101;&#104;&#110;&#064;&#109;&#097;&#105;&#108;&#098;&#111;&#120;&#046;&#111;&#114;&#103;"> Aurofree Hoehn</a>, {{ content['INDEX_LICENCE'] }}: <a href="{{ url_for('licence') }}">MIT</a>, {{ content['INDEX_VERSION'] }}: {{ global_data.version }}</p>
         </div>
     </footer>
 
