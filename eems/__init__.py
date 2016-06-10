@@ -85,19 +85,21 @@ def cms(lang):
             content[i.POSITION] = i.ENGLISH
 
 
-test = General.query.all()
+# test = General.query.all()
 # for x in test:
 #     print x.ITEM
 
-three = General.query.filter_by(ID=3).first()
-print three.ITEM
+# three = General.query.filter_by(ID=3).first()
+# print three.ITEM
 
 
 @app.route('/', methods=['GET', 'POST'])
-def index():
+@app.route('/<string:lang>/', methods=['GET', 'POST'])
+def index(lang=None):
     # level-0 :: VARIABLES
     global global_data
     global content
+    print lang
 
     # level-1 :: CONFIG
     config_db = sqlite.ConfigHandler()
@@ -107,11 +109,11 @@ def index():
     global_data['session_icon'] = config_db.get('SESSION_ICON')
     global_data['session_color'] = config_db.get('SESSION_COLOR')
     home = config_db.get('HOME')
-    language = config_db.get('LANGUAGE')
+    # language = config_db.get('LANGUAGE')
     config_db.close()
 
     # level-2 :: CONTENT
-    cms(language)
+    cms(lang)
 
     profiles = ['new']
     tmp = os.listdir(home)

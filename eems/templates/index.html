@@ -71,8 +71,8 @@
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-language"></i>&nbsp; {{ content['INDEX_LANGUAGE'] }}<span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="#"><span class="flag-icon flag-icon-de"></span>&nbsp; {{ content['INDEX_LANGUAGE_DE'] }}</a></li>
-                                <li><a href="#"><span class="flag-icon flag-icon-gb"></span>&nbsp; {{ content['INDEX_LANGUAGE_EN'] }}</a></li>
+                                <li><a href="{{ url_for(name, lang='de') }}"><span class="flag-icon flag-icon-de"></span>&nbsp; {{ content['INDEX_LANGUAGE_DE'] }}</a></li>
+                                <li><a href="{{ url_for(name, lang='en') }}"><span class="flag-icon flag-icon-gb"></span>&nbsp; {{ content['INDEX_LANGUAGE_EN'] }}</a></li>
                             </ul>
                         </li>
                     </ul>
