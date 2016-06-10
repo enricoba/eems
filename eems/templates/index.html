@@ -40,7 +40,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="{{ url_for('index') }}">
+                    <a class="navbar-brand" href="{{ url_for('index', lang=global_data.language) }}">
                         <i class="icon-raspberrypi"></i>&nbsp; EEMS</a>
                 </div>
                 <div class="collapse navbar-collapse" id="eemsBar">
@@ -51,7 +51,7 @@
                                         {{ global_data.navbar_status }}
                                    {% elif name == 'config' %}
                                         active
-                                   {% endif %}"><a href="{{ url_for('config') }}"><i class="fa fa-cogs"></i>&nbsp; {{ content['INDEX_CONFIG'] }}</a></li>
+                                   {% endif %}"><a href="{{ url_for('config', lang=global_data.language) }}"><i class="fa fa-cogs"></i>&nbsp; {{ content['INDEX_CONFIG'] }}</a></li>
                         <li class="{% if name == 'index' %}
                                         {{ global_data.navbar_status }}
                                    {% elif name == 'licence' %}

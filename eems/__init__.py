@@ -56,6 +56,7 @@ class Content(db.Model):
 
 # global template data
 global_data = {
+    'language':             '',
     'version':              __version__,
     'session':              'None',
     'navbar_status':        '',
@@ -99,7 +100,6 @@ def index(lang=None):
     # level-0 :: VARIABLES
     global global_data
     global content
-    print lang
 
     # level-1 :: CONFIG
     config_db = sqlite.ConfigHandler()
@@ -108,12 +108,15 @@ def index(lang=None):
     global_data['navbar_status'] = config_db.get('NAVBAR_STATUS')
     global_data['session_icon'] = config_db.get('SESSION_ICON')
     global_data['session_color'] = config_db.get('SESSION_COLOR')
+    global_data['language'] = config_db.get('LANGUAGE')
     home = config_db.get('HOME')
-    # language = config_db.get('LANGUAGE')
     config_db.close()
 
     # level-2 :: CONTENT
-    cms(lang)
+    if lang is None:
+        cms(global_data['language'])
+    else:
+        cms(lang)
 
     profiles = ['new']
     tmp = os.listdir(home)
@@ -170,7 +173,8 @@ def index(lang=None):
 
 
 @app.route('/config/', methods=['GET', 'POST'])
-def config():
+@app.route('/<string:lang>/config/', methods=['GET', 'POST'])
+def config(lang=None):
     # level-0 :: VARIABLES
     global global_data
     global content
@@ -183,6 +187,9 @@ def config():
     global_data['session_icon'] = config_db.get('SESSION_ICON')
     global_data['session_color'] = config_db.get('SESSION_COLOR')
     config_db.close()
+
+    # level-2 :: CONTENT
+    cms(lang)
 
     # level-3 :: SESSION
     session = sqlite.DBHandler()
