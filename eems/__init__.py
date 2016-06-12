@@ -20,8 +20,6 @@ from sensors import ds18b20_new
 eems project information
 """
 
-# TODO CMS !!!
-
 
 __project__ = 'eems'
 __version__ = '0.2.0.1b1'
@@ -56,12 +54,14 @@ class Content(db.Model):
 
 # global template data
 global_data = {
-    'language':             '',
-    'version':              __version__,
-    'session':              'None',
-    'navbar_status':        '',
-    'session_icon':         '',
-    'session_color':        ''
+    'USER':                 '',
+    'HOME':                 '',
+    'SESSION':              '-',
+    'VERSION':              __version__,
+    'NAVBAR_STATUS':        '',
+    'SESSION_ICON':         '',
+    'SESSION_COLOR':        '',
+    'LANGUAGE':             'en',
 }
 
 content = {
@@ -77,13 +77,26 @@ content = {
 }
 
 
-def cms(lang):
+def __db_content(lang):
+    """Private function *__db_content* queries the database and reads the content information related to each language.
+
+    :param lang:
+        Expects a *string* conainting a language code ('de' / 'en').
+    :return:
+        Returns *None*.
+    """
     cms = Content.query.all()
     for i in cms:
         if lang == 'de':
             content[i.POSITION] = i.GERMAN
         elif lang == 'en':
             content[i.POSITION] = i.ENGLISH
+
+
+def __db_general():
+    kms = General.query.all()
+    for i in kms:
+        global_data[i.ITEM] = i.VALUE
 
 
 # test = General.query.all()
@@ -102,24 +115,16 @@ def index(lang=None):
     global content
 
     # level-1 :: CONFIG
-    config_db = sqlite.ConfigHandler()
-    config_db.start()
-    global_data['session'] = config_db.get('SESSION')
-    global_data['navbar_status'] = config_db.get('NAVBAR_STATUS')
-    global_data['session_icon'] = config_db.get('SESSION_ICON')
-    global_data['session_color'] = config_db.get('SESSION_COLOR')
-    global_data['language'] = config_db.get('LANGUAGE')
-    home = config_db.get('HOME')
-    config_db.close()
+    __db_general()
 
     # level-2 :: CONTENT
     if lang is None:
-        cms(global_data['language'])
+        __db_content(global_data['LANGUAGE'])
     else:
-        cms(lang)
+        __db_content(lang)
 
     profiles = ['new']
-    tmp = os.listdir(home)
+    tmp = os.listdir(global_data['HOME'])
     for profile in tmp:
         profiles.append(str(profile[:-3]))
 
@@ -134,7 +139,7 @@ def index(lang=None):
                 # add default tables and contents
                 path = os.path.dirname(__file__)
                 subprocess.call(['cp', '{}/data/db/default.db'.format(path),
-                                 '{}/{}.db'.format(home, profile_tmp)])
+                                 '{}/{}.db'.format(global_data['HOME'], profile_tmp)])
             else:
                 profile_load = request.form['session-load']
                 config_db.write('SESSION', profile_load)
@@ -157,10 +162,10 @@ def index(lang=None):
             config_db.close()
 
             # handle session status
-            global_data['session'] = '-'
-            global_data['navbar_status'] = 'disabled'
-            global_data['session_icon'] = 'unlock'
-            global_data['session_color'] = 'darkred'
+            global_data['SESSION'] = '-'
+            global_data['NAVBAR_STATUS'] = 'disabled'
+            global_data['SESSION_ICON'] = 'unlock'
+            global_data['SESSION_COLOR'] = 'darkred'
             return render_template('index.html', name='index',
                                    global_data=global_data,
                                    content=content,
@@ -180,20 +185,15 @@ def config(lang=None):
     global content
 
     # level-1 :: CONFIG
-    config_db = sqlite.ConfigHandler()
-    config_db.start()
-    global_data['session'] = config_db.get('SESSION')
-    global_data['navbar_status'] = config_db.get('NAVBAR_STATUS')
-    global_data['session_icon'] = config_db.get('SESSION_ICON')
-    global_data['session_color'] = config_db.get('SESSION_COLOR')
-    config_db.close()
+    __db_general()
 
     # level-2 :: CONTENT
-    cms(lang)
+    __db_content(lang)
 
     # level-3 :: SESSION
     session = sqlite.DBHandler()
-    session.start(global_data['session'])
+    print global_data['SESSION']
+    session.start(global_data['SESSION'])
 
     if request.method == 'POST':
         session_config_hw, session_config_sw = session.get_session_config()
@@ -356,17 +356,11 @@ def monitor():
     global content
 
     # level-1 :: CONFIG
-    config_db = sqlite.ConfigHandler()
-    config_db.start()
-    global_data['session'] = config_db.get('SESSION')
-    global_data['navbar_status'] = config_db.get('NAVBAR_STATUS')
-    global_data['session_icon'] = config_db.get('SESSION_ICON')
-    global_data['session_color'] = config_db.get('SESSION_COLOR')
-    config_db.close()
+    __db_general()
 
     # level-3 :: SESSION
     session = sqlite.DBHandler()
-    session.start(global_data['session'])
+    session.start(global_data['SESSION'])
 
     ds18b20_table_check = session.check_table_exist('SENSOR_IDS_DS18B20')
     if ds18b20_table_check:
@@ -387,13 +381,7 @@ def licence():
     global content
 
     # level-1 :: CONFIG
-    config_db = sqlite.ConfigHandler()
-    config_db.start()
-    global_data['session'] = config_db.get('SESSION')
-    global_data['navbar_status'] = config_db.get('NAVBAR_STATUS')
-    global_data['session_icon'] = config_db.get('SESSION_ICON')
-    global_data['session_color'] = config_db.get('SESSION_COLOR')
-    config_db.close()
+    __db_general()
     return render_template('index.html', name='licence',
                            global_data=global_data,
                            content=content)
