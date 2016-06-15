@@ -7,22 +7,14 @@ Initiation module for eems.
 import os
 import subprocess
 from flask import Flask, render_template, request, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
-
+from support.database import init_db, db_session
+from support.models import General, Content
 
 # import eems modules
 from support import sqlite
 # from support import detects, checks
 from sensors import ds18b20_new
 
-
-# new SQLAlchemy implementation
-from support.database import init_db, db_session
-from support.models import General
-
-
-init_db()
-General.query.all()
 
 """
 eems project information
@@ -37,33 +29,18 @@ __author__ = 'Henrik Baran, Aurofree Hoehn'
 
 # Flask object
 app = Flask(__name__)
-path = os.path.dirname(__file__)
-db_dir = '{}/data/db/config.db'.format(path)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////{}'.format(db_dir)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
-db = SQLAlchemy(app)
+# init database connection
+init_db()
+# test = General.query.all()
+# for x in test:
+#     print x.item
 
 
 # close db when app is shutting down
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db_session.remove()
-
-
-class General(db.Model):
-    __tablename__ = 'GENERAL'
-    ID = db.Column('ID', db.INTEGER, primary_key=True, unique=True)
-    ITEM = db.Column('ITEM', db.TEXT)
-    VALUE = db.Column('VALUE', db.TEXT)
-
-
-class Content(db.Model):
-    __tablename__ = 'CONTENT'
-    ID = db.Column('ID', db.INTEGER, primary_key=True, unique=True)
-    POSITION = db.Column('POSITION', db.TEXT)
-    GERMAN = db.Column('GERMAN', db.TEXT)
-    ENGLISH = db.Column('ENGLISH', db.TEXT)
 
 
 # global template data
@@ -102,23 +79,15 @@ def __db_content(lang):
     cms = Content.query.all()
     for i in cms:
         if lang == 'de':
-            content[i.POSITION] = i.GERMAN
+            content[i.position] = i.german
         elif lang == 'en':
-            content[i.POSITION] = i.ENGLISH
+            content[i.position] = i.english
 
 
 def __db_general():
     kms = General.query.all()
     for i in kms:
-        global_data[i.ITEM] = i.VALUE
-
-
-# test = General.query.all()
-# for x in test:
-#     print x.ITEM
-
-# three = General.query.filter_by(ID=3).first()
-# print three.ITEM
+        global_data[i.item] = i.value
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -206,7 +175,6 @@ def config(lang=None):
 
     # level-3 :: SESSION
     session = sqlite.DBHandler()
-    print global_data['SESSION']
     session.start(global_data['SESSION'])
 
     if request.method == 'POST':
