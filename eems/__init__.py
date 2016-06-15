@@ -16,6 +16,14 @@ from support import sqlite
 from sensors import ds18b20_new
 
 
+# new SQLAlchemy implementation
+from support.database import init_db, db_session
+from support.models import General
+
+
+init_db()
+General.query.all()
+
 """
 eems project information
 """
@@ -35,6 +43,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////{}'.format(db_dir)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db = SQLAlchemy(app)
+
+
+# close db when app is shutting down
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db_session.remove()
 
 
 class General(db.Model):
