@@ -8,7 +8,7 @@ import os
 import subprocess
 from flask import Flask, render_template, request, redirect, url_for
 from support.database import init_db, db_session
-from support.models import General, Content
+from support.models import General, Content, Sessions
 
 # import eems modules
 from support import sqlite
@@ -32,9 +32,11 @@ app = Flask(__name__)
 
 # init database connection
 init_db()
-# test = General.query.all()
-# for x in test:
-#     print x.item
+
+# TODO very if possible to get JSON/dict directly
+test = General.query.all()
+for x in test:
+    print x.item, x.value
 
 
 # close db when app is shutting down

@@ -15,6 +15,7 @@ test.*
 
 # excel files
 *.xlsx
+todo
 
 # folders
 build/

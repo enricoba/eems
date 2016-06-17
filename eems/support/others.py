@@ -8,7 +8,6 @@ import os
 import subprocess
 
 
-# TODO auch nicht mehr notwendig ?!
 def get_user():
     """Public function *get_user* determines the actual user name.
 
