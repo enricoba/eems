@@ -9,7 +9,8 @@ import sys
 import argparse
 import subprocess
 
-from eems.support import sqlite
+from eems.support.database import init_db, db_session
+from eems.support.models import General
 
 
 help_text = """Help Information for eems setup.
@@ -65,12 +66,15 @@ def main():
     if args.command == 'setup':
         file_path = '{}/setup.sh'.format(path)
         actual_user = get_user()
-        subprocess.call([file_path, actual_user])
-        config_db = sqlite.ConfigHandler()
-        config_db.start()
-        config_db.write('USER', actual_user)
-        config_db.write('HOME', '/home/{}/eems'.format(actual_user))
-        config_db.close()
+
+        init_db()
+        user = General('USER', actual_user)
+        home = General('HOME', '/home/{}/eems'.format(actual_user))
+        db_session.add_all(user, home)
+        db_session.commit()
+        db_session.remove()
+
+        # subprocess.call([file_path, actual_user])
     elif args.command == 'uninstall':
         actual_user = get_user()
         file_path = '{}/uninstall.sh'.format(path)

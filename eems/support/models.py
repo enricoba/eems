@@ -4,8 +4,7 @@ from database import Base
 
 class General(Base):
     __tablename__ = 'GENERAL'
-    id = Column('ID', Integer, primary_key=True, unique=True)
-    item = Column('ITEM', Text)
+    item = Column('ITEM', Text, primary_key=True, unique=True)
     value = Column('VALUE', Text)
 
     def __init__(self, item=None, value=None):
