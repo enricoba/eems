@@ -36,7 +36,7 @@ db = SQLAlchemy(app)
 
 
 class General(db.Model):
-    __tablename__ = 'General'
+    __tablename__ = 'general'
     id = db.Column(db.Integer, primary_key=True, unique=True)
     item = db.Column(db.Text)
     value = db.Column(db.Text)
@@ -47,7 +47,7 @@ class General(db.Model):
 
 
 class Content(db.Model):
-    __tablename__ = 'Content'
+    __tablename__ = 'content'
     id = db.Column(db.Integer, primary_key=True, unique=True)
     position = db.Column(db.Text)
     german = db.Column(db.Text)
@@ -60,14 +60,27 @@ class Content(db.Model):
 
 
 class Sessions(db.Model):
-    __tablename__ = 'Sessions'
+    __tablename__ = 'sessions'
     id = db.Column(db.Integer, primary_key=True, unique=True)
     session = db.Column(db.Text)
-    data_id = db.Column(db.Text)
 
-    def __init__(self, session=None, data_id=None):
+    def __init__(self, session=None):
         self.session = session
-        self.data_id = data_id
+
+
+class SensorsUsed(db.Model):
+    __tablename__ = 'sensors_used'
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    code = db.Column(db.Text)
+    name = db.Column(db.Text)
+    value = db.Column(db.REAL)
+    session_id = db.Column(db.Integer)
+
+    def __init__(self, code=None, name=None, value=None, session_id=None):
+        self.code = code
+        self.name = name
+        self.value = value
+        self.session_id = session_id
 
 
 def __db_content(lang):
@@ -101,7 +114,7 @@ def index(lang=None):
         db.session.commit()
         content = __db_content(lang)
 
-    profiles = ['new']
+    profiles = [content['HOME_NEW'].encode('utf-8')]
     sessions = Sessions.query.all()
     for i in sessions:
         profiles.append(i.session.encode("utf-8"))
@@ -115,7 +128,7 @@ def index(lang=None):
             if len(profile_tmp):
                 session = General.query.filter_by(item='SESSION').first()
                 session.value = profile_tmp
-                session_add = Sessions(profile_tmp, 1)
+                session_add = Sessions(profile_tmp)
                 db.session.add(session_add)
             else:
                 profile_load = request.form['session-load']
@@ -177,6 +190,20 @@ def config(lang=None):
                                global_data=global_data,
                                content=content)
     else:
+        session = General.query.filter_by(item='SESSION').first()
+        print session.value
+        tmp = Sessions.query.filter_by(session=session.value).first()
+        session_id = tmp.id
+        # level-10 :: SENSORS
+        s_ds18b20 = ds18b20.DS18B20()
+        # s_list = s_ds18b20.detect()
+        s_list = ['sensor-1', 'sensor-2', 'sensor-3']
+        if len(s_list):
+            for s in s_list:
+                tmp = SensorsUsed(code=s, session_id=session_id)
+                db.session.add(tmp)
+            db.session.commit()
+
         # level-99 :: CONFIG
         global_data = __db_general()
         return render_template('index.html', name='config',
