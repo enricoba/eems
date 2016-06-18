@@ -40,3 +40,9 @@ class Sessions(Base):
         self.session = session
         self.frontend = frontend
         self.backend = backend
+
+
+class Test(Base):
+    __tablename__ = 'TEST'
+    id = Column('id', Integer, primary_key=True)
+    name = Column('name', Text)
