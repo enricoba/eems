@@ -103,6 +103,10 @@ def __db_general():
 
 
 @app.route('/', methods=['GET', 'POST'])
+def start():
+    return redirect(url_for('index', lang='en'))
+
+
 @app.route('/<string:lang>/', methods=['GET', 'POST'])
 def index(lang=None):
     # level-0 :: CONTENT
@@ -143,7 +147,7 @@ def index(lang=None):
             icon.value = 'lock'
             color.value = 'green'
             db.session.commit()
-            return redirect(url_for('config'))
+            return redirect(url_for('config', lang=lang))
         elif 'sessionLogout' in request.form:
             session = General.query.filter_by(item='SESSION').first()
             status = General.query.filter_by(item='NAVBAR_STATUS').first()
@@ -191,7 +195,6 @@ def config(lang=None):
                                content=content)
     else:
         session = General.query.filter_by(item='SESSION').first()
-        print session.value
         tmp = Sessions.query.filter_by(session=session.value).first()
         session_id = tmp.id
         # level-10 :: SENSORS
