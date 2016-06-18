@@ -198,7 +198,7 @@ def config(lang=None):
         tmp = Sessions.query.filter_by(session=session.value).first()
         session_id = tmp.id
         # level-10 :: SENSORS
-        s_ds18b20 = ds18b20.DS18B20()
+        # s_ds18b20 = ds18b20.DS18B20()
         # s_list = s_ds18b20.detect()
         s_list = ['sensor-1', 'sensor-2', 'sensor-3']
         if len(s_list):
