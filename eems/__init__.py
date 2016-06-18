@@ -5,7 +5,6 @@ Initiation module for eems.
 
 # import external modules
 import os
-import subprocess
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
@@ -28,12 +27,11 @@ __author__ = 'Henrik Baran, Aurofree Hoehn'
 # Flask object
 app = Flask(__name__)
 # check if server or development environment
-if os.path.exists('/var/www/eems/eems/data/db/'):
-    path = '/var/www/eems/eems/data/db/config.db'
+if os.path.exists('/var/www/eems/eems/data/'):
+    path = '/var/www/eems/eems/data/config.db'
 else:
-    path = '{}/data/db/config.db'.format(os.path.dirname(__file__))
+    path = '{}/data/config.db'.format(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////{}'.format(path)
-app.config['SQLALCHEMY_NATIVE_UNICODE'] = True
 db = SQLAlchemy(app)
 
 
