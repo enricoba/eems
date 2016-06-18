@@ -94,13 +94,13 @@ def __db_general():
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/<string:lang>/', methods=['GET', 'POST'])
 def index(lang=None):
-    # level-0 :: CONFIG
-    global_data = __db_general()
-
-    # level-1 :: CONTENT
+    # level-0 :: CONTENT
     if lang is None:
-        content = __db_content(global_data['LANGUAGE'])
+        content = __db_content('en')
     else:
+        language = General.query.filter_by(item='LANGUAGE').first()
+        language.value = lang
+        db.session.commit()
         content = __db_content(lang)
 
     profiles = ['new']
@@ -119,11 +119,6 @@ def index(lang=None):
                 session.value = profile_tmp
                 session_add = Sessions(profile_tmp, 1)
                 db.session.add(session_add)
-
-                # add default tables and contents
-                path = os.path.dirname(__file__)
-                subprocess.call(['cp', '{}/data/db/default.db'.format(path),
-                                 '{}/{}.db'.format(global_data['HOME'], profile_tmp)])
             else:
                 profile_load = request.form['session-load']
                 session = General.query.filter_by(item='SESSION').first()
@@ -149,13 +144,15 @@ def index(lang=None):
             color.value = 'darkred'
             db.session.commit()
 
-            # handle session status
+            # level-99 :: CONFIG
             global_data = __db_general()
             return render_template('index.html', name='index',
                                    global_data=global_data,
                                    content=content,
                                    profiles=profiles, len=len(profiles))
     else:
+        # level-99 :: CONFIG
+        global_data = __db_general()
         return render_template('index.html', name='index',
                                global_data=global_data,
                                content=content,
@@ -165,21 +162,25 @@ def index(lang=None):
 @app.route('/config/', methods=['GET', 'POST'])
 @app.route('/<string:lang>/config/', methods=['GET', 'POST'])
 def config(lang=None):
-    # level-0 :: CONFIG
-    global_data = __db_general()
-
-    # level-1 :: CONTENT
+    # level-0 :: CONTENT
     if lang is None:
-        content = __db_content(global_data['LANGUAGE'])
+        content = __db_content('en')
     else:
+        language = General.query.filter_by(item='LANGUAGE').first()
+        language.value = lang
+        db.session.commit()
         content = __db_content(lang)
 
     # level-2 :: HANDLING
     if request.method == 'POST':
+        # level-99 :: CONFIG
+        global_data = __db_general()
         return render_template('index.html', name='config',
                                global_data=global_data,
                                content=content)
     else:
+        # level-99 :: CONFIG
+        global_data = __db_general()
         return render_template('index.html', name='config',
                                global_data=global_data,
                                content=content)
@@ -188,15 +189,17 @@ def config(lang=None):
 @app.route('/monitor/')
 @app.route('/<string:lang>/monitor/')
 def monitor(lang=None):
-    # level-0 :: CONFIG
-    global_data = __db_general()
-
-    # level-1 :: CONTENT
+    # level-0 :: CONTENT
     if lang is None:
-        content = __db_content(global_data['LANGUAGE'])
+        content = __db_content('en')
     else:
+        language = General.query.filter_by(item='LANGUAGE').first()
+        language.value = lang
+        db.session.commit()
         content = __db_content(lang)
 
+    # level-99 :: CONFIG
+    global_data = __db_general()
     return render_template('index.html', name='monitor',
                            global_data=global_data,
                            content=content)
@@ -205,14 +208,17 @@ def monitor(lang=None):
 @app.route('/licence/')
 @app.route('/<string:lang>/licence/')
 def licence(lang=None):
-    # level-0 :: CONFIG
-    global_data = __db_general()
-
-    # level-1 :: CONTENT
+    # level-0 :: CONTENT
     if lang is None:
-        content = __db_content(global_data['LANGUAGE'])
+        content = __db_content('en')
     else:
+        language = General.query.filter_by(item='LANGUAGE').first()
+        language.value = lang
+        db.session.commit()
         content = __db_content(lang)
+
+    # level-99 :: CONFIG
+    global_data = __db_general()
     return render_template('index.html', name='licence',
                            global_data=global_data,
                            content=content)
