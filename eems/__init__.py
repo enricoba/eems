@@ -304,7 +304,7 @@ def config(lang=None):
             for t in threads:
                 t.join()
             for code in s_list:
-                sensor = SensorsUsed.query.filter_by(code=code, session_id=sensor_id).first()
+                sensor = SensorsUsed.query.filter_by(code=code, session_id=session_id).first()
                 if sensor is None:
                     tmp = SensorsUsed(code=code, value=s_dict.dic[code], session_id=session_id, sensor_id=sensor_id)
                     db.session.add(tmp)
