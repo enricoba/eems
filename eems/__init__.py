@@ -81,8 +81,8 @@ app = Flask(__name__)
 if os.path.exists('/var/www/eems/eems/data/'):
     path = '/var/www/eems/eems/data/config.db'
 else:
-    # path = '{}/data/config.db'.format(os.path.dirname(__file__))
-    path = '/home/pi/git_hub/eems/eems/data/config.db'
+    path = '{}/data/config.db'.format(os.path.dirname(__file__))
+    # path = '/home/pi/git_hub/eems/eems/data/config.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////{}'.format(path)
 db = SQLAlchemy(app)
 
@@ -265,7 +265,7 @@ def config(lang=None):
                                global_data=global_data,
                                content=content)
     else:
-        query = General.query.filter_by(item='SESSION').first()
+        """query = General.query.filter_by(item='SESSION').first()
         tmp = Sessions.query.filter_by(session=query.value).first()
         session_id = tmp.id
 
@@ -289,13 +289,18 @@ def config(lang=None):
             for s in s_list:
                 tmp = SensorsUsed(code=s, value=s_dict.dic[s], session_id=session_id, sensor_id=sensor_id)
                 db.session.add(tmp)
-            db.session.commit()
+            db.session.commit()"""
 
-        # level-99 :: CONFIG
+        # level-99 :: DB
+        sensors_used = SensorsUsed.query.all()
+        sensors_supported = SensorsSupported.query.all()
+
         global_data = __db_general()
         return render_template('index.html', name='config',
                                global_data=global_data,
-                               content=content)
+                               content=content,
+                               sensors_used=sensors_used,
+                               sensors_supported=sensors_supported)
 
 
 @app.route('/monitor/')
