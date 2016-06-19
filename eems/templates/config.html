@@ -6,9 +6,9 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Sensor-ID</th>
-                            <th>Name</th>
-                            <th>Value</th>
+                            <th>{{ content.CONFIG_TH_1 }}</th> <!-- Sensor-ID -->
+                            <th>{{ content.CONFIG_TH_2 }}</th> <!-- Name -->
+                            <th>{{ content.CONFIG_TH_3 }}</th> <!-- Value -->
                         </tr>
                     </thead>
                     <tbody>
@@ -16,7 +16,7 @@
                             {% if i.sensor_id == s.id %}
                                 <tr>
                                     <td>{{ i.code }}</td>
-                                    <td><input class="form-control" type="text" placeholder="user defined name"></td>
+                                    <td><input class="form-control" type="text" placeholder={{ content.CONFIG_TB_PLACEHOLDER }}></td>
                                     <td>{{ i.value }}{{ s.unit }}</td>
                                 </tr>
                             {% endif %}
