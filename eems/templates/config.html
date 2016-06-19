@@ -13,7 +13,7 @@
                     </thead>
                     <tbody>
                         {% for i in sensors_used %}
-                            {% if i.sensor_id == s.id and i.session_id == session_id %}
+                            {% if i.sensor_id == s.id and i.session_id == global_data.SESSION_ID|int %}
                                 <tr>
                                     <td>{{ i.code }}</td>
                                     <td><input class="form-control" type="text" placeholder={{ content.CONFIG_TB_PLACEHOLDER }}></td>

@@ -17,15 +17,6 @@ from sensors import ds18b20
 
 class _SensorDictionary(object):
     def __init__(self, s_list):
-        """Private class *_SensorDictionary* provides functions to manage the
-        sensors dictionary.
-
-        :param dic:
-            Expects a sensor dictionary.
-        :return:
-            Returns a in-memory object tree providing the functions
-            *set_temp*, *get_dic* and *reset_dic*.
-        """
         tmp = dict()
         for s in sorted(s_list):
             tmp[s] = None
@@ -33,33 +24,13 @@ class _SensorDictionary(object):
         self.lock = Lock()
 
     def set_temp(self, sensor, temp):
-        """Public function *set_temp* sets the value for an individual key.
-
-        :param sensor:
-            Expects a string of the sensor name to match with the sensor key.
-        :param temp:
-            Expects an integer or a float containing the sensor value
-            to store.
-        :return:
-            Returns *None*.
-        """
         with self.lock:
             self.dic.__setitem__(sensor, temp)
 
     def get_dic(self):
-        """Public function *get_dic* returns the sensors dictionary.
-
-        :return:
-            Returns the dictionary.
-        """
         return self.dic
 
     def reset_dic(self):
-        """Public function *reset_dic* sets all dictionary values to None.
-
-        :return:
-            Returns *None*.
-        """
         for sensor in self.dic.keys():
             self.dic.__setitem__(sensor, None)
 
@@ -81,8 +52,10 @@ app = Flask(__name__)
 if os.path.exists('/var/www/eems/eems/data/'):
     path = '/var/www/eems/eems/data/config.db'
 else:
-    # path = '{}/data/config.db'.format(os.path.dirname(__file__))
-    path = '/home/pi/git_hub/eems/eems/data/config.db'
+    print os.path.dirname(__file__)
+    path = '{}/data/config.db'.format(os.path.dirname(__file__))
+    print path
+    # path = '/home/pi/git_hub/eems/eems/data/config.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////{}'.format(path)
 
 db = SQLAlchemy(app)
@@ -234,16 +207,28 @@ def index(lang=None):
             icon.value = 'lock'
             color.value = 'green'
             db.session.commit()
+
+            # get session id from sessions table by session name of general table
+            query = General.query.filter_by(item='SESSION').first()
+            s_id = Sessions.query.filter_by(session=query.value).first()
+
+            # update session_id in general table
+            session_id = General.query.filter_by(item='SESSION_ID').first()
+            session_id.value = s_id.id
+            db.session.commit()
+
             return redirect(url_for('config', lang=lang))
         elif 'sessionLogout' in request.form:
             session = General.query.filter_by(item='SESSION').first()
             status = General.query.filter_by(item='NAVBAR_STATUS').first()
             icon = General.query.filter_by(item='SESSION_ICON').first()
             color = General.query.filter_by(item='SESSION_COLOR').first()
+            session_id = General.query.filter_by(item='SESSION_ID').first()
             session.value = '-'
             status.value = 'disabled'
             icon.value = 'unlock'
             color.value = 'darkred'
+            session_id.value = '-'
             db.session.commit()
 
             # level-99 :: CONFIG
@@ -284,14 +269,15 @@ def config(lang=None):
         query = General.query.filter_by(item='SESSION').first()
         tmp = Sessions.query.filter_by(session=query.value).first()
         session_id = tmp.id
-        print session_id
+
+        query = General.query.filter_by(item='SESSION_ID').first()
+        print query.value, type(query.value)
 
         # level-10 :: SENSORS - DS18B20
         query = SensorsSupported.query.filter_by(name='ds18b20').first()
         sensor_id = query.id
         s_ds18b20 = ds18b20.DS18B20()
         s_list = s_ds18b20.detect()
-        # s_list = ['sensor-1', 'sensor-2', 'sensor-3']
         if len(s_list):
             # function to get sensor values
             s_dict = _SensorDictionary(s_list)
@@ -321,8 +307,7 @@ def config(lang=None):
                                global_data=global_data,
                                content=content,
                                sensors_used=sensors_used,
-                               sensors_supported=sensors_supported,
-                               session_id=session_id)
+                               sensors_supported=sensors_supported)
 
 
 @app.route('/monitor/')
