@@ -304,6 +304,8 @@ def config(lang=None):
                 t.join()
             for s in s_list:
                 sensor = SensorsUsed.query.filter_by(code=s).first()
+                print sensor
+                print sensor.id
                 if sensor:
                     if session_id in sensor.session_id:
                         sensor.value = s_dict.dic[s]
