@@ -71,7 +71,7 @@ eems project information
 
 __project__ = 'eems'
 __version__ = '0.2.0.1b1'
-__copyright__ = '2016, Henrik Baran, Aurofree Hoehn'
+__copyright__ = '2015-2016, Henrik Baran, Aurofree Hoehn'
 __author__ = 'Henrik Baran, Aurofree Hoehn'
 
 
@@ -84,6 +84,7 @@ else:
     path = '{}/data/config.db'.format(os.path.dirname(__file__))
     # path = '/home/pi/git_hub/eems/eems/data/config.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////{}'.format(path)
+
 db = SQLAlchemy(app)
 
 
@@ -150,6 +151,21 @@ class SensorsSupported(db.Model):
         self.unit = unit
 
 
+class Data(db.Model):
+    __tablename__ = 'data'
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    timestamp = db.Column(db.Integer)
+    value = db.Column(db.Float)
+    session_id = db.Column(db.Integer)
+    sensor_id = db.Column(db.Integer)
+
+    def __init__(self, timestamp=None, value=None, session_id=None, sensor_id=None):
+        self.timestamp = timestamp
+        self.value = value
+        self.session_id = session_id
+        self.sensor_id = sensor_id
+
+
 # db.create_all()
 # db.session.commit()
 
@@ -159,9 +175,9 @@ def __db_content(lang):
     content = Content.query.all()
     for i in content:
         if lang == 'de':
-            tmp_dict[i.position] = i.german.encode('utf-8')
+            tmp_dict[i.position] = i.german
         elif lang == 'en':
-            tmp_dict[i.position] = i.english.encode('utf-8')
+            tmp_dict[i.position] = i.english
     return tmp_dict
 
 
@@ -169,7 +185,7 @@ def __db_general():
     tmp_dict = dict()
     general = General.query.all()
     for i in general:
-        tmp_dict[i.item] = i.value.encode('utf-8')
+        tmp_dict[i.item] = i.value
     return tmp_dict
 
 
@@ -189,7 +205,7 @@ def index(lang=None):
         db.session.commit()
         content = __db_content(lang)
 
-    profiles = [content['HOME_NEW']]
+    profiles = [content['HOME_NEW'].encode('utf-8')]
     sessions = Sessions.query.all()
     for i in sessions:
         profiles.append(i.session.encode('utf-8'))
