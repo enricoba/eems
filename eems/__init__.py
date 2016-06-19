@@ -265,7 +265,7 @@ def config(lang=None):
                                global_data=global_data,
                                content=content)
     else:
-        """query = General.query.filter_by(item='SESSION').first()
+        query = General.query.filter_by(item='SESSION').first()
         tmp = Sessions.query.filter_by(session=query.value).first()
         session_id = tmp.id
 
@@ -287,9 +287,13 @@ def config(lang=None):
             for t in threads:
                 t.join()
             for s in s_list:
+                # aus DB lesen was schon drin
+                # DB mit aktuellem Sensor vergleichen
+                # wenn nicht in DB sensor hinzufügen
+                # wenn in DB und Session-ID identisch value updaten
                 tmp = SensorsUsed(code=s, value=s_dict.dic[s], session_id=session_id, sensor_id=sensor_id)
                 db.session.add(tmp)
-            db.session.commit()"""
+            db.session.commit()
 
         # level-99 :: DB
         sensors_used = SensorsUsed.query.all()
