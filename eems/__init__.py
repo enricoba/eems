@@ -157,13 +157,13 @@ class Data(db.Model):
     timestamp = db.Column(db.Integer)
     value = db.Column(db.Float)
     session_id = db.Column(db.Integer)
-    sensor_id = db.Column(db.Integer)
+    sensor_name_id = db.Column(db.Integer)
 
-    def __init__(self, timestamp=None, value=None, session_id=None, sensor_id=None):
+    def __init__(self, timestamp=None, value=None, session_id=None, sensor_name_id=None):
         self.timestamp = timestamp
         self.value = value
         self.session_id = session_id
-        self.sensor_id = sensor_id
+        self.sensor_name_id = sensor_name_id
 
 
 # db.create_all()
@@ -303,12 +303,23 @@ def config(lang=None):
             for t in threads:
                 t.join()
             for s in s_list:
+                sensor = SensorsUsed.query.filter_by(code=s).first()
+                if s in sensor.code:
+                    print 'erstes'
+
+                if not sensor:
+                    print 'zweites'
+                    tmp = SensorsUsed(code=s, value=s_dict.dic[s], session_id=session_id, sensor_id=sensor_id)
+                    db.session.add(tmp)
+                else:
+                    print 'else'
+                    sensor.value = s_dict.dic[s]
+
                 # aus DB lesen was schon drin
                 # DB mit aktuellem Sensor vergleichen
                 # wenn nicht in DB sensor hinzufügen
                 # wenn in DB und Session-ID identisch value updaten
-                tmp = SensorsUsed(code=s, value=s_dict.dic[s], session_id=session_id, sensor_id=sensor_id)
-                db.session.add(tmp)
+
             db.session.commit()
 
         # level-99 :: DB
