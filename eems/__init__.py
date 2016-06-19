@@ -150,26 +150,26 @@ class SensorsSupported(db.Model):
         self.unit = unit
 
 
+# db.create_all()
+# db.session.commit()
+
+
 def __db_content(lang):
     tmp_dict = dict()
     content = Content.query.all()
     for i in content:
         if lang == 'de':
-            tmp_dict[i.position] = i.german
+            tmp_dict[i.position] = i.german.encode('utf-8')
         elif lang == 'en':
-            tmp_dict[i.position] = i.english
+            tmp_dict[i.position] = i.english.encode('utf-8')
     return tmp_dict
-
-
-# db.create_all()
-# db.session.commit()
 
 
 def __db_general():
     tmp_dict = dict()
     general = General.query.all()
     for i in general:
-        tmp_dict[i.item] = i.value
+        tmp_dict[i.item] = i.value.encode('utf-8')
     return tmp_dict
 
 
@@ -189,10 +189,10 @@ def index(lang=None):
         db.session.commit()
         content = __db_content(lang)
 
-    profiles = [content['HOME_NEW'].encode('utf-8')]
+    profiles = [content['HOME_NEW']]
     sessions = Sessions.query.all()
     for i in sessions:
-        profiles.append(i.session.encode("utf-8"))
+        profiles.append(i.session.encode('utf-8'))
 
     if request.method == 'POST':
         if 'session-start' in request.form:
