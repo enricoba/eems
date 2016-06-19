@@ -308,7 +308,7 @@ def config(lang=None):
                     tmp = SensorsUsed(code=s, value=s_dict.dic[s], session_id=session_id, sensor_id=sensor_id)
                     db.session.add(tmp)
                 else:
-                    if session_id in sensor.session_id:
+                    if session_id == sensor.session_id:
                         sensor.value = s_dict.dic[s]
 
                 # aus DB lesen was schon drin
