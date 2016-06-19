@@ -46,14 +46,13 @@
 
     function click_button() {
         swal({
-            title: "Warning!",
-            text: "If you press Logout, you will be logged out ... no " +
-            "seriously, monitoring will stop. However, you can still access " +
-            "your monitored data afterwards.",
+            title: "{{ content.HOME_JS_LOGOUT_TITLE }}",
+            text: "{{ content.HOME_JS_LOGOUT_TEXT }}",
             type: "warning",
             showCancelButton: true,
             closeOnConfirm: true,
-            confirmButtonText: "Logout",
+            confirmButtonText: "{{ content.HOME_LOGOUT }}",
+            cancelButtonText: "{{ content.HOME_CANCEL }}",
             confirmButtonColor: "#ec6c62"
         }, function() {
             document.logout.sessionLogout.click();
@@ -67,8 +66,8 @@
             return true;
         } else if (input_value == null || input_value == "") {
             sweetAlert({
-                title: "Oops!",
-                text: "Please define a project name.",
+                title: "{{ content.HOME_JS_FAIL_TITLE }}",
+                text: "{{ content.HOME_JS_FAIL_TEXT }}",
                 type: "error"
             });
             return false;
@@ -77,8 +76,8 @@
             for (i = 0; i < len; i++) {
                 if (input_value == profiles[i]) {
                   sweetAlert({
-                    title: "We are sorry!",
-                    text: "This project already exists, please pick another name.",
+                    title: "{{ content.HOME_JS_SRY_TITLE }}",
+                    text: "{{ content.HOME_JS_SRY_TEXT }}",
                     type: "error"
                 });
                 return false;
