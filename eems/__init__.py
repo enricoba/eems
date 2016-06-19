@@ -267,9 +267,6 @@ def config(lang=None):
         tmp = Sessions.query.filter_by(session=query.value).first()
         session_id = tmp.id
 
-        query = General.query.filter_by(item='SESSION_ID').first()
-        print query.value, type(query.value)
-
         # level-10 :: SENSORS - DS18B20
         query = SensorsSupported.query.filter_by(name='ds18b20').first()
         sensor_id = query.id

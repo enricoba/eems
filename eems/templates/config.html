@@ -1,7 +1,7 @@
 <div class="form-group">
     <form role="form" method="post" action="" onsubmit="">
         {% for s in sensors_supported %}
-            <h4>{{ s.name.upper() }} ({{ s.typ }})</h4>
+            <h4>{{ s.name.upper() }}</h4>
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
@@ -16,7 +16,7 @@
                             {% if i.sensor_id == s.id and i.session_id == global_data.SESSION_ID|int %}
                                 <tr>
                                     <td>{{ i.code }}</td>
-                                    <td><input class="form-control" type="text" placeholder={{ content.CONFIG_TB_PLACEHOLDER }}></td>
+                                    <td><input class="form-control" type="text" placeholder="{{ content.CONFIG_TB_PLACEHOLDER }}"></td>
                                     <td>{{ i.value }}{{ s.unit }}</td>
                                 </tr>
                             {% endif %}

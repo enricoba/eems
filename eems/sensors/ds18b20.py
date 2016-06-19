@@ -20,6 +20,7 @@ class DS18B20(object):
                 file_content = slave.readlines()
         except IOError as e:
             print e
+            s_dict.set_temp(sensor, 8888)
         else:
             if file_content[0].strip()[-3:] == 'YES':
                 value = file_content[1].strip()[29:]
