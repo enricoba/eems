@@ -81,8 +81,8 @@ app = Flask(__name__)
 if os.path.exists('/var/www/eems/eems/data/'):
     path = '/var/www/eems/eems/data/config.db'
 else:
-    # path = '{}/data/config.db'.format(os.path.dirname(__file__))
-    path = '/home/pi/git_hub/eems/eems/data/config.db'
+    path = '{}/data/config.db'.format(os.path.dirname(__file__))
+    # path = '/home/pi/git_hub/eems/eems/data/config.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////{}'.format(path)
 
 db = SQLAlchemy(app)
@@ -284,6 +284,7 @@ def config(lang=None):
         query = General.query.filter_by(item='SESSION').first()
         tmp = Sessions.query.filter_by(session=query.value).first()
         session_id = tmp.id
+        print session_id
 
         # level-10 :: SENSORS - DS18B20
         query = SensorsSupported.query.filter_by(name='ds18b20').first()
@@ -302,20 +303,13 @@ def config(lang=None):
                 t.start()
             for t in threads:
                 t.join()
-            for s in s_list:
-                sensor = SensorsUsed.query.filter_by(code=s).first()
+            for code in s_list:
+                sensor = SensorsUsed.query.filter_by(code=code, session_id=sensor_id).first()
                 if sensor is None:
-                    tmp = SensorsUsed(code=s, value=s_dict.dic[s], session_id=session_id, sensor_id=sensor_id)
+                    tmp = SensorsUsed(code=code, value=s_dict.dic[code], session_id=session_id, sensor_id=sensor_id)
                     db.session.add(tmp)
                 else:
-                    if session_id == sensor.session_id:
-                        sensor.value = s_dict.dic[s]
-
-                # aus DB lesen was schon drin
-                # DB mit aktuellem Sensor vergleichen
-                # wenn nicht in DB sensor hinzufügen
-                # wenn in DB und Session-ID identisch value updaten
-
+                    sensor.value = s_dict.dic[code]
             db.session.commit()
 
         # level-99 :: DB
