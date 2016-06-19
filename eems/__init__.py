@@ -5,12 +5,63 @@ Initiation module for eems.
 
 # import external modules
 import os
+import collections
+from threading import Thread, Lock
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 
 # import eems modules
 from sensors import ds18b20
+
+
+class _SensorDictionary(object):
+    def __init__(self, s_list):
+        """Private class *_SensorDictionary* provides functions to manage the
+        sensors dictionary.
+
+        :param dic:
+            Expects a sensor dictionary.
+        :return:
+            Returns a in-memory object tree providing the functions
+            *set_temp*, *get_dic* and *reset_dic*.
+        """
+        tmp = dict()
+        for s in sorted(s_list):
+            tmp[s] = None
+        self.dic = collections.OrderedDict(sorted(tmp.items(), key=lambda t: t[0]))
+        self.lock = Lock()
+
+    def set_temp(self, sensor, temp):
+        """Public function *set_temp* sets the value for an individual key.
+
+        :param sensor:
+            Expects a string of the sensor name to match with the sensor key.
+        :param temp:
+            Expects an integer or a float containing the sensor value
+            to store.
+        :return:
+            Returns *None*.
+        """
+        with self.lock:
+            self.dic.__setitem__(sensor, temp)
+
+    def get_dic(self):
+        """Public function *get_dic* returns the sensors dictionary.
+
+        :return:
+            Returns the dictionary.
+        """
+        return self.dic
+
+    def reset_dic(self):
+        """Public function *reset_dic* sets all dictionary values to None.
+
+        :return:
+            Returns *None*.
+        """
+        for sensor in self.dic.keys():
+            self.dic.__setitem__(sensor, None)
 
 
 """
@@ -75,12 +126,27 @@ class SensorsUsed(db.Model):
     name = db.Column(db.Text)
     value = db.Column(db.REAL)
     session_id = db.Column(db.Integer)
+    sensor_id = db.Column(db.Integer)
 
-    def __init__(self, code=None, name=None, value=None, session_id=None):
+    def __init__(self, code=None, name=None, value=None, session_id=None, sensor_id=None):
         self.code = code
         self.name = name
         self.value = value
         self.session_id = session_id
+        self.sensor_id = sensor_id
+
+
+class SensorsSupported(db.Model):
+    __tablename__ = 'sensors_supported'
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    name = db.Column(db.Text)
+    typ = db.Column(db.Text)
+    unit = db.Column(db.Text)
+
+    def __init__(self, name=None, typ=None, unit=None):
+        self.name = name
+        self.typ = typ
+        self.unit = unit
 
 
 def __db_content(lang):
@@ -92,6 +158,10 @@ def __db_content(lang):
         elif lang == 'en':
             tmp_dict[i.position] = i.english
     return tmp_dict
+
+
+# db.create_all()
+# db.session.commit()
 
 
 def __db_general():
@@ -194,16 +264,29 @@ def config(lang=None):
                                global_data=global_data,
                                content=content)
     else:
-        session = General.query.filter_by(item='SESSION').first()
-        tmp = Sessions.query.filter_by(session=session.value).first()
+        query = General.query.filter_by(item='SESSION').first()
+        tmp = Sessions.query.filter_by(session=query.value).first()
         session_id = tmp.id
-        # level-10 :: SENSORS
-        # s_ds18b20 = ds18b20.DS18B20()
-        # s_list = s_ds18b20.detect()
-        s_list = ['sensor-1', 'sensor-2', 'sensor-3']
+
+        # level-10 :: SENSORS - DS18B20
+        query = SensorsSupported.query.filter_by(name='ds18b20').first()
+        sensor_id = query.id
+        s_ds18b20 = ds18b20.DS18B20()
+        s_list = s_ds18b20.detect()
+        # s_list = ['sensor-1', 'sensor-2', 'sensor-3']
         if len(s_list):
+            # function to get sensor values
+            s_dict = _SensorDictionary(s_list)
+            threads = list()
             for s in s_list:
-                tmp = SensorsUsed(code=s, session_id=session_id)
+                threads.append(Thread(target=s_ds18b20.read, args=(s, s_dict)))
+            for t in threads:
+                t.setDaemon(True)
+                t.start()
+            for t in threads:
+                t.join()
+            for s in s_list:
+                tmp = SensorsUsed(code=s, value=s_dict.dic[s], session_id=session_id, sensor_id=sensor_id)
                 db.session.add(tmp)
             db.session.commit()
 

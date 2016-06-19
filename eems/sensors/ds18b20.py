@@ -13,7 +13,7 @@ class DS18B20(object):
         self.path_config = '/boot/config.txt'
         self.dir_sensors = '/sys/bus/w1/devices'
 
-    def read(self, sensor):
+    def read(self, sensor, s_dict):
         dir_file = '{}/{}'.format(self.dir_sensors, sensor)
         try:
             with open(dir_file + '/w1_slave', 'r') as slave:
@@ -24,9 +24,9 @@ class DS18B20(object):
             if file_content[0].strip()[-3:] == 'YES':
                 value = file_content[1].strip()[29:]
                 temp = round(float(value) / 1000, 1)
-                return temp
+                s_dict.set_temp(sensor, temp)
             else:
-                return 9999
+                s_dict.set_temp(sensor, 9999)
 
     def check(self):
         if self.__check_w1_config() is True and self.__check_w1_modules() is True:
