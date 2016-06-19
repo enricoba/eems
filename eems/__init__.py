@@ -81,8 +81,8 @@ app = Flask(__name__)
 if os.path.exists('/var/www/eems/eems/data/'):
     path = '/var/www/eems/eems/data/config.db'
 else:
-    path = '{}/data/config.db'.format(os.path.dirname(__file__))
-    # path = '/home/pi/git_hub/eems/eems/data/config.db'
+    # path = '{}/data/config.db'.format(os.path.dirname(__file__))
+    path = '/home/pi/git_hub/eems/eems/data/config.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////{}'.format(path)
 
 db = SQLAlchemy(app)
