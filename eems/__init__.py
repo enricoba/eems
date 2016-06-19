@@ -321,7 +321,8 @@ def config(lang=None):
                                global_data=global_data,
                                content=content,
                                sensors_used=sensors_used,
-                               sensors_supported=sensors_supported)
+                               sensors_supported=sensors_supported,
+                               session_id=session_id)
 
 
 @app.route('/monitor/')
