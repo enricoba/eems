@@ -1,35 +1,61 @@
 <div class="form-group">
     <form role="form" method="post" action="" onsubmit="">
-        {% for s in sensors_supported %}
-            <h4>{{ s.name.upper() }}</h4>
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>{{ content.CONFIG_TH_1 }}</th> <!-- Sensor-ID -->
-                            <th>{{ content.CONFIG_TH_2 }}</th> <!-- Name -->
-                            <th>{{ content.CONFIG_TH_3 }}</th> <!-- Value -->
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for i in sensors_used %}
-                            {% if i.sensor_id == s.id and i.session_id == global_data.SESSION_ID|int %}
-                                <tr>
-                                    <td>{{ i.code }}</td>
-                                    <td><input class="form-control" type="text" placeholder="{{ content.CONFIG_TB_PLACEHOLDER }}"></td>
-                                    <td>{{ i.value }}{{ s.unit }}</td>
-                                </tr>
-                            {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
+        <div class="form-group">
+            <label for="start-time">Start:</label>
+            <div class='input-group date' id='datetimepicker1'>
+                <input type='text' class="form-control" id="start-time">
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
             </div>
-        {% endfor %}
+        </div>
+
+        <div class="form-group">
+            <label for="end-time">Ende:</label>
+            <input type="text" class="form-control" id="end-time" placeholder="end datetime">
+        </div>
+
+        <div class="form-group">
+            <label for="interval">Interval:</label>
+            <input type="text" class="form-control" id="interval" placeholder="interval in seconds">
+        </div>
+
+        <button type="submit" style="width: 100px; margin-bottom: 20px" class="btn  btn-success">Start</button>
+
+        <div class="form-group" style="border-top: solid 1px">
+            {% for s in sensors_supported %}
+                <h4 style="margin-top: 20px">{{ s.name.upper() }}</h4>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>{{ content.CONFIG_TH_1 }}</th> <!-- Sensor-ID -->
+                                <th>{{ content.CONFIG_TH_2 }}</th> <!-- Name -->
+                                <th style="text-align: right">{{ content.CONFIG_TH_3 }}</th> <!-- Value -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in sensors_used %}
+                                {% if i.sensor_id == s.id and i.session_id == global_data.SESSION_ID|int %}
+                                    <tr>
+                                        <td style="vertical-align: middle">{{ i.code }}</td>
+                                        <td><input class="form-control" type="text" placeholder="{{ content.CONFIG_TB_PLACEHOLDER }}"></td>
+                                        <td style="text-align: right; vertical-align: middle">{{ i.value }}{{ s.unit }}</td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endfor %}
+        </div>
     </form>
 </div>
 
 
 
-<script>
-
+<script type="text/javascript">
+    $(function () {
+        $('#datetimepicker1').datetimepicker();
+    });
 </script>
