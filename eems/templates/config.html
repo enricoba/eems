@@ -1,26 +1,17 @@
 <div class="form-group">
     <form role="form" method="post" action="" onsubmit="">
-        <div class="form-group">
-            <label for="start-time">Start:</label>
-            <div class='input-group date' id='datetimepicker1'>
-                <input type='text' class="form-control" id="start-time">
-                <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar"></span>
-                </span>
-            </div>
-        </div>
 
         <div class="form-group">
-            <label for="end-time">Ende:</label>
-            <input type="text" class="form-control" id="end-time" placeholder="end datetime">
+            <label for="datetime24">Ende:</label><br>
+            <input class="form-control" id="datetime24" data-format="DD-MM-YYYY HH:mm" data-template="DD / MM / YYYY     HH : mm" name="datetime" value="{{ t }}" type="text">
         </div>
 
         <div class="form-group">
             <label for="interval">Interval:</label>
-            <input type="text" class="form-control" id="interval" placeholder="interval in seconds">
+            <input type="text" class="form-control" name="interval" id="interval" placeholder="interval in seconds">
         </div>
 
-        <button type="submit" style="width: 100px; margin-bottom: 20px" class="btn  btn-success">Start</button>
+        <button type="submit" name="config-start" style="width: 100px; margin-bottom: 20px" class="btn  btn-success">Start</button>
 
         <div class="form-group" style="border-top: solid 1px">
             {% for s in sensors_supported %}
@@ -52,10 +43,15 @@
     </form>
 </div>
 
-
-
-<script type="text/javascript">
-    $(function () {
-        $('#datetimepicker1').datetimepicker();
+<script>
+    var year = parseInt("{{ t[6:10] }}");
+    $(function(){
+        $('#datetime24').combodate({
+            minYear: year,
+            maxYear: year + 5,
+            smartDays: true
+        });
     });
 </script>
+
+

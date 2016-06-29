@@ -5,7 +5,10 @@ Initiation module for eems.
 
 # import external modules
 import os
+import math
+import time
 import collections
+import datetime
 from threading import Thread, Lock
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -86,9 +89,13 @@ class Sessions(db.Model):
     __tablename__ = 'sessions'
     id = db.Column(db.Integer, primary_key=True, unique=True)
     session = db.Column(db.Text)
+    interval = db.Column(db.Integer)
+    end_time = db.Column(db.Integer)
 
-    def __init__(self, session=None):
+    def __init__(self, session=None, interval=None, end_time=None):
         self.session = session
+        self.interval = interval
+        self.end_time = end_time
 
 
 class SensorsUsed(db.Model):
@@ -257,12 +264,25 @@ def config(lang=None):
 
     # level-2 :: HANDLING
     if request.method == 'POST':
+        if 'config-start' in request.form:
+            # get session
+            query = General.query.filter_by(item='SESSION').first()
+            # update end_time and interval
+            tmp = Sessions.query.filter_by(session=query.value).first()
+            tmp.interval = int(request.form['interval'])
+            tmp.end_time = int(time.mktime(datetime.datetime.strptime(request.form['datetime'],
+                                                                      '%d-%m-%Y %H:%M').timetuple()))
+            db.session.commit()
+
         # level-99 :: CONFIG
         global_data = __db_general()
         return render_template('index.html', name='config',
                                global_data=global_data,
                                content=content)
     else:
+        at = math.ceil((time.time() / 300)) * 300
+        tmp = datetime.datetime.fromtimestamp(at)
+        t = tmp.strftime('%d-%m-%Y %H:%M')
         query = General.query.filter_by(item='SESSION').first()
         tmp = Sessions.query.filter_by(session=query.value).first()
         session_id = tmp.id
@@ -299,7 +319,7 @@ def config(lang=None):
         global_data = __db_general()
         return render_template('index.html', name='config',
                                global_data=global_data,
-                               content=content,
+                               content=content, t=t,
                                sensors_used=sensors_used,
                                sensors_supported=sensors_supported)
 
