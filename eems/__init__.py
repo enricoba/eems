@@ -237,14 +237,14 @@ def index(lang=None):
 
             # level-99 :: CONFIG
             global_data = __db_general()
-            return render_template('index.html', name='index',
+            return render_template('index.html', name='index', version=__version__,
                                    global_data=global_data,
                                    content=content,
                                    profiles=profiles, len=len(profiles))
     else:
         # level-99 :: CONFIG
         global_data = __db_general()
-        return render_template('index.html', name='index',
+        return render_template('index.html', name='index', version=__version__,
                                global_data=global_data,
                                content=content,
                                profiles=profiles, len=len(profiles))
@@ -276,12 +276,11 @@ def config(lang=None):
 
         # level-99 :: CONFIG
         global_data = __db_general()
-        return render_template('index.html', name='config',
-                               global_data=global_data,
-                               content=content)
+        return redirect(url_for('monitor', lang=lang))
     else:
         at = math.ceil((time.time() / 300)) * 300
         tmp = datetime.datetime.fromtimestamp(at)
+        print at
         t = tmp.strftime('%d-%m-%Y %H:%M')
         query = General.query.filter_by(item='SESSION').first()
         tmp = Sessions.query.filter_by(session=query.value).first()
@@ -317,7 +316,7 @@ def config(lang=None):
         sensors_supported = SensorsSupported.query.all()
 
         global_data = __db_general()
-        return render_template('index.html', name='config',
+        return render_template('index.html', name='config', version=__version__,
                                global_data=global_data,
                                content=content, t=t,
                                sensors_used=sensors_used,
@@ -338,7 +337,7 @@ def monitor(lang=None):
 
     # level-99 :: CONFIG
     global_data = __db_general()
-    return render_template('index.html', name='monitor',
+    return render_template('index.html', name='monitor', version=__version__,
                            global_data=global_data,
                            content=content)
 
@@ -357,7 +356,7 @@ def licence(lang=None):
 
     # level-99 :: CONFIG
     global_data = __db_general()
-    return render_template('index.html', name='licence',
+    return render_template('index.html', name='licence', version=__version__,
                            global_data=global_data,
                            content=content)
 

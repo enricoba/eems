@@ -1,13 +1,13 @@
 <div class="form-group">
-    <form role="form" method="post" action="" onsubmit="">
+    <form role="form" method="post" action="" onsubmit="return config_start(this)">
 
         <div class="form-group">
-            <label for="datetime24">Ende:</label><br>
+            <label for="datetime24">{{ content.CONFIG_ENDTIME }}:</label><br>
             <input class="form-control" id="datetime24" data-format="DD-MM-YYYY HH:mm" data-template="DD / MM / YYYY     HH : mm" name="datetime" value="{{ t }}" type="text">
         </div>
 
         <div class="form-group">
-            <label for="interval">Interval:</label>
+            <label for="interval">{{ content.CONFIG_INTERVAL }}:</label>
             <input type="text" class="form-control" name="interval" id="interval" placeholder="interval in seconds">
         </div>
 
@@ -52,6 +52,29 @@
             smartDays: true
         });
     });
+
+    function config_start(form) {
+        var now = moment().unix();
+        var datetime = moment(form['datetime'].value, 'DD-MM-YYYY HH:mm').unix();
+        var interval = form["interval"].value;
+        if ( now >= datetime) {
+            sweetAlert({
+                title: "{{ content.CONFIG_JS_ENDTIME_TITLE }}",
+                text: "{{ content.CONFIG_JS_ENDTIME_TEXT }}",
+                type: "error"
+            });
+            return false;
+        } else if (interval == null || interval == "" || parseInt(interval) < 2) {
+            sweetAlert({
+                title: "{{ content.CONFIG_JS_INTERVAL_TITLE }}",
+                text: "{{ content.CONFIG_JS_INTERVAL_TEXT }}",
+                type: "error"
+            });
+            return false;
+        } else {
+            return true;
+        }
+    }
 </script>
 
 
