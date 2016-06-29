@@ -14,21 +14,17 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='sweetalert/sweetalert.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='flag-icon/css/flag-icon.min.css') }}">
 
-    <!-- Nanobar -->
-    <script src="{{ url_for('static', filename='nanobar/nanobar.min.js') }}"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='nanobar/my_bar.css') }}">
-    <script>var nanobar = new Nanobar();</script>
-
-    <!-- Chart.js -->
-    <script src="{{ url_for('static', filename='chart.js/Chart.js') }}"></script>
-
-    <!-- jQuery & combodate -->
+    <!-- Javascript links -->
     <script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='sweetalert/sweetalert.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='nanobar/nanobar.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='chart.js/Chart.js') }}"></script>
     <script src="{{ url_for('static', filename='combodate/combodate.js') }}"></script>
     <script src="{{ url_for('static', filename='moment/moment.min.js') }}"></script>
 
     <!-- global data -->
     <script>
+        var nanobar = new Nanobar();
         var global_data = {{ global_data|tojson }};
         var content = {{ content|tojson }};
     </script>
@@ -105,28 +101,11 @@
     <footer class="navbar-fixed-bottom" style="position: absolute; bottom: 0; height: 50px; padding-top: 5px">
         <div class="container">
             <p class="text-center"><i class="fa fa-copyright"></i> 2016 <a href="mailto:&#104;&#101;&#110;&#114;&#105;&#107;&#046;&#098;&#097;&#114;&#097;&#110;&#064;&#111;&#110;&#108;&#105;&#110;&#101;&#046;&#100;&#101;">Henrik Baran</a>,
-            <a href="mailto:&#097;&#046;&#104;&#111;&#101;&#104;&#110;&#064;&#109;&#097;&#105;&#108;&#098;&#111;&#120;&#046;&#111;&#114;&#103;"> Aurofree Hoehn</a>, {{ content.INDEX_LICENCE }}: <a href="{{ url_for('licence', lang=global_data.LANGUAGE) }}">MIT</a>, {{ content.INDEX_VERSION }}: {{ version }}</p>
+            <a href="mailto:&#097;&#046;&#104;&#111;&#101;&#104;&#110;&#064;&#109;&#097;&#105;&#108;&#098;&#111;&#120;&#046;&#111;&#114;&#103;"> Aurofree Hoehn</a>, {{ content.INDEX_LICENCE }}: <a href="{{ url_for('licence', lang=global_data.LANGUAGE) }}">MIT</a>, {{ content.INDEX_VERSION }}: </p>
         </div>
     </footer>
 
-    <!-- Javascript links -->
-    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}"></script>
+    <!-- JS Bootstrap -->
     <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='sweetalert/sweetalert.min.js') }}"></script>
-
-
-
-    <!-- JQuery activation -->
-    <script>
-        $(document).ready(function() {
-           $(".nav li.disabled a").click(function() {
-             return false;
-           });
-        });
-
-        $(document).ready(function(){
-            $('[data-toggle="popover"]').popover();
-        });
-    </script>
 </body>
 </html>
