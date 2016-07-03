@@ -3,15 +3,17 @@
 
         <div class="form-group">
             <label for="datetime24">{{ content.CONFIG_ENDTIME }}:</label><br>
-            <input class="form-control" id="datetime24" data-format="DD-MM-YYYY HH:mm" data-template="DD / MM / YYYY     HH : mm" name="datetime" value="{{ t }}" type="text">
+            <input class="form-control" id="datetime24" data-format="DD-MM-YYYY HH:mm" data-template="DD / MM / YYYY     HH : mm" name="datetime" value="{{ timedate }}" type="text">
         </div>
 
-        <div class="form-group">
+        <div class="form-group" style="margin-bottom: 20px">
             <label for="interval">{{ content.CONFIG_INTERVAL }}:</label>
-            <input type="text" class="form-control" name="interval" id="interval" placeholder="interval in seconds">
+            <input type="text" class="form-control" value="{{ interval }}" name="interval" id="interval" placeholder="interval in seconds">
         </div>
 
-        <button type="submit" name="config-start" style="width: 100px; margin-bottom: 20px" class="btn  btn-success">Start</button>
+        {% if flag == 0 %}
+            <button type="submit" name="config-start" style="width: 100px; margin-bottom: 20px" class="btn  btn-success">Start</button>
+        {% endif %}
 
         <div class="form-group" style="border-top: solid 1px">
             {% for s in sensors_supported %}
@@ -44,7 +46,7 @@
 </div>
 
 <script>
-    var year = parseInt("{{ t[6:10] }}");
+    var year = parseInt("{{ timedate[6:10] }}");
     $(function(){
         $('#datetime24').combodate({
             minYear: year,

@@ -278,13 +278,23 @@ def config(lang=None):
         global_data = __db_general()
         return redirect(url_for('monitor', lang=lang))
     else:
-        at = math.ceil((time.time() / 300)) * 300
-        tmp = datetime.datetime.fromtimestamp(at)
-        print at
-        t = tmp.strftime('%d-%m-%Y %H:%M')
+        # if data then read database else actual time and no value interval
+
         query = General.query.filter_by(item='SESSION').first()
-        tmp = Sessions.query.filter_by(session=query.value).first()
-        session_id = tmp.id
+        s_tmp = Sessions.query.filter_by(session=query.value).first()
+        if s_tmp.interval is None:
+            at = math.ceil((time.time() / 300)) * 300
+            tmp = datetime.datetime.fromtimestamp(at)
+            timedate = tmp.strftime('%d-%m-%Y %H:%M')
+            interval = ''
+            flag = 0
+        else:
+            tmp = datetime.datetime.fromtimestamp(s_tmp.end_time)
+            timedate = tmp.strftime('%d-%m-%Y %H:%M')
+            interval = s_tmp.interval
+            flag = 1
+
+        session_id = s_tmp.id
 
         # level-10 :: SENSORS - DS18B20
         query = SensorsSupported.query.filter_by(name='ds18b20').first()
@@ -318,7 +328,7 @@ def config(lang=None):
         global_data = __db_general()
         return render_template('index.html', name='config', version=__version__,
                                global_data=global_data,
-                               content=content, t=t,
+                               content=content, timedate=timedate, interval=interval, flag=flag,
                                sensors_used=sensors_used,
                                sensors_supported=sensors_supported)
 
