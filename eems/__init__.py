@@ -166,6 +166,15 @@ def __db_general():
     return tmp_dict
 
 
+# TODO content management system
+@app.context_processor
+def utility_processor():
+    def test(value):
+        print value
+        return value
+    return dict(test=test)
+
+
 @app.route('/', methods=['GET', 'POST'])
 def start():
     return redirect(url_for('index', lang='en'))
@@ -273,6 +282,9 @@ def config(lang=None):
             tmp.end_time = int(time.mktime(datetime.datetime.strptime(request.form['datetime'],
                                                                       '%d-%m-%Y %H:%M').timetuple()))
             db.session.commit()
+
+        elif 'rename' in request.form:
+            print request.form['inp_28-0000073c741d']
 
         # level-99 :: CONFIG
         global_data = __db_general()

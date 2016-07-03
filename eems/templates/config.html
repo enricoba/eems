@@ -15,9 +15,11 @@
             <button type="submit" name="config-start" style="width: 100px; margin-bottom: 20px" class="btn  btn-success">Start</button>
         {% endif %}
 
+
         <div class="form-group" style="border-top: solid 1px">
             {% for s in sensors_supported %}
                 <h4 style="margin-top: 20px">{{ s.name.upper() }}</h4>
+                <button type="button" name="rename" style="width: 100px" class="btn  btn-warning" onclick="test()">Rename</button>
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
@@ -32,7 +34,7 @@
                                 {% if i.sensor_id == s.id and i.session_id == global_data.SESSION_ID|int %}
                                     <tr>
                                         <td style="vertical-align: middle">{{ i.code }}</td>
-                                        <td><input class="form-control" type="text" placeholder="{{ content.CONFIG_TB_PLACEHOLDER }}"></td>
+                                        <td><input class="form-control" type="text" name="inp_{{ i.code }}" placeholder="{{ content.CONFIG_TB_PLACEHOLDER }}"></td>
                                         <td style="text-align: right; vertical-align: middle">{{ i.value }}{{ s.unit }}</td>
                                     </tr>
                                 {% endif %}
@@ -76,6 +78,10 @@
         } else {
             return true;
         }
+    }
+
+    function test() {
+        {{ test(23) }}
     }
 </script>
 
