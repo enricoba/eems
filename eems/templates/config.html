@@ -1,3 +1,5 @@
+<button onclick="test()" class="btn btn-success" style="margin-bottom: 20px; width: 100px">Test</button>
+
 <div class="form-group">
     <form role="form" method="post" action="" onsubmit="return config_start(this)">
 
@@ -81,7 +83,13 @@
     }
 
     function test() {
-        {{ test(23) }}
+        $.ajax({
+            url: '/update',
+            type: 'GET',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: {a: 20}
+        });
     }
 </script>
 

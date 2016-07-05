@@ -27,6 +27,7 @@
         var nanobar = new Nanobar();
         var global_data = {{ global_data|tojson }};
         var content = {{ content|tojson }};
+        var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     </script>
 </head>
 

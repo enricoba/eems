@@ -10,7 +10,7 @@ import time
 import collections
 import datetime
 from threading import Thread, Lock
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -257,6 +257,13 @@ def index(lang=None):
                                global_data=global_data,
                                content=content,
                                profiles=profiles, len=len(profiles))
+
+
+@app.route('/update/', methods=['GET'])
+def update():
+    print request.args.get('a')
+    ret_data = {'value': request.args.get('a')}
+    return jsonify(ret_data)
 
 
 @app.route('/config/', methods=['GET', 'POST'])
