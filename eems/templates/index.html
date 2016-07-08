@@ -17,14 +17,12 @@
     <!-- Javascript links -->
     <script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='sweetalert/sweetalert.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='nanobar/nanobar.min.js') }}"></script>
     <script src="{{ url_for('static', filename='chart.js/Chart.js') }}"></script>
     <script src="{{ url_for('static', filename='combodate/combodate.js') }}"></script>
     <script src="{{ url_for('static', filename='moment/moment.min.js') }}"></script>
 
     <!-- global data -->
     <script>
-        var nanobar = new Nanobar();
         var global_data = {{ global_data|tojson }};
         var content = {{ content|tojson }};
         var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
