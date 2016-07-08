@@ -261,10 +261,19 @@ def index(lang=None):
 
 @app.route('/update/', methods=['GET'])
 def update():
+    query = General.query.filter_by(item='SESSION').first()
+    s_tmp = Sessions.query.filter_by(session=query.value).first()
+    session_id = s_tmp.id
     for i in request.args.items():
+        if i[1] == '':
+            name = None
+        else:
+            name = i[1]
+        sensor = SensorsUsed.query.filter_by(code=i[0], session_id=session_id).first()
+        sensor.name = name
         print i[0], ': ', i[1]
-    ret_data = {'value': request.args.get('a')}
-    return jsonify(ret_data)
+    db.session.commit()
+    return jsonify()
 
 
 @app.route('/config/', methods=['GET', 'POST'])
