@@ -265,13 +265,8 @@ def update():
     s_tmp = Sessions.query.filter_by(session=query.value).first()
     session_id = s_tmp.id
     for i in request.args.items():
-        if i[1] == '':
-            name = None
-        else:
-            name = i[1]
         sensor = SensorsUsed.query.filter_by(code=i[0], session_id=session_id).first()
-        sensor.name = name
-        print i[0], ': ', i[1]
+        sensor.name = i[1]
     db.session.commit()
     return jsonify()
 
