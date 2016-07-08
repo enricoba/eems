@@ -261,7 +261,7 @@ def index(lang=None):
 
 @app.route('/update/', methods=['GET'])
 def update():
-    print request.args.get('a')
+    print request.args.get('28-000006d7cfa5')
     ret_data = {'value': request.args.get('a')}
     return jsonify(ret_data)
 

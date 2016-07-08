@@ -1,7 +1,5 @@
-<button onclick="test()" class="btn btn-success" style="margin-bottom: 20px; width: 100px">Test</button>
-
 <div class="form-group">
-    <form role="form" method="post" action="" onsubmit="return config_start(this)">
+    <form role="form" method="post" onsubmit="return config_start(this)">
 
         <div class="form-group">
             <label for="datetime24">{{ content.CONFIG_ENDTIME }}:</label><br>
@@ -16,37 +14,36 @@
         {% if flag == 0 %}
             <button type="submit" name="config-start" style="width: 100px; margin-bottom: 20px" class="btn  btn-success">Start</button>
         {% endif %}
-
-
-        <div class="form-group" style="border-top: solid 1px">
-            {% for s in sensors_supported %}
-                <h4 style="margin-top: 20px">{{ s.name.upper() }}</h4>
-                <button type="button" name="rename" style="width: 100px" class="btn  btn-warning" onclick="test()">Rename</button>
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>{{ content.CONFIG_TH_1 }}</th> <!-- Sensor-ID -->
-                                <th>{{ content.CONFIG_TH_2 }}</th> <!-- Name -->
-                                <th style="text-align: right">{{ content.CONFIG_TH_3 }}</th> <!-- Value -->
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for i in sensors_used %}
-                                {% if i.sensor_id == s.id and i.session_id == global_data.SESSION_ID|int %}
-                                    <tr>
-                                        <td style="vertical-align: middle">{{ i.code }}</td>
-                                        <td><input class="form-control" type="text" name="inp_{{ i.code }}" placeholder="{{ content.CONFIG_TB_PLACEHOLDER }}"></td>
-                                        <td style="text-align: right; vertical-align: middle">{{ i.value }}{{ s.unit }}</td>
-                                    </tr>
-                                {% endif %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% endfor %}
-        </div>
     </form>
+
+    <div class="form-group" style="border-top: solid 1px">
+        {% for s in sensors_supported %}
+            <h4 style="margin-top: 20px">{{ s.name.upper() }}</h4>
+            <button style="width: 100px" class="btn btn-warning" onclick="rename()">Rename</button>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>{{ content.CONFIG_TH_1 }}</th> <!-- Sensor-ID -->
+                            <th>{{ content.CONFIG_TH_2 }}</th> <!-- Name -->
+                            <th style="text-align: right">{{ content.CONFIG_TH_3 }}</th> <!-- Value -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in sensors_used %}
+                            {% if i.sensor_id == s.id and i.session_id == global_data.SESSION_ID|int %}
+                                <tr>
+                                    <td style="vertical-align: middle">{{ i.code }}</td>
+                                    <td><input class="form-control" type="text" name="inp_{{ i.code }}" placeholder="{{ content.CONFIG_TB_PLACEHOLDER }}"></td>
+                                    <td style="text-align: right; vertical-align: middle">{{ i.value }}{{ s.unit }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+    </div>
 </div>
 
 <script>
@@ -58,6 +55,23 @@
             smartDays: true
         });
     });
+
+
+    function rename() {
+        {% for s in sensors_supported %}
+                {% for i in sensors_used %}
+                    {% if i.sensor_id == s.id and i.session_id == global_data.SESSION_ID|int %}
+                        var my_data = {"{{ i.code }}": 20};
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        alert(my_data);
+        $.ajax({
+            url: '/update',
+            method: 'GET',
+            data: my_data
+        });
+    }
 
     function config_start(form) {
         var now = moment().unix();
@@ -80,16 +94,6 @@
         } else {
             return true;
         }
-    }
-
-    function test() {
-        $.ajax({
-            url: '/update',
-            type: 'GET',
-            contentType: 'application/json',
-            dataType: 'json',
-            data: {a: 20}
-        });
     }
 </script>
 
