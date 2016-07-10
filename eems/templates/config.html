@@ -8,7 +8,7 @@
 
         <div class="form-group" style="margin-bottom: 20px">
             <label for="interval">{{ content.CONFIG_INTERVAL }}:</label>
-            <input type="text" class="form-control" value="{{ interval }}" name="interval" id="interval" placeholder="interval in seconds">
+            <input type="text" class="form-control" value="{{ interval }}" name="interval" id="interval" placeholder="{{ content.CONFIG_INTERVAL_PLACEHOLDER }}">
         </div>
 
         {% if flag == 0 %}
