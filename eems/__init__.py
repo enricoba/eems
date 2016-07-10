@@ -339,7 +339,8 @@ def config(lang=None):
             for code in s_list:
                 sensor = SensorsUsed.query.filter_by(code=code, session_id=session_id).first()
                 if sensor is None:
-                    tmp = SensorsUsed(code=code, value=s_dict.dic[code], session_id=session_id, sensor_id=sensor_id)
+                    tmp = SensorsUsed(code=code, value=s_dict.dic[code], session_id=session_id, sensor_id=sensor_id,
+                                      name='')
                     db.session.add(tmp)
                 else:
                     sensor.value = s_dict.dic[code]
