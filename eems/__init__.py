@@ -91,11 +91,13 @@ class Sessions(db.Model):
     session = db.Column(db.Text)
     interval = db.Column(db.Integer)
     end_time = db.Column(db.Integer)
+    monitoring = db.Column(db.Integer)
 
-    def __init__(self, session=None, interval=None, end_time=None):
+    def __init__(self, session=None, interval=None, end_time=None, monitoring=0):
         self.session = session
         self.interval = interval
         self.end_time = end_time
+        self.monitoring = monitoring
 
 
 class SensorsUsed(db.Model):
@@ -164,6 +166,52 @@ def __db_general():
     for i in general:
         tmp_dict[i.item] = i.value
     return tmp_dict
+
+
+def read_sensors(session_id, s_list):
+    query = SensorsSupported.query.filter_by(name='ds18b20').first()
+    sensor_id = query.id
+    # function to get sensor values
+
+    s_ds18b20 = ds18b20.DS18B20()
+    s_list = SensorsUsed.query.filter_by(session_id=session_id, sensor_id=sensor_id).first()
+
+    s_dict = _SensorDictionary(s_list)
+    threads = list()
+    for s in s_list:
+        threads.append(Thread(target=s_ds18b20.read, args=(s, s_dict)))
+    for t in threads:
+        t.setDaemon(True)
+        t.start()
+    for t in threads:
+        t.join()
+    for code in s_list:
+        sensor = SensorsUsed.query.filter_by(code=code, session_id=session_id).first()
+        if sensor is None:
+            tmp = SensorsUsed(code=code, value=s_dict.dic[code], session_id=session_id, sensor_id=sensor_id,
+                              name='')
+            db.session.add(tmp)
+        else:
+            sensor.value = s_dict.dic[code]
+    db.session.commit()
+
+
+def monitor(interval):
+    query = General.query.filter_by(item='SESSION').first()
+    s_tmp = Sessions.query.filter_by(session=query.value).first()
+    monitoring = s_tmp.monitoring
+
+    timestamp = int(time.time() / interval) * interval
+    timestamp += interval
+
+    while monitoring is 1:
+        time.sleep(timestamp - time.time())
+        print time.time()
+        timestamp += interval
+
+        query = General.query.filter_by(item='SESSION').first()
+        s_tmp = Sessions.query.filter_by(session=query.value).first()
+        monitoring = s_tmp.monitoring
 
 
 # TODO content management system
@@ -283,29 +331,30 @@ def config(lang=None):
         db.session.commit()
         content = __db_content(lang)
 
-    # level-2 :: HANDLING
+    # level-2 :: DB
+    query = General.query.filter_by(item='SESSION').first()
+    s_tmp = Sessions.query.filter_by(session=query.value).first()
+    session_id = s_tmp.id
+
+    # level-3 :: HANDLING
     if request.method == 'POST':
         if 'config-start' in request.form:
-            # get session
-            query = General.query.filter_by(item='SESSION').first()
-            # update end_time and interval
-            tmp = Sessions.query.filter_by(session=query.value).first()
-            tmp.interval = int(request.form['interval'])
-            tmp.end_time = int(time.mktime(datetime.datetime.strptime(request.form['datetime'],
-                                                                      '%d-%m-%Y %H:%M').timetuple()))
+            interval = int(request.form['interval'])
+            s_tmp.interval = interval
+            s_tmp.end_time = int(time.mktime(datetime.datetime.strptime(request.form['datetime'],
+                                                                        '%d-%m-%Y %H:%M').timetuple()))
+            s_tmp.monitoring = 1
             db.session.commit()
 
-        elif 'rename' in request.form:
-            print request.form['inp_28-0000073c741d']
+            # start monitoring :)
+            worker = Thread(target=monitor, args=(interval, ))
+            print worker.name
+            worker.setDaemon(True)
+            worker.start()
 
-        # level-99 :: CONFIG
-        global_data = __db_general()
         return redirect(url_for('monitor', lang=lang))
     else:
         # if data then read database else actual time and no value interval
-
-        query = General.query.filter_by(item='SESSION').first()
-        s_tmp = Sessions.query.filter_by(session=query.value).first()
         if s_tmp.interval is None:
             at = math.ceil((time.time() / 300)) * 300
             tmp = datetime.datetime.fromtimestamp(at)
@@ -318,15 +367,12 @@ def config(lang=None):
             interval = s_tmp.interval
             flag = 1
 
-        session_id = s_tmp.id
-
         # level-10 :: SENSORS - DS18B20
-        query = SensorsSupported.query.filter_by(name='ds18b20').first()
-        sensor_id = query.id
         s_ds18b20 = ds18b20.DS18B20()
         s_list = s_ds18b20.detect()
         if len(s_list):
-            # function to get sensor values
+            query = SensorsSupported.query.filter_by(name='ds18b20').first()
+            sensor_id = query.id
             s_dict = _SensorDictionary(s_list)
             threads = list()
             for s in s_list:
