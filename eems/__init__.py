@@ -196,8 +196,11 @@ def read_sensors(session_id, s_list):
     db.session.commit()
 
 
-def monitor(interval):
-    query = General.query.filter_by(item='SESSION').first()
+def monitor():
+    interval = 5
+    while True:
+        print interval
+    """query = General.query.filter_by(item='SESSION').first()
     s_tmp = Sessions.query.filter_by(session=query.value).first()
     monitoring = s_tmp.monitoring
 
@@ -206,12 +209,12 @@ def monitor(interval):
 
     while monitoring is 1:
         time.sleep(timestamp - time.time())
-        print time.time()
+        # print time.time()
         timestamp += interval
 
         query = General.query.filter_by(item='SESSION').first()
         s_tmp = Sessions.query.filter_by(session=query.value).first()
-        monitoring = s_tmp.monitoring
+        monitoring = s_tmp.monitoring"""
 
 
 # TODO content management system
@@ -347,9 +350,7 @@ def config(lang=None):
             db.session.commit()
 
             # start monitoring :)
-            worker = Thread(target=monitor, args=(interval, ))
-            print worker.name
-            worker.setDaemon(True)
+            worker = Thread(target=monitor)
             worker.start()
 
         return redirect(url_for('monitor', lang=lang))
@@ -445,4 +446,4 @@ def licence(lang=None):
 if __name__ == "__main__":
     # in deployment MUST be False !!!
     app.debug = True
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', threaded=True)
