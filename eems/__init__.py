@@ -9,6 +9,7 @@ import math
 import time
 import collections
 import datetime
+from celery import Celery
 from threading import Thread, Lock
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -51,6 +52,12 @@ __author__ = 'Henrik Baran, Aurofree Hoehn'
 
 # Flask object
 app = Flask(__name__)
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379'
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
+
+
 # check if server or development environment
 if os.path.exists('/var/www/eems/eems/data/'):
     path = '/var/www/eems/eems/data/config.db'
@@ -145,8 +152,10 @@ class Data(db.Model):
         self.sensor_name_id = sensor_name_id
 
 
-# db.create_all()
-# db.session.commit()
+# vegan stuff
+@celery.task()
+def test():
+        print 'test das Gemüse'
 
 
 def __db_content(lang):
@@ -166,64 +175,6 @@ def __db_general():
     for i in general:
         tmp_dict[i.item] = i.value
     return tmp_dict
-
-
-def read_sensors(session_id, s_list):
-    query = SensorsSupported.query.filter_by(name='ds18b20').first()
-    sensor_id = query.id
-    # function to get sensor values
-
-    s_ds18b20 = ds18b20.DS18B20()
-    s_list = SensorsUsed.query.filter_by(session_id=session_id, sensor_id=sensor_id).first()
-
-    s_dict = _SensorDictionary(s_list)
-    threads = list()
-    for s in s_list:
-        threads.append(Thread(target=s_ds18b20.read, args=(s, s_dict)))
-    for t in threads:
-        t.setDaemon(True)
-        t.start()
-    for t in threads:
-        t.join()
-    for code in s_list:
-        sensor = SensorsUsed.query.filter_by(code=code, session_id=session_id).first()
-        if sensor is None:
-            tmp = SensorsUsed(code=code, value=s_dict.dic[code], session_id=session_id, sensor_id=sensor_id,
-                              name='')
-            db.session.add(tmp)
-        else:
-            sensor.value = s_dict.dic[code]
-    db.session.commit()
-
-
-def monitor():
-    interval = 5
-    while True:
-        print interval
-    """query = General.query.filter_by(item='SESSION').first()
-    s_tmp = Sessions.query.filter_by(session=query.value).first()
-    monitoring = s_tmp.monitoring
-
-    timestamp = int(time.time() / interval) * interval
-    timestamp += interval
-
-    while monitoring is 1:
-        time.sleep(timestamp - time.time())
-        # print time.time()
-        timestamp += interval
-
-        query = General.query.filter_by(item='SESSION').first()
-        s_tmp = Sessions.query.filter_by(session=query.value).first()
-        monitoring = s_tmp.monitoring"""
-
-
-# TODO content management system
-@app.context_processor
-def utility_processor():
-    def test(value):
-        print value
-        return value
-    return dict(test=test)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -348,11 +299,6 @@ def config(lang=None):
                                                                         '%d-%m-%Y %H:%M').timetuple()))
             s_tmp.monitoring = 1
             db.session.commit()
-
-            # start monitoring :)
-            worker = Thread(target=monitor)
-            worker.start()
-
         return redirect(url_for('monitor', lang=lang))
     else:
         # if data then read database else actual time and no value interval
@@ -417,6 +363,14 @@ def monitor(lang=None):
         db.session.commit()
         content = __db_content(lang)
 
+    query = General.query.filter_by(item='SESSION').first()
+    s_tmp = Sessions.query.filter_by(session=query.value).first()
+    if s_tmp.monitoring == 1:
+        print 'monitoring'
+        test.delay()
+    else:
+        print 'else'
+
     # level-99 :: CONFIG
     global_data = __db_general()
     return render_template('index.html', name='monitor', version=__version__,
@@ -446,4 +400,4 @@ def licence(lang=None):
 if __name__ == "__main__":
     # in deployment MUST be False !!!
     app.debug = True
-    app.run(host='0.0.0.0', threaded=True)
+    app.run(host='0.0.0.0')
