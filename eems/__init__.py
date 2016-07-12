@@ -9,7 +9,7 @@ import math
 import time
 import collections
 import datetime
-from celery import Celery
+# from celery import Celery
 from threading import Thread, Lock
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -52,10 +52,10 @@ __author__ = 'Henrik Baran, Aurofree Hoehn'
 
 # Flask object
 app = Flask(__name__)
-app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379'
-app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379'
-celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-celery.conf.update(app.config)
+# app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379'
+# app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379'
+# celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+# celery.conf.update(app.config)
 
 
 # check if server or development environment
@@ -153,9 +153,41 @@ class Data(db.Model):
 
 
 # vegan stuff
-@celery.task()
-def test():
-        print 'test das Gemüse'
+# @celery.task()
+# def test():
+#        print 'test das Gemüse'
+
+flag = 1
+
+
+def w_monitor(interval):
+    global flag
+
+    query = General.query.filter_by(item='SESSION').first()
+    s_tmp = Sessions.query.filter_by(session=query.value).first()
+    query = SensorsSupported.query.filter_by(name='ds18b20').first()
+    sensors = SensorsUsed.query.filter_by(session_id=s_tmp.id, sensor_id=query.id).first()
+    print sensors.code
+    for i in sensors:
+        print i.code
+
+    timestamp = int(time.time() / interval) * interval
+    timestamp += interval
+    time.sleep(timestamp - time.time())
+    while flag == 1:
+        print time.time(), 'hello ', flag
+
+        timestamp += interval
+        time.sleep(timestamp - time.time())
+
+
+def w_watchdog(end_time, interval):
+    global flag
+    timestamp = int(time.time() / interval) * interval
+    timestamp += interval
+    duration = end_time - time.time()
+    time.sleep(duration - 1)
+    flag = 0
 
 
 def __db_content(lang):
@@ -294,11 +326,20 @@ def config(lang=None):
     if request.method == 'POST':
         if 'config-start' in request.form:
             interval = int(request.form['interval'])
+            end_time = int(time.mktime(datetime.datetime.strptime(request.form['datetime'],
+                                                                  '%d-%m-%Y %H:%M').timetuple()))
             s_tmp.interval = interval
-            s_tmp.end_time = int(time.mktime(datetime.datetime.strptime(request.form['datetime'],
-                                                                        '%d-%m-%Y %H:%M').timetuple()))
+            s_tmp.end_time = end_time
             s_tmp.monitoring = 1
             db.session.commit()
+
+            # start monitoring
+            t = Thread(target=w_monitor, args=(interval, ))
+            w = Thread(target=w_watchdog, args=(end_time, interval, ))
+            t.setDaemon(True)
+            w.setDaemon(True)
+            w.start()
+            t.start()
         return redirect(url_for('monitor', lang=lang))
     else:
         # if data then read database else actual time and no value interval
@@ -362,14 +403,6 @@ def monitor(lang=None):
         language.value = lang
         db.session.commit()
         content = __db_content(lang)
-
-    query = General.query.filter_by(item='SESSION').first()
-    s_tmp = Sessions.query.filter_by(session=query.value).first()
-    if s_tmp.monitoring == 1:
-        print 'monitoring'
-        test.delay()
-    else:
-        print 'else'
 
     # level-99 :: CONFIG
     global_data = __db_general()
