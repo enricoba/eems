@@ -163,11 +163,15 @@ flag = 1
 def w_monitor(interval):
     global flag
 
+    s_ds18b20 = ds18b20.DS18B20()
+
     query = General.query.filter_by(item='SESSION').first()
     s_tmp = Sessions.query.filter_by(session=query.value).first()
     query = SensorsSupported.query.filter_by(name='ds18b20').first()
-    sensors = SensorsUsed.query.filter_by(session_id=s_tmp.id, sensor_id=query.id).first()
-    print sensors.code
+    sensors = SensorsUsed.query.filter_by(session_id=s_tmp.id, sensor_id=query.id).all()
+
+
+    print sensors
     for i in sensors:
         print i.code
 
