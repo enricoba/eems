@@ -7,7 +7,7 @@ Initiation module for eems.
 import os
 import math
 import time
-import collections
+# import collections
 import datetime
 # from celery import Celery
 from threading import Thread, Lock
@@ -22,21 +22,22 @@ from sensors import ds18b20
 class _SensorDictionary(object):
     def __init__(self, s_list):
         tmp = dict()
-        for s in sorted(s_list):
+        for s in s_list:
             tmp[s] = None
-        self.dic = collections.OrderedDict(sorted(tmp.items(), key=lambda t: t[0]))
+        # self.dic = collections.OrderedDict(sorted(tmp.items(), key=lambda t: t[0]))
+        self.dic = tmp
         self.lock = Lock()
 
     def set_temp(self, sensor, temp):
         with self.lock:
-            self.dic.__setitem__(sensor, temp)
+            self.dic[sensor] = temp
 
     def get_dic(self):
         return self.dic
 
     def reset_dic(self):
         for sensor in self.dic.keys():
-            self.dic.__setitem__(sensor, None)
+            self.dic[sensor] = None
 
 
 """
@@ -142,13 +143,11 @@ class Data(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True)
     timestamp = db.Column(db.Integer)
     value = db.Column(db.Float)
-    session_id = db.Column(db.Integer)
     sensor_name_id = db.Column(db.Integer)
 
-    def __init__(self, timestamp=None, value=None, session_id=None, sensor_name_id=None):
+    def __init__(self, timestamp=None, value=None, sensor_name_id=None):
         self.timestamp = timestamp
         self.value = value
-        self.session_id = session_id
         self.sensor_name_id = sensor_name_id
 
 
@@ -167,19 +166,35 @@ def w_monitor(interval):
 
     query = General.query.filter_by(item='SESSION').first()
     s_tmp = Sessions.query.filter_by(session=query.value).first()
+    session_id = s_tmp.id
     query = SensorsSupported.query.filter_by(name='ds18b20').first()
-    sensors = SensorsUsed.query.filter_by(session_id=s_tmp.id, sensor_id=query.id).all()
+    sensor_id = query.id
+    sensors = SensorsUsed.query.filter_by(session_id=session_id, sensor_id=sensor_id).all()
 
-
-    print sensors
+    s_list = list()
+    s_names_ids = dict()
     for i in sensors:
-        print i.code
+        s_list.append(i.code)
+        s_names_ids[i.code] = i.id
+    s_dict = _SensorDictionary(s_list)
 
     timestamp = int(time.time() / interval) * interval
     timestamp += interval
     time.sleep(timestamp - time.time())
     while flag == 1:
-        print time.time(), 'hello ', flag
+        threads = list()
+        for s in s_list:
+            threads.append(Thread(target=s_ds18b20.read, args=(s, s_dict)))
+        for t in threads:
+            t.setDaemon(True)
+            t.start()
+        for t in threads:
+            t.join()
+        time_now = int(time.time())
+        for code in s_list:
+            tmp = Data(timestamp=time_now, value=s_dict.dic[code], sensor_name_id=s_names_ids[code])
+            db.session.add(tmp)
+        db.session.commit()
 
         timestamp += interval
         time.sleep(timestamp - time.time())
