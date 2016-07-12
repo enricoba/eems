@@ -7,9 +7,7 @@ Initiation module for eems.
 import os
 import math
 import time
-# import collections
 import datetime
-# from celery import Celery
 from threading import Thread, Lock
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -24,7 +22,6 @@ class _SensorDictionary(object):
         tmp = dict()
         for s in s_list:
             tmp[s] = None
-        # self.dic = collections.OrderedDict(sorted(tmp.items(), key=lambda t: t[0]))
         self.dic = tmp
         self.lock = Lock()
 
@@ -53,11 +50,6 @@ __author__ = 'Henrik Baran, Aurofree Hoehn'
 
 # Flask object
 app = Flask(__name__)
-# app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379'
-# app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379'
-# celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-# celery.conf.update(app.config)
-
 
 # check if server or development environment
 if os.path.exists('/var/www/eems/eems/data/'):
@@ -151,16 +143,11 @@ class Data(db.Model):
         self.sensor_name_id = sensor_name_id
 
 
-# vegan stuff
-# @celery.task()
-# def test():
-#        print 'test das Gemüse'
-
-flag = 1
+w_flag = 1
 
 
 def w_monitor(interval):
-    global flag
+    global w_flag
 
     s_ds18b20 = ds18b20.DS18B20()
 
@@ -169,11 +156,11 @@ def w_monitor(interval):
     session_id = s_tmp.id
     query = SensorsSupported.query.filter_by(name='ds18b20').first()
     sensor_id = query.id
-    sensors = SensorsUsed.query.filter_by(session_id=session_id, sensor_id=sensor_id).all()
+    tmp_sensors = SensorsUsed.query.filter_by(session_id=session_id, sensor_id=sensor_id).all()
 
     s_list = list()
     s_names_ids = dict()
-    for i in sensors:
+    for i in tmp_sensors:
         s_list.append(i.code)
         s_names_ids[i.code] = i.id
     s_dict = _SensorDictionary(s_list)
@@ -181,7 +168,8 @@ def w_monitor(interval):
     timestamp = int(time.time() / interval) * interval
     timestamp += interval
     time.sleep(timestamp - time.time())
-    while flag == 1:
+    while w_flag == 1:
+        time_now = int(time.time())
         threads = list()
         for s in s_list:
             threads.append(Thread(target=s_ds18b20.read, args=(s, s_dict)))
@@ -190,7 +178,6 @@ def w_monitor(interval):
             t.start()
         for t in threads:
             t.join()
-        time_now = int(time.time())
         for code in s_list:
             tmp = Data(timestamp=time_now, value=s_dict.dic[code], sensor_name_id=s_names_ids[code])
             db.session.add(tmp)
@@ -201,12 +188,12 @@ def w_monitor(interval):
 
 
 def w_watchdog(end_time, interval):
-    global flag
+    global w_flag
     timestamp = int(time.time() / interval) * interval
     timestamp += interval
     duration = end_time - time.time()
     time.sleep(duration - 1)
-    flag = 0
+    w_flag = 0
 
 
 def __db_content(lang):
