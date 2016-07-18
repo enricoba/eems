@@ -1,4 +1,39 @@
 <div class="container-fluid">
+    <form role="form" name="sensors">
+        <div class="form-group">
+            {% for s in sensors_supported %}
+                <h4 style="margin-top: 20px">{{ s.name.upper() }}</h4>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th> <!-- Name/Sensor-ID -->
+                                <th>Min</th> <!-- Min -->
+                                <th>Max</th> <!-- Max -->
+                                <th>Mean</th> <!-- Mean -->
+                                <th>Last value</th> <!-- last value -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in sensors_used %}
+                                {% if i.sensor_id == s.id and i.session_id == global_data.SESSION_ID|int %}
+                                    <tr>
+                                        <td style="vertical-align: middle">{{ i.code }}</td>
+                                        <td style="text-align: center; vertical-align: middle">{{ i.value }}{{ s.unit }}</td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endfor %}
+        </div>
+    </form>
+</div>
+
+
+
+<div class="container-fluid">
     <div class="row">
         <div class="col-sm-6">
             <canvas id="myChart_01" height="250"></canvas>

@@ -6,6 +6,7 @@ Initiation module for eems.
 # import external modules
 import os
 import math
+import numpy
 import time
 import datetime
 from threading import Thread, Lock
@@ -387,7 +388,7 @@ def config(lang=None):
             db.session.commit()
 
         # level-99 :: DB
-        sensors_used = SensorsUsed.query.all()
+        sensors_used = SensorsUsed.query.filter_by(session_id=session_id).all()
         sensors_supported = SensorsSupported.query.all()
 
         global_data = __db_general()
@@ -410,11 +411,35 @@ def monitor(lang=None):
         db.session.commit()
         content = __db_content(lang)
 
+    # level-1 :: VALUES
+    query = General.query.filter_by(item='SESSION').first()
+    s_tmp = Sessions.query.filter_by(session=query.value).first()
+    session_id = s_tmp.id
+
+    sensors_used = SensorsUsed.query.filter_by(session_id=session_id).all()
+    sensors_supported = SensorsSupported.query.all()
+
+    data = dict()
+    data_2 = dict()
+    for i in sensors_used:
+        data[i.code] = Data.query.filter_by(sensor_name_id=i.id).all()
+        data_2[i.code] = list()
+    for i in data:
+        for x in data[i]:
+            data_2[i].append(x.value)
+            print i, x.value
+
+    print data_2
+    print 'Max ', max(data_2['28-000006d6ef15'])
+    print 'Min', min(data_2['28-000006d6ef15'])
+    print 'Mean ', numpy.mean(data_2['28-000006d6ef15'])
+
     # level-99 :: CONFIG
     global_data = __db_general()
     return render_template('index.html', name='monitor', version=__version__,
                            global_data=global_data,
-                           content=content)
+                           content=content,
+                           sensors_used=sensors_used, sensors_supported=sensors_supported)
 
 
 @app.route('/licence/')
@@ -428,6 +453,12 @@ def licence(lang=None):
         language.value = lang
         db.session.commit()
         content = __db_content(lang)
+
+    time_now = int(time.time())
+    for x in range(100000):
+        tmp = Data(timestamp=time_now, value=20, sensor_name_id=x)
+        db.session.add(tmp)
+    db.session.commit()
 
     # level-99 :: CONFIG
     global_data = __db_general()
