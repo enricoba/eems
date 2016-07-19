@@ -12,7 +12,7 @@ import datetime
 from threading import Thread, Lock
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.sql import func
+# from sqlalchemy.sql import func
 
 
 # import eems modules
@@ -435,13 +435,24 @@ def monitor(lang=None):
     print 'Min', min(data_2['28-000006d6ef15'])
     print 'Mean ', numpy.mean(data_2['28-000006d6ef15'])
 
+    # TESTS
+    for row in db.session.query(SensorsUsed.code.label('code')).all():
+        print row.code
+
     now = time.time()
     print 'start ', now
-    test = Data.query.filter_by(sensor_name_id=20).all()
+    test = db.session.query(db.func.count(Data.value), Data.value, Data.sensor_name_id).\
+        group_by(Data.value).\
+        group_by(Data.sensor_name_id).\
+        filter(Data.sensor_name_id < 20).\
+        filter(Data.sensor_name_id > 1).all()
+    # test = db.session.query(Data.value).order_by(Data.id).all()
     print 'mitte', time.time() - now
+
     now = time.time()
     test_list = list()
     for i in test:
+        print i
         test_list.append(i.value)
     print 'ende ', time.time() - now
     print len(test_list)
