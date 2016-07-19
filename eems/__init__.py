@@ -420,42 +420,36 @@ def monitor(lang=None):
     sensors_used = SensorsUsed.query.filter_by(session_id=session_id).all()
     sensors_supported = SensorsSupported.query.all()
 
-    data = dict()
-    data_2 = dict()
-    for i in sensors_used:
-        data[i.code] = Data.query.filter_by(sensor_name_id=i.id).all()
-        data_2[i.code] = list()
-    for i in data:
-        for x in data[i]:
-            data_2[i].append(x.value)
-            print i, x.value
-
-    print data_2
-    print 'Max ', max(data_2['28-000006d6ef15'])
-    print 'Min', min(data_2['28-000006d6ef15'])
-    print 'Mean ', numpy.mean(data_2['28-000006d6ef15'])
-
     # TESTS
     for row in db.session.query(SensorsUsed.code.label('code')).all():
         print row.code
 
     now = time.time()
     print 'start ', now
-    test = db.session.query(db.func.count(Data.value), Data.value, Data.sensor_name_id).\
+    """test = db.session.query(db.func.count(Data.value), Data.value, Data.sensor_name_id).\
         group_by(Data.value).\
         group_by(Data.sensor_name_id).\
         filter(Data.sensor_name_id < 20).\
-        filter(Data.sensor_name_id > 1).all()
-    # test = db.session.query(Data.value).order_by(Data.id).all()
-    print 'mitte', time.time() - now
+        filter(Data.sensor_name_id > 1).all()"""
+    maxi = db.session.query(db.func.max(Data.value)).scalar()
+    print 'max: ', maxi
 
+    sums = db.session.query(db.func.sum(Data.value).label('a1')).group_by(Data.id)
+    print 'sums: ', sums
+    # average = db.session.query(db.func.avg(sums.subquery().columns.a1)).scalar()
+    average = db.session.query(db.func.avg(Data.value)).\
+        filter(Data.sensor_name_id < 20).\
+        scalar()
+    print 'avg: ', average
+    print 'mitte', time.time() - now
+    """
     now = time.time()
     test_list = list()
     for i in test:
         print i
         test_list.append(i.value)
     print 'ende ', time.time() - now
-    print len(test_list)
+    print len(test_list)"""
 
     # level-99 :: CONFIG
     global_data = __db_general()
