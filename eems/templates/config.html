@@ -28,7 +28,7 @@
                             <tr>
                                 <th>{{ content.CONFIG_TH_1 }}</th> <!-- Sensor-ID -->
                                 <th>{{ content.CONFIG_TH_2 }}</th> <!-- Name -->
-                                <th style="text-align: right">{{ content.CONFIG_TH_3 }}</th> <!-- Value -->
+                                <th style="text-align: right">{{ content.CONFIG_TH_3 }} ({{ s.unit }})</th> <!-- Value -->
                             </tr>
                         </thead>
                         <tbody>
@@ -37,7 +37,7 @@
                                     <tr>
                                         <td style="vertical-align: middle">{{ i.code }}</td>
                                         <td><input class="form-control" value="{{ i.name }}" type="text" name="inp_{{ i.code }}" placeholder="{{ content.CONFIG_TB_PLACEHOLDER }}"></td>
-                                        <td style="text-align: right; vertical-align: middle">{{ i.value }}{{ s.unit }}</td>
+                                        <td style="text-align: right; vertical-align: middle">{{ i.value }}</td>
                                     </tr>
                                 {% endif %}
                             {% endfor %}

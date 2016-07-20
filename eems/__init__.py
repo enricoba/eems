@@ -420,17 +420,31 @@ def monitor(lang=None):
     sensors_used = SensorsUsed.query.filter_by(session_id=session_id).all()
     sensors_supported = SensorsSupported.query.all()
 
-    # TESTS
+    # all the values
+    now = time.time()
+    print 'start ', now
+    values = dict()
+    for i in sensors_used:
+        max_value = db.session.query(db.func.max(Data.value)).filter_by(sensor_name_id=i.id).scalar()
+        min_value = db.session.query(db.func.min(Data.value)).filter_by(sensor_name_id=i.id).scalar()
+        avg_value = round(db.session.query(db.func.avg(Data.value)).filter_by(sensor_name_id=i.id).scalar(), 1)
+        last_value = db.session.query(Data.value).filter_by(sensor_name_id=i.id).order_by(Data.id.desc()).first()[0]
+        values[i.id] = [max_value, min_value, avg_value, last_value]
+
+    print values
+    print values[2]
+    print 'mitte', time.time() - now
+    """# TESTS
     for row in db.session.query(SensorsUsed.code.label('code')).all():
         print row.code
 
     now = time.time()
     print 'start ', now
-    """test = db.session.query(db.func.count(Data.value), Data.value, Data.sensor_name_id).\
+    test = db.session.query(db.func.count(Data.value), Data.value, Data.sensor_name_id).\
         group_by(Data.value).\
         group_by(Data.sensor_name_id).\
         filter(Data.sensor_name_id < 20).\
-        filter(Data.sensor_name_id > 1).all()"""
+        filter(Data.sensor_name_id > 1).all()
     maxi = db.session.query(db.func.max(Data.value)).scalar()
     print 'max: ', maxi
 
@@ -442,7 +456,7 @@ def monitor(lang=None):
         scalar()
     print 'avg: ', average
     print 'mitte', time.time() - now
-    """
+
     now = time.time()
     test_list = list()
     for i in test:
@@ -455,7 +469,7 @@ def monitor(lang=None):
     global_data = __db_general()
     return render_template('index.html', name='monitor', version=__version__,
                            global_data=global_data,
-                           content=content,
+                           content=content, values=values,
                            sensors_used=sensors_used, sensors_supported=sensors_supported)
 
 

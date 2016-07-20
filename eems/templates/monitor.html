@@ -7,11 +7,11 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Name</th> <!-- Name/Sensor-ID -->
-                                <th>Min</th> <!-- Min -->
-                                <th>Max</th> <!-- Max -->
-                                <th>Mean</th> <!-- Mean -->
-                                <th>Last value</th> <!-- last value -->
+                                <th style="text-align: left">{{ content.MONITOR_TH_1 }}</th> <!-- Name/Sensor-ID -->
+                                <th style="text-align: right">{{ content.MONITOR_TH_2 }} ({{ s.unit }})</th> <!-- Min -->
+                                <th style="text-align: right">{{ content.MONITOR_TH_3 }} ({{ s.unit }})</th> <!-- Max -->
+                                <th style="text-align: right">{{ content.MONITOR_TH_4 }} ({{ s.unit }})</th> <!-- Mean -->
+                                <th style="text-align: right">{{ content.MONITOR_TH_5 }} ({{ s.unit }})</th> <!-- last value -->
                             </tr>
                         </thead>
                         <tbody>
@@ -19,7 +19,10 @@
                                 {% if i.sensor_id == s.id and i.session_id == global_data.SESSION_ID|int %}
                                     <tr>
                                         <td style="vertical-align: middle">{{ i.code }}</td>
-                                        <td style="text-align: center; vertical-align: middle">{{ i.value }}{{ s.unit }}</td>
+                                        <td style="text-align: right; vertical-align: middle">{{ values[i.id][0] }}</td>
+                                        <td style="text-align: right; vertical-align: middle">{{ values[i.id][1] }}</td>
+                                        <td style="text-align: right; vertical-align: middle">{{ values[i.id][2] }}</td>
+                                        <td style="text-align: right; vertical-align: middle">{{ values[i.id][3] }}</td>
                                     </tr>
                                 {% endif %}
                             {% endfor %}
