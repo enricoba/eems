@@ -107,11 +107,11 @@ class SensorsUsed(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True)
     code = db.Column(db.Text)
     name = db.Column(db.Text)
-    value = db.Column(db.REAL)
     session_id = db.Column(db.Integer)
     sensor_id = db.Column(db.Integer)
+    value = db.Column(db.REAL)
 
-    def __init__(self, code=None, name=None, value=None, session_id=None, sensor_id=None):
+    def __init__(self, code=None, name=None, session_id=None, sensor_id=None, value=None):
         self.code = code
         self.name = name
         self.value = value
@@ -351,12 +351,24 @@ def config(lang=None):
         return redirect(url_for('monitor', lang=lang))
     else:
         # if data then read database else actual time and no value interval
-        if s_tmp.interval is None:
+        s_ds18b20 = ds18b20.DS18B20()
+        if s_tmp.monitoring is not 1:
             at = math.ceil((time.time() / 300)) * 300
             tmp = datetime.datetime.fromtimestamp(at)
             timedate = tmp.strftime('%d-%m-%Y %H:%M')
             interval = ''
             flag = 0
+
+            s_list = s_ds18b20.detect()
+            if len(s_list):
+                query = SensorsSupported.query.filter_by(name='ds18b20').first()
+                sensor_id = query.id
+                for code in s_list:
+                    sensor = SensorsUsed.query.filter_by(code=code, session_id=session_id).first()
+                    if sensor is None:
+                        tmp = SensorsUsed(code=code, session_id=session_id, sensor_id=sensor_id, name='')
+                        db.session.add(tmp)
+                db.session.commit()
         else:
             tmp = datetime.datetime.fromtimestamp(s_tmp.end_time)
             timedate = tmp.strftime('%d-%m-%Y %H:%M')
@@ -364,11 +376,23 @@ def config(lang=None):
             flag = 1
 
         # level-10 :: SENSORS - DS18B20
-        s_ds18b20 = ds18b20.DS18B20()
-        s_list = s_ds18b20.detect()
-        if len(s_list):
-            query = SensorsSupported.query.filter_by(name='ds18b20').first()
-            sensor_id = query.id
+
+        # level-80 :: DB
+        sensors_used = SensorsUsed.query.filter_by(session_id=session_id).all()
+        sensors_supported = SensorsSupported.query.all()
+
+        # level-90 :: VALUE
+        tmp = list()
+        for i in sensors_used:
+            if Data.query.filter_by(sensor_name_id=i.id).first() is None:
+                tmp.append(False)
+            else:
+                tmp.append(True)
+        if True not in tmp:
+            s_list = list()
+            for i in sensors_used:
+                s_list.append(i.code)
+
             s_dict = _SensorDictionary(s_list)
             threads = list()
             for s in s_list:
@@ -379,19 +403,15 @@ def config(lang=None):
             for t in threads:
                 t.join()
             for code in s_list:
-                sensor = SensorsUsed.query.filter_by(code=code, session_id=session_id).first()
-                if sensor is None:
-                    tmp = SensorsUsed(code=code, value=s_dict.dic[code], session_id=session_id, sensor_id=sensor_id,
-                                      name='')
-                    db.session.add(tmp)
-                else:
-                    sensor.value = s_dict.dic[code]
+                sensors_used.value = s_dict.dic[code]
+            db.session.commit()
+        else:
+            for i in sensors_used:
+                i.value = db.session.query(Data.value).filter_by(sensor_name_id=i.id).\
+                    order_by(Data.id.desc()).first()[0]
             db.session.commit()
 
         # level-99 :: DB
-        sensors_used = SensorsUsed.query.filter_by(session_id=session_id).all()
-        sensors_supported = SensorsSupported.query.all()
-
         global_data = __db_general()
         return render_template('index.html', name='config', version=__version__,
                                global_data=global_data,
@@ -425,11 +445,14 @@ def monitor(lang=None):
     print 'start ', now
     values = dict()
     for i in sensors_used:
-        tmp_values = db.session.query(db.func.max(Data.value),
-                                      db.func.min(Data.value),
-                                      db.func.avg(Data.value)).filter_by(sensor_name_id=i.id).all()
-        last_value = db.session.query(Data.value).filter_by(sensor_name_id=i.id).order_by(Data.id.desc()).first()[0]
-        values[i.id] = [tmp_values[0][0], tmp_values[0][1], round(tmp_values[0][2], 1), last_value]
+        if Data.query.filter_by(sensor_name_id=i.id).first() is not None:
+            tmp_values = db.session.query(db.func.max(Data.value),
+                                          db.func.min(Data.value),
+                                          db.func.avg(Data.value)).filter_by(sensor_name_id=i.id).all()
+            last_value = db.session.query(Data.value).filter_by(sensor_name_id=i.id).order_by(Data.id.desc()).first()[0]
+            values[i.id] = [tmp_values[0][0], tmp_values[0][1], round(tmp_values[0][2], 1), last_value]
+        else:
+            values[i.id] = ['-', '-', '-', '-']
 
     print time.time() - now
     # TESTS
