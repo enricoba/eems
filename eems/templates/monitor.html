@@ -18,7 +18,11 @@
                             {% for i in sensors_used %}
                                 {% if i.sensor_id == s.id and i.session_id == global_data.SESSION_ID|int %}
                                     <tr>
-                                        <td style="vertical-align: middle">{{ i.code }}</td>
+                                        <td style="vertical-align: middle">{% if i.name != '' %}
+                                                            {{ i.name }}
+                                                        {% else %}
+                                                            {{ i.code }}
+                                                        {% endif %}</td>
                                         <td style="text-align: right; vertical-align: middle">{{ values[i.id][0] }}</td>
                                         <td style="text-align: right; vertical-align: middle">{{ values[i.id][1] }}</td>
                                         <td style="text-align: right; vertical-align: middle">{{ values[i.id][2] }}</td>
