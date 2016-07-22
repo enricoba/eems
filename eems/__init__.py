@@ -403,7 +403,9 @@ def config(lang=None):
             for t in threads:
                 t.join()
             for code in s_list:
-                sensors_used.value = s_dict.dic[code]
+                for i in sensors_used:
+                    if i.code == code:
+                        i.value = s_dict.dic[code]
             db.session.commit()
         else:
             for i in sensors_used:
