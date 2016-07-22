@@ -425,17 +425,15 @@ def monitor(lang=None):
     print 'start ', now
     values = dict()
     for i in sensors_used:
-        max_value = db.session.query(db.func.max(Data.value)).filter_by(sensor_name_id=i.id).scalar()
-        min_value = db.session.query(db.func.min(Data.value)).filter_by(sensor_name_id=i.id).scalar()
-        avg_value = round(db.session.query(db.func.avg(Data.value)).filter_by(sensor_name_id=i.id).scalar(), 1)
+        tmp_values = db.session.query(db.func.max(Data.value),
+                                      db.func.min(Data.value),
+                                      db.func.avg(Data.value)).filter_by(sensor_name_id=i.id).all()
         last_value = db.session.query(Data.value).filter_by(sensor_name_id=i.id).order_by(Data.id.desc()).first()[0]
-        values[i.id] = [max_value, min_value, avg_value, last_value]
+        values[i.id] = [tmp_values[0][0], tmp_values[0][1], round(tmp_values[0][2], 1), last_value]
 
-    print values
-    print values[2]
-    print 'mitte', time.time() - now
-    """# TESTS
-    for row in db.session.query(SensorsUsed.code.label('code')).all():
+    print time.time() - now
+    # TESTS
+    """for row in db.session.query(SensorsUsed.code.label('code')).all():
         print row.code
 
     now = time.time()
@@ -485,10 +483,7 @@ def licence(lang=None):
         db.session.commit()
         content = __db_content(lang)
 
-    time_now = int(time.time())
-    for x in range(100000):
-        tmp = Data(timestamp=time_now, value=20, sensor_name_id=20)
-        db.session.add(tmp)
+    db.session.query(Data).delete()
     db.session.commit()
 
     # level-99 :: CONFIG
