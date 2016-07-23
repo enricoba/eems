@@ -391,13 +391,7 @@ def config(lang=None):
             else:
                 tmp.append(True)
         if True not in tmp:
-            # alternative
-            # s_list = [i.code for i in sensors_used]
-
-            s_list = list() # könnte gelöscht werden
-            for i in sensors_used: #könnte gelöscht werden
-                s_list.append(i.code) # könnte gelöscht werden
-
+            s_list = [i.code for i in sensors_used]
             s_dict = _SensorDictionary(s_list)
             threads = list()
             for s in s_list:
@@ -471,27 +465,11 @@ def monitor(lang=None):
     now = time.time()
     print 'TEST ', now
     chart_y = dict()
-    # chart_u = dict()
-    chart_x = list()
-    # alternative
-    # chart_z = [x[0] for x in db.session.query(Data.timestamp).group_by(Data.timestamp).all()]
+    chart_x = [x[0] for x in db.session.query(Data.timestamp).group_by(Data.timestamp).all()]
     for i in sensors_used:
-        chart_y[i.id] = list() # könnte gelöscht werden
-        data = db.session.query(Data.timestamp, Data.value).filter_by(sensor_name_id=i.id).all()
-
-        # alternative
-        # chart_u[i.id] = [x[1] for x in data]
-
-        for x in data: # könnte gelöscht werden
-            chart_y[i.id].append(x[1]) # könnte gelöscht werden
-            if i.id == 1: # könnte gelöscht werden
-                chart_x.append(x[0]) # könnte gelöscht werden
+        data = db.session.query(Data.value).filter_by(sensor_name_id=i.id).all()
+        chart_y[i.id] = [x[0] for x in data]
     print 'TEST ENDE', time.time() - now
-    print chart_y
-    for i in sensors_used:
-        print i.id, chart_y[i.id]
-    print chart_x
-    print chart_y[1]
 
     # formatting: scale
 
