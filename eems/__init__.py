@@ -112,7 +112,7 @@ class SensorsUsed(db.Model):
     value = db.Column(db.REAL)
     color = db.Column(db.Text)
 
-    def __init__(self, code=None, name=None, session_id=None, sensor_id=None, value=None, color=None):
+    def __init__(self, code=None, name=None, session_id=None, sensor_id=None, value=None, color='black'):
         self.code = code
         self.name = name
         self.value = value
@@ -188,7 +188,6 @@ def w_monitor(interval):
         db.session.commit()
 
         timestamp += interval
-        print timestamp - time.time()
         time.sleep(timestamp - time.time())
 
 
@@ -443,14 +442,12 @@ def monitor(lang=None):
     sensors_supported = SensorsSupported.query.all()
 
     # all the values
-    now = time.time()
+    # now = time.time()
     # print 'start ', now
     values = dict()
-
     data = db.session.query(db.func.max(Data.value),
                             db.func.min(Data.value),
                             db.func.avg(Data.value)).group_by(Data.sensor_name_id).all()
-
     for i in sensors_used:
         if Data.query.filter_by(sensor_name_id=i.id).first() is not None:
             last_value = db.session.query(Data.value).filter_by(sensor_name_id=i.id).order_by(Data.id.desc()).first()[0]
@@ -463,14 +460,14 @@ def monitor(lang=None):
     # 1. X-Achse
     # time
 
-    now = time.time()
-    print 'TEST ', now
+    # now = time.time()
+    # print 'TEST ', now
     chart_y = dict()
     chart_x = [x[0] for x in db.session.query(Data.timestamp).group_by(Data.timestamp).all()]
     for i in sensors_used:
         data = db.session.query(Data.value).filter_by(sensor_name_id=i.id).all()
         chart_y[i.id] = [x[0] for x in data]
-    print 'TEST ENDE', time.time() - now
+    # print 'TEST ENDE', time.time() - now
 
     # formatting: scale
 
@@ -530,8 +527,8 @@ def licence(lang=None):
         db.session.commit()
         content = __db_content(lang)
 
-    db.session.query(Data).delete()
-    db.session.commit()
+    # db.session.query(Data).delete()
+    # db.session.commit()
 
     # level-99 :: CONFIG
     global_data = __db_general()
