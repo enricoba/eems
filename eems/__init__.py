@@ -188,6 +188,7 @@ def w_monitor(interval):
         db.session.commit()
 
         timestamp += interval
+        print timestamp - time.time()
         time.sleep(timestamp - time.time())
 
 
