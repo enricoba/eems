@@ -110,13 +110,15 @@ class SensorsUsed(db.Model):
     session_id = db.Column(db.Integer)
     sensor_id = db.Column(db.Integer)
     value = db.Column(db.REAL)
+    color = db.Column(db.Text)
 
-    def __init__(self, code=None, name=None, session_id=None, sensor_id=None, value=None):
+    def __init__(self, code=None, name=None, session_id=None, sensor_id=None, value=None, color=None):
         self.code = code
         self.name = name
         self.value = value
         self.session_id = session_id
         self.sensor_id = sensor_id
+        self.color = color
 
 
 class SensorsSupported(db.Model):
@@ -444,19 +446,50 @@ def monitor(lang=None):
 
     # all the values
     now = time.time()
-    print 'start ', now
+    # print 'start ', now
     values = dict()
+
+    data = db.session.query(db.func.max(Data.value),
+                            db.func.min(Data.value),
+                            db.func.avg(Data.value)).group_by(Data.sensor_name_id).all()
+
     for i in sensors_used:
         if Data.query.filter_by(sensor_name_id=i.id).first() is not None:
-            tmp_values = db.session.query(db.func.max(Data.value),
-                                          db.func.min(Data.value),
-                                          db.func.avg(Data.value)).filter_by(sensor_name_id=i.id).all()
             last_value = db.session.query(Data.value).filter_by(sensor_name_id=i.id).order_by(Data.id.desc()).first()[0]
-            values[i.id] = [tmp_values[0][0], tmp_values[0][1], round(tmp_values[0][2], 1), last_value]
+            values[i.id] = [data[i.id-1][0], data[i.id-1][1], round(data[i.id-1][2], 1), last_value]
         else:
             values[i.id] = ['-', '-', '-', '-']
 
-    print time.time() - now
+    # print time.time() - now
+
+    # 1. X-Achse
+    # time
+
+    now = time.time()
+    print 'TEST ', now
+    chart_y = dict()
+    chart_x = list()
+    for i in sensors_used:
+        chart_y[i.id] = list()
+        data = db.session.query(Data.timestamp, Data.value).filter_by(sensor_name_id=i.id).all()
+        for x in data:
+            chart_y[i.id].append(x[1])
+            if i.id == 1:
+                chart_x.append(x[0])
+    print 'TEST ENDE', time.time() - now
+    print chart_y
+    for i in sensors_used:
+        print i.id, chart_y[i.id]
+    print chart_x
+    print chart_y[1]
+
+    # formatting: scale
+
+    # 2. Y-Achse
+    # values
+
+    # labels
+
     # TESTS
     """for row in db.session.query(SensorsUsed.code.label('code')).all():
         print row.code
@@ -492,7 +525,7 @@ def monitor(lang=None):
     global_data = __db_general()
     return render_template('index.html', name='monitor', version=__version__,
                            global_data=global_data,
-                           content=content, values=values,
+                           content=content, values=values, chart_y=chart_y, chart_x=chart_x,
                            sensors_used=sensors_used, sensors_supported=sensors_supported)
 
 
