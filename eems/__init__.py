@@ -148,6 +148,12 @@ class Data(db.Model):
 w_flag = 1
 
 
+def get_session():
+    general = General.query.filter_by(item='SESSION').first()
+    sessions = Sessions.query.filter_by(session=general.value).first()
+    return general, sessions
+
+
 def w_monitor(interval):
     global w_flag
 
