@@ -6,13 +6,11 @@ Initiation module for eems.
 # import external modules
 import os
 import math
-import numpy
 import time
 import datetime
 from threading import Thread, Lock
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
-# from sqlalchemy.sql import func
 
 
 # import eems modules
@@ -371,6 +369,18 @@ def config(lang=None):
                         tmp = SensorsUsed(code=code, session_id=session_id, sensor_id=sensor_id, name='')
                         db.session.add(tmp)
                 db.session.commit()
+
+            # create data table
+            table = '{}_data'.format(session_id)
+            info = dict()
+            info['id'] = db.Column(db.Integer, primary_key=True, unique=True)
+            info['timestamp'] = db.Column(db.Integer)
+            for code in s_list:
+                info[code] = db.Column(db.Float)
+            if not db.engine.has_table(table):
+                data = type(table, (db.Model,), info)
+                db.create_all()
+                print db.engine.table_names()
         else:
             tmp = datetime.datetime.fromtimestamp(s_tmp.end_time)
             timedate = tmp.strftime('%d-%m-%Y %H:%M')
@@ -526,9 +536,6 @@ def licence(lang=None):
         language.value = lang
         db.session.commit()
         content = __db_content(lang)
-
-    # db.session.query(Data).delete()
-    # db.session.commit()
 
     # level-99 :: CONFIG
     global_data = __db_general()
