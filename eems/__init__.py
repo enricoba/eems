@@ -394,7 +394,7 @@ def config(lang=None):
         sensors_supported = SensorsSupported.query.all()
 
         # level-90 :: VALUE
-        tmp = list()
+        """tmp = list()
         for i in sensors_used:
             if Data.query.filter_by(sensor_name_id=i.id).first() is None:
                 tmp.append(False)
@@ -420,7 +420,7 @@ def config(lang=None):
             for i in sensors_used:
                 i.value = db.session.query(Data.value).filter_by(sensor_name_id=i.id).\
                     order_by(Data.id.desc()).first()[0]
-            db.session.commit()
+            db.session.commit()"""
 
         # level-99 :: DB
         global_data = __db_general()
