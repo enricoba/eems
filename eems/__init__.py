@@ -147,7 +147,7 @@ class Data(db.Model):
 
 w_flag = 1
 
-
+# TODO: Funktion erweitern das db-Abfrage einfacher wird
 def get_session():
     general = General.query.filter_by(item='SESSION').first()
     sessions = Sessions.query.filter_by(session=general.value).first()
@@ -166,16 +166,21 @@ def w_monitor(interval):
     sensor_id = query.id
     tmp_sensors = SensorsUsed.query.filter_by(session_id=session_id, sensor_id=sensor_id).all()
 
-    s_list = list()
-    s_names_ids = dict()
-    for i in tmp_sensors:
-        s_list.append(i.code)
-        s_names_ids[i.code] = i.id
+    # s_list = list()
+    # s_names_ids = dict()
+    # for i in tmp_sensors:
+    #     s_list.append(i.code)
+    #     s_names_ids[i.code] = i.id
+
+    # Alternative für for-schleife von oben
+    s_list, s_names_ids = [i.code for i in tmp_sensors], {i.code: i.id for i in tmp_sensors}
+
     s_dict = _SensorDictionary(s_list)
 
     timestamp = int(time.time() / interval) * interval
     timestamp += interval
     time.sleep(timestamp - time.time())
+    # data_table = '{}_data'.format(session_id)
     while w_flag == 1:
         time_now = int(time.time())
         threads = list()
@@ -187,6 +192,7 @@ def w_monitor(interval):
         for t in threads:
             t.join()
         for code in s_list:
+            # TODO: In Datenbank schreiben an neue Tabelle anpassen!!!
             tmp = Data(timestamp=time_now, value=s_dict.dic[code], sensor_name_id=s_names_ids[code])
             db.session.add(tmp)
         db.session.commit()
@@ -216,10 +222,14 @@ def __db_content(lang):
 
 
 def __db_general():
-    tmp_dict = dict()
+    # Alternative für for-schleife
     general = General.query.all()
-    for i in general:
-        tmp_dict[i.item] = i.value
+    tmp_dict = {i.item: i.value for i in general}
+
+    # tmp_dict = dict()
+    # general = General.query.all()
+    # for i in general:
+    #     tmp_dict[i.item] = i.value
     return tmp_dict
 
 
@@ -381,8 +391,9 @@ def config(lang=None):
             info = dict()
             info['id'] = db.Column(db.Integer, primary_key=True, unique=True)
             info['timestamp'] = db.Column(db.Integer)
-            for code in s_list:
-                info[code] = db.Column(db.Float)
+            info = {code: db.Float for code in s_list}
+            # for code in s_list:
+            #     info[code] = db.Column(db.Float)
             if not db.engine.has_table(table):
                 data = type(table, (db.Model,), info)
                 db.create_all()
@@ -400,9 +411,12 @@ def config(lang=None):
         sensors_supported = SensorsSupported.query.all()
 
         # level-90 :: VALUE
-        """tmp = list()
+        # TODO: an neue Data-Tabelle anpassen! Vorher muss Funktion w_monitor angepasst werden
+        """
+        data_table = '{}_data'.format(session_id)
+        tmp = list()
         for i in sensors_used:
-            if Data.query.filter_by(sensor_name_id=i.id).first() is None:
+            if data_table.query.filter_by(sensor_name_id=i.id).first() is None:
                 tmp.append(False)
             else:
                 tmp.append(True)
@@ -460,6 +474,17 @@ def monitor(lang=None):
     # all the values
     # now = time.time()
     # print 'start ', now
+    # TODO: Auf neue Data-Tabelle anpassen!!!
+    ### Idee anfang
+    ### Idee noch nicht getestet!!!
+    # data_table = '{}_data'.format(session_id)
+    # values = {sensor_code: [db.session.query(db.func.min(data_table.code).scalar()),
+    #                         db.session.query(db.func.max(data_table.code).scalar()),
+    #                         db.session.query(db.func.avg(data_table.code).scalar()),
+    #                         db.session.query(data_table.code).filter_by(sensor_name_id=sensor_code.id).order_by(
+    #                             data_table.id.desc()).first()[0]] for sensor_code in sensors_used}
+    ## Idee ende
+
     values = dict()
     data = db.session.query(db.func.max(Data.value),
                             db.func.min(Data.value),
@@ -478,11 +503,12 @@ def monitor(lang=None):
 
     # now = time.time()
     # print 'TEST ', now
-    chart_y = dict()
+    # TODO: Diagramm an neue DATA-Tabelle anpassen
+    """chart_y = dict()
     chart_x = [x[0] for x in db.session.query(Data.timestamp).group_by(Data.timestamp).all()]
     for i in sensors_used:
         data = db.session.query(Data.value).filter_by(sensor_name_id=i.id).all()
-        chart_y[i.id] = [x[0] for x in data]
+        chart_y[i.id] = [x[0] for x in data]"""
     # print 'TEST ENDE', time.time() - now
 
     # formatting: scale
