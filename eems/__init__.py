@@ -504,6 +504,8 @@ def monitor(lang=None):
     # now = time.time()
     # print 'TEST ', now
     # TODO: Diagramm an neue DATA-Tabelle anpassen
+    chart_x = list()
+    chart_y = dict()
     """chart_y = dict()
     chart_x = [x[0] for x in db.session.query(Data.timestamp).group_by(Data.timestamp).all()]
     for i in sensors_used:
